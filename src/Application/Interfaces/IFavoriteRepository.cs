@@ -8,27 +8,38 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IFavoriteRepository
 {
     /// <summary>
-    /// Kullanıcının favorilerini getir
+    /// Favori ekler
     /// </summary>
-    Task<IEnumerable<Favorite>> GetByUserIdAsync(Guid userId);
-    
-    /// <summary>
-    /// Evin favori sayısını getir
-    /// </summary>
-    Task<int> GetFavoriteCountByPropertyIdAsync(Guid propertyId);
-    
-    /// <summary>
-    /// Kullanıcının evi favori olarak ekleyip eklemediğini kontrol et
-    /// </summary>
-    Task<bool> IsFavoriteAsync(Guid userId, Guid propertyId);
-    
-    /// <summary>
-    /// Favori ekle veya kaldır (toggle)
-    /// </summary>
-    Task<bool> ToggleFavoriteAsync(Guid userId, Guid propertyId);
+    Task<Favorite> AddAsync(Favorite favorite);
 
     /// <summary>
-    /// Değişiklikleri kaydet
+    /// Favori siler
     /// </summary>
+    Task DeleteAsync(Guid id);
+
+    /// <summary>
+    /// Değişiklikleri kaydeder
+    /// </summary>
+    /// <returns>Kaydedilen değişiklik sayısı</returns>
     Task<int> SaveChangesAsync();
+
+    /// <summary>
+    /// Kullanıcı ID'sine göre favorileri getir
+    /// </summary>
+    Task<IEnumerable<Favorite>> GetByUserIdAsync(Guid userId);
+
+    /// <summary>
+    /// Ev ID'sine göre favorileri getir
+    /// </summary>
+    Task<IEnumerable<Favorite>> GetByPropertyIdAsync(Guid propertyId);
+
+    /// <summary>
+    /// Kullanıcının favori evlerini getir
+    /// </summary>
+    Task<IEnumerable<Property>> GetFavoritePropertiesAsync(Guid userId);
+
+    /// <summary>
+    /// Favori var mı kontrol et
+    /// </summary>
+    Task<bool> ExistsAsync(Guid userId, Guid propertyId);
 } 

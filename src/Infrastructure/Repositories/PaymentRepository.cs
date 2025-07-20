@@ -17,6 +17,12 @@ public class PaymentRepository : IPaymentRepository
         _context = context;
     }
 
+    public async Task<Payment> AddAsync(Payment payment)
+    {
+        await _context.Payments.AddAsync(payment);
+        return payment;
+    }
+
     public async Task<IEnumerable<Payment>> GetByUserIdAsync(Guid userId)
     {
         return await _context.Payments

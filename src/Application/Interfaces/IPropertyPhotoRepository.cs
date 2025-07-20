@@ -8,27 +8,28 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IPropertyPhotoRepository
 {
     /// <summary>
-    /// Eve göre fotoğrafları getir
+    /// Fotoğraf ekler
+    /// </summary>
+    Task<PropertyPhoto> AddAsync(PropertyPhoto photo);
+
+    /// <summary>
+    /// Fotoğraf siler
+    /// </summary>
+    Task DeleteAsync(Guid id);
+
+    /// <summary>
+    /// Değişiklikleri kaydeder
+    /// </summary>
+    /// <returns>Kaydedilen değişiklik sayısı</returns>
+    Task<int> SaveChangesAsync();
+
+    /// <summary>
+    /// Ev ID'sine göre fotoğrafları getir
     /// </summary>
     Task<IEnumerable<PropertyPhoto>> GetByPropertyIdAsync(Guid propertyId);
-    
+
     /// <summary>
     /// Ana fotoğrafı getir
     /// </summary>
-    Task<PropertyPhoto?> GetMainPhotoByPropertyIdAsync(Guid propertyId);
-    
-    /// <summary>
-    /// Ana fotoğrafı ayarla
-    /// </summary>
-    Task SetMainPhotoAsync(Guid propertyId, Guid photoId);
-    
-    /// <summary>
-    /// Fotoğraf sıralamasını güncelle
-    /// </summary>
-    Task UpdatePhotoOrderAsync(Guid propertyId, Dictionary<Guid, int> photoOrders);
-
-    /// <summary>
-    /// Değişiklikleri kaydet
-    /// </summary>
-    Task<int> SaveChangesAsync();
+    Task<PropertyPhoto?> GetMainPhotoAsync(Guid propertyId);
 } 

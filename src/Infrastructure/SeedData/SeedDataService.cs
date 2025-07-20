@@ -76,9 +76,7 @@ public class SeedDataService
             LastName = "User",
             UserType = UserType.Admin,
             IsVerified = true,
-            IsActive = true,
-            CreatedDate = DateTime.UtcNow,
-            IsPublish = true
+            IsActive = true
         };
 
         if (await _userManager.FindByEmailAsync(adminUser.Email) == null)
@@ -101,20 +99,15 @@ public class SeedDataService
             .RuleFor(u => u.FirstName, f => f.Name.FirstName())
             .RuleFor(u => u.LastName, f => f.Name.LastName())
             .RuleFor(u => u.DateOfBirth, f => f.Date.Past(50, DateTime.Now.AddYears(-18)))
-            .RuleFor(u => u.Gender, f => f.PickRandom("Male", "Female", "Other"))
             .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber())
             .RuleFor(u => u.Address, f => f.Address.StreetAddress())
             .RuleFor(u => u.City, f => f.Address.City())
             .RuleFor(u => u.Country, f => f.Address.Country())
             .RuleFor(u => u.PostalCode, f => f.Address.ZipCode())
-            .RuleFor(u => u.ProfilePictureUrl, f => f.Image.PicsumUrl(200, 200))
-            .RuleFor(u => u.Bio, f => f.Lorem.Paragraph())
+            .RuleFor(u => u.ProfilePicture, f => f.Image.PicsumUrl(200, 200))
             .RuleFor(u => u.UserType, UserType.Host)
             .RuleFor(u => u.IsVerified, f => f.Random.Bool(0.8f))
-            .RuleFor(u => u.IsActive, f => f.Random.Bool(0.9f))
-            .RuleFor(u => u.CreatedDate, f => f.Date.Past(2))
-            .RuleFor(u => u.IsPublish, true)
-            .RuleFor(u => u.IsDeleted, false);
+            .RuleFor(u => u.IsActive, f => f.Random.Bool(0.9f));
 
         var hosts = hostFaker.Generate(20);
         foreach (var host in hosts)
@@ -140,20 +133,15 @@ public class SeedDataService
             .RuleFor(u => u.FirstName, f => f.Name.FirstName())
             .RuleFor(u => u.LastName, f => f.Name.LastName())
             .RuleFor(u => u.DateOfBirth, f => f.Date.Past(50, DateTime.Now.AddYears(-18)))
-            .RuleFor(u => u.Gender, f => f.PickRandom("Male", "Female", "Other"))
             .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber())
             .RuleFor(u => u.Address, f => f.Address.StreetAddress())
             .RuleFor(u => u.City, f => f.Address.City())
             .RuleFor(u => u.Country, f => f.Address.Country())
             .RuleFor(u => u.PostalCode, f => f.Address.ZipCode())
-            .RuleFor(u => u.ProfilePictureUrl, f => f.Image.PicsumUrl(200, 200))
-            .RuleFor(u => u.Bio, f => f.Lorem.Paragraph())
+            .RuleFor(u => u.ProfilePicture, f => f.Image.PicsumUrl(200, 200))
             .RuleFor(u => u.UserType, UserType.Guest)
             .RuleFor(u => u.IsVerified, f => f.Random.Bool(0.7f))
-            .RuleFor(u => u.IsActive, f => f.Random.Bool(0.9f))
-            .RuleFor(u => u.CreatedDate, f => f.Date.Past(2))
-            .RuleFor(u => u.IsPublish, true)
-            .RuleFor(u => u.IsDeleted, false);
+            .RuleFor(u => u.IsActive, f => f.Random.Bool(0.9f));
 
         var guests = guestFaker.Generate(50);
         foreach (var guest in guests)
@@ -195,25 +183,21 @@ public class SeedDataService
             .RuleFor(p => p.Latitude, f => f.Random.Double(36.0, 42.0))
             .RuleFor(p => p.Longitude, f => f.Random.Double(26.0, 45.0))
             .RuleFor(p => p.PricePerNight, f => f.Random.Decimal(100, 2000))
-            .RuleFor(p => p.Currency, "TRY")
-            .RuleFor(p => p.MaxGuests, f => f.Random.Int(1, 10))
-            .RuleFor(p => p.Bedrooms, f => f.Random.Int(1, 5))
-            .RuleFor(p => p.Beds, f => f.Random.Int(1, 8))
-            .RuleFor(p => p.Bathrooms, f => f.Random.Int(1, 4))
-            .RuleFor(p => p.Amenities, f => string.Join(",", f.PickRandom(new[] { "WiFi", "Kitchen", "TV", "Air Conditioning", "Heating", "Washer", "Dryer", "Parking", "Pool", "Gym" }, f.Random.Int(3, 7))))
-            .RuleFor(p => p.HouseRules, f => f.Lorem.Sentences(2))
-            .RuleFor(p => p.CancellationPolicy, f => f.PickRandom("Flexible", "Moderate", "Strict"))
-            .RuleFor(p => p.CheckInTime, f => f.PickRandom("14:00", "15:00", "16:00"))
-            .RuleFor(p => p.CheckOutTime, f => f.PickRandom("10:00", "11:00", "12:00"))
-            .RuleFor(p => p.IsInstantBookable, f => f.Random.Bool(0.3f))
-            .RuleFor(p => p.IsSuperhost, f => f.Random.Bool(0.2f))
-            .RuleFor(p => p.IsVerified, f => f.Random.Bool(0.8f))
-            .RuleFor(p => p.IsActive, f => f.Random.Bool(0.9f))
+            .RuleFor(p => p.MaxGuestCount, f => f.Random.Int(1, 10))
+            .RuleFor(p => p.BedroomCount, f => f.Random.Int(1, 5))
+            .RuleFor(p => p.BedCount, f => f.Random.Int(1, 8))
+            .RuleFor(p => p.BathroomCount, f => f.Random.Int(1, 4))
+            .RuleFor(p => p.HasWifi, f => f.Random.Bool(0.9f))
+            .RuleFor(p => p.HasAirConditioning, f => f.Random.Bool(0.8f))
+            .RuleFor(p => p.HasKitchen, f => f.Random.Bool(0.9f))
+            .RuleFor(p => p.HasParking, f => f.Random.Bool(0.7f))
+            .RuleFor(p => p.HasPool, f => f.Random.Bool(0.3f))
+            .RuleFor(p => p.AllowsPets, f => f.Random.Bool(0.4f))
+            .RuleFor(p => p.AllowsSmoking, f => f.Random.Bool(0.2f))
             .RuleFor(p => p.ViewCount, f => f.Random.Int(0, 1000))
             .RuleFor(p => p.FavoriteCount, f => f.Random.Int(0, 100))
             .RuleFor(p => p.AverageRating, f => f.Random.Decimal(3.0m, 5.0m))
             .RuleFor(p => p.TotalReviews, f => f.Random.Int(0, 50))
-            .RuleFor(p => p.CreatedDate, f => f.Date.Past(1))
             .RuleFor(p => p.IsPublish, true)
             .RuleFor(p => p.IsDeleted, false);
 
@@ -240,12 +224,14 @@ public class SeedDataService
             .RuleFor(r => r.PropertyId, f => f.PickRandom(properties).Id)
             .RuleFor(r => r.CheckInDate, f => f.Date.Future(1))
             .RuleFor(r => r.CheckOutDate, (f, r) => r.CheckInDate.AddDays(f.Random.Int(1, 14)))
-            .RuleFor(r => r.NumberOfGuests, f => f.Random.Int(1, 6))
-            .RuleFor(r => r.TotalPrice, f => f.Random.Decimal(500, 5000))
-            .RuleFor(r => r.Currency, "TRY")
+            .RuleFor(r => r.GuestCount, f => f.Random.Int(1, 6))
+            .RuleFor(r => r.TotalDays, (f, r) => (r.CheckOutDate - r.CheckInDate).Days)
+            .RuleFor(r => r.PricePerNight, f => f.Random.Decimal(100, 500))
+            .RuleFor(r => r.CleaningFee, f => f.Random.Decimal(50, 200))
+            .RuleFor(r => r.ServiceFee, f => f.Random.Decimal(20, 100))
+            .RuleFor(r => r.TotalPrice, (f, r) => (r.PricePerNight * r.TotalDays) + r.CleaningFee + r.ServiceFee)
             .RuleFor(r => r.Status, f => f.PickRandom<ReservationStatus>())
             .RuleFor(r => r.SpecialRequests, f => f.Random.Bool(0.3f) ? f.Lorem.Sentence() : null)
-            .RuleFor(r => r.CreatedDate, f => f.Date.Past(6))
             .RuleFor(r => r.IsPublish, true)
             .RuleFor(r => r.IsDeleted, false);
 
@@ -331,7 +317,7 @@ public class SeedDataService
         var messageFaker = new Faker<Message>()
             .RuleFor(m => m.Id, f => Guid.NewGuid())
             .RuleFor(m => m.SenderId, f => f.PickRandom(users).Id)
-            .RuleFor(m => m.ReceiverId, f => f.PickRandom(users.Where(u => u.Id != m.SenderId)).Id)
+            .RuleFor(m => m.ReceiverId, (f, m) => f.PickRandom(users.Where(u => u.Id != m.SenderId)).Id)
             .RuleFor(m => m.PropertyId, f => f.Random.Bool(0.3f) ? f.PickRandom(properties).Id : null)
             .RuleFor(m => m.ReservationId, f => f.Random.Bool(0.2f) ? f.PickRandom(reservations).Id : null)
             .RuleFor(m => m.Subject, f => f.Lorem.Sentence(3, 8))
@@ -340,7 +326,6 @@ public class SeedDataService
             .RuleFor(m => m.MessageType, f => f.PickRandom<MessageType>())
             .RuleFor(m => m.Priority, f => f.PickRandom<MessagePriority>())
             .RuleFor(m => m.Category, f => f.PickRandom<MessageCategory>())
-            .RuleFor(m => m.CreatedDate, f => f.Date.Past(6))
             .RuleFor(m => m.IsPublish, true)
             .RuleFor(m => m.IsDeleted, false);
 

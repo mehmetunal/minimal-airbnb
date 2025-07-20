@@ -17,6 +17,21 @@ public class PropertyPhotoRepository : IPropertyPhotoRepository
         _context = context;
     }
 
+    public async Task<PropertyPhoto> AddAsync(PropertyPhoto photo)
+    {
+        await _context.PropertyPhotos.AddAsync(photo);
+        return photo;
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var photo = await _context.PropertyPhotos.FindAsync(id);
+        if (photo != null)
+        {
+            _context.PropertyPhotos.Remove(photo);
+        }
+    }
+
     public async Task<IEnumerable<PropertyPhoto>> GetByPropertyIdAsync(Guid propertyId)
     {
         return await _context.PropertyPhotos
@@ -27,7 +42,7 @@ public class PropertyPhotoRepository : IPropertyPhotoRepository
             .ToListAsync();
     }
 
-    public async Task<PropertyPhoto?> GetMainPhotoByPropertyIdAsync(Guid propertyId)
+    public async Task<PropertyPhoto?> GetMainPhotoAsync(Guid propertyId)
     {
         return await _context.PropertyPhotos
             .Include(p => p.Property)

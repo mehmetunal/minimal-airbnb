@@ -9,6 +9,19 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IPropertyRepository
 {
     /// <summary>
+    /// Property ekler
+    /// </summary>
+    /// <param name="property">Eklenecek property</param>
+    /// <returns>Eklenen property</returns>
+    Task<Property> AddAsync(Property property);
+
+    /// <summary>
+    /// Değişiklikleri kaydeder
+    /// </summary>
+    /// <returns>Kaydedilen değişiklik sayısı</returns>
+    Task<int> SaveChangesAsync();
+
+    /// <summary>
     /// Ev sahibine göre evleri getir
     /// </summary>
     Task<IEnumerable<Property>> GetByHostIdAsync(Guid hostId);
@@ -45,4 +58,9 @@ public interface IPropertyRepository
         decimal? minPrice = null, decimal? maxPrice = null, int? guestCount = null, bool? hasWifi = null, 
         bool? hasAirConditioning = null, bool? hasKitchen = null, bool? hasParking = null, bool? hasPool = null, 
         bool? allowsPets = null, bool? allowsSmoking = null);
+
+    /// <summary>
+    /// Belirli tarih aralığında müsait evleri getir
+    /// </summary>
+    Task<IEnumerable<Property>> GetAvailablePropertiesAsync(DateTime checkInDate, DateTime checkOutDate, int guestCount);
 } 

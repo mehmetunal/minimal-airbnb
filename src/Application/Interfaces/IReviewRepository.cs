@@ -8,17 +8,23 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IReviewRepository
 {
     /// <summary>
-    /// Eve göre yorumları getir
+    /// Değerlendirme ekler
+    /// </summary>
+    Task<Review> AddAsync(Review review);
+
+    /// <summary>
+    /// Değişiklikleri kaydeder
+    /// </summary>
+    /// <returns>Kaydedilen değişiklik sayısı</returns>
+    Task<int> SaveChangesAsync();
+
+    /// <summary>
+    /// Ev ID'sine göre değerlendirmeleri getir
     /// </summary>
     Task<IEnumerable<Review>> GetByPropertyIdAsync(Guid propertyId);
-    
+
     /// <summary>
-    /// Misafire göre yorumları getir
+    /// Kullanıcı ID'sine göre değerlendirmeleri getir
     /// </summary>
-    Task<IEnumerable<Review>> GetByGuestIdAsync(Guid guestId);
-    
-    /// <summary>
-    /// Puana göre yorumları getir
-    /// </summary>
-    Task<IEnumerable<Review>> GetByRatingAsync(int rating);
+    Task<IEnumerable<Review>> GetByUserIdAsync(Guid userId);
 } 

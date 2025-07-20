@@ -18,6 +18,17 @@ public class PropertyRepository : IPropertyRepository
         _context = context;
     }
 
+    public async Task<Property> AddAsync(Property property)
+    {
+        await _context.Properties.AddAsync(property);
+        return property;
+    }
+
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
+
     public async Task<IEnumerable<Property>> GetByHostIdAsync(Guid hostId)
     {
         return await _context.Properties
@@ -104,7 +115,7 @@ public class PropertyRepository : IPropertyRepository
             .Include(p => p.Reviews)
             .Include(p => p.Photos)
             .Include(p => p.Favorites)
-            .Where(p => p.Reviews.Any() && p.Reviews.Average(r => (decimal)r.Rating) >= minRating)
+            .Where(p => p.Reviews.Average(r => (decimal)r.Rating) >= minRating)
             .ToListAsync();
     }
 

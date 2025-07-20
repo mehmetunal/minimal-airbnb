@@ -80,6 +80,17 @@ public class ReviewRepository : IReviewRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Review>> GetByUserIdAsync(Guid userId)
+    {
+        return await _context.Reviews
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Reservation)
+            .Where(r => r.GuestId == userId)
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Review>> GetByHostIdAsync(Guid hostId)
     {
         return await _context.Reviews
