@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../buildMultiTargeting/MinimalAirbnb.Web.props" />
+</Project>

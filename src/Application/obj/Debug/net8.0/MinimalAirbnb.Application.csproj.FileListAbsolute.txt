@@ -1,0 +1,15 @@
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/bin/Debug/net8.0/MinimalAirbnb.Application.deps.json
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/bin/Debug/net8.0/MinimalAirbnb.Application.dll
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/bin/Debug/net8.0/MinimalAirbnb.Application.pdb
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/bin/Debug/net8.0/MinimalAirbnb.Domain.dll
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/bin/Debug/net8.0/MinimalAirbnb.Domain.pdb
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.csproj.AssemblyReference.cache
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.GeneratedMSBuildEditorConfig.editorconfig
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.AssemblyInfoInputs.cache
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.AssemblyInfo.cs
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.csproj.CoreCompileInputs.cache
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.csproj.CopyComplete
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.dll
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/refint/MinimalAirbnb.Application.dll
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/MinimalAirbnb.Application.pdb
+/media/mehmet/diskim/Project/MinimalAirbnb/src/Application/obj/Debug/net8.0/ref/MinimalAirbnb.Application.dll

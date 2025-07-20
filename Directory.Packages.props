@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <Copyright>Copyright © MinimalAirbnb, Ltd</Copyright>
+    <Company>MinimalAirbnb</Company>
+    <Authors>MinimalAirbnb Team</Authors>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Maggsoft Framework Paketleri -->
+    <PackageVersion Include="Maggsoft.Core" Version="2.0.39" />
+    <PackageVersion Include="Maggsoft.Data" Version="2.0.20" />
+    <PackageVersion Include="Maggsoft.Framework" Version="2.3.6" />
+    <PackageVersion Include="Maggsoft.Data.Mssql" Version="2.0.10" />
+    <PackageVersion Include="Maggsoft.Mssql" Version="2.0.12" />
+    <PackageVersion Include="Maggsoft.Cache" Version="2.0.22" />
+    <PackageVersion Include="Maggsoft.Cache.MemoryCache" Version="2.0.7" />
+    <PackageVersion Include="Maggsoft.Services" Version="2.0.8" />
+    <PackageVersion Include="Maggsoft.Aspect.Core" Version="1.0.15" />
+    <PackageVersion Include="Maggsoft.Mssql.Services" Version="2.0.17" />
+    <PackageVersion Include="Maggsoft.Endpoints" Version="2.0.7" />
+    <PackageVersion Include="Maggsoft.Logging" Version="1.0.6" />
+    <PackageVersion Include="Maggsoft.EventBus" Version="1.0.19" />
+    <!-- AutoMapper -->
+    <PackageVersion Include="AutoMapper" Version="13.0.1" />
+    <!-- Validation -->
+    <PackageVersion Include="FluentValidation" Version="11.10.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
+    <!-- MediatR (CQRS) -->
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+    <!-- API ve Swagger -->
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+    <PackageVersion Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <!-- Microsoft Entity Framework -->
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Proxies" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+    <!-- Migration ve Database -->
+    <PackageVersion Include="FluentMigrator" Version="6.2.0" />
+    <PackageVersion Include="FluentMigrator.Runner" Version="6.2.0" />
+    <PackageVersion Include="FluentMigrator.Runner.SqlServer" Version="6.2.0" />
+    <!-- Logging -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog.Sinks.MSSqlServer" Version="7.0.2" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="8.0.4" />
+    <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="8.0.0" />
+    <!-- Caching -->
+    <PackageVersion Include="Microsoft.Extensions.Caching.Memory" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
+    <!-- Aspect Oriented Programming -->
+    <PackageVersion Include="AspectCore.Abstractions" Version="2.4.0" />
+    <PackageVersion Include="AspectCore.Extensions.DependencyInjection" Version="2.4.0" />
+    <!-- File Management -->
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Abstractions" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Physical" Version="8.0.10" />
+    <PackageVersion Include="System.Drawing.Common" Version="8.0.10" />
+    <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="6.0.0" />
+    <PackageVersion Include="System.Runtime.Caching" Version="8.0.10" />
+    <!-- JSON ve Serialization -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <!-- Registry ve Configuration -->
+    <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyModel" Version="8.0.10" />
+    <!-- Email ve Template -->
+    <PackageVersion Include="MailKit" Version="4.8.0" />
+    <PackageVersion Include="RazorEngineCore" Version="2023.11.2" />
+    <!-- Excel Operations -->
+    <PackageVersion Include="DocumentFormat.OpenXml" Version="3.2.0" />
+    <PackageVersion Include="FastMember" Version="1.5.0" />
+    <!-- Azure Services -->
+    <PackageVersion Include="Azure.Extensions.AspNetCore.DataProtection.Keys" Version="1.2.3" />
+    <PackageVersion Include="Azure.Identity" Version="1.12.0" />
+    <PackageVersion Include="Azure.Security.KeyVault.Certificates" Version="4.6.0" />
+    <!-- Test Data -->
+    <PackageVersion Include="Bogus" Version="35.4.0" />
+  </ItemGroup>
+</Project>
