@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "89QrlLwerTp3ZkM3tUTQBVC3m9H6AiU9/j6/j1fEMcOkA1sV+K7Gj2bVE63Z2dWOFpXKTyMfE2oM782o5hWC3g==",
+  "dgSpecHash": "770iSfFqya0=",
   "success": true,
   "projectFilePath": "/media/mehmet/diskim/Project/MinimalAirbnb/src/Admin/MinimalAirbnb.Admin.csproj",
   "expectedPackageFiles": [
@@ -187,8 +187,11 @@
     {
       "code": "NU1507",
       "level": "Warning",
+      "message": "There are 2 package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: nuget.org, github",
+      "projectPath": "/media/mehmet/diskim/Project/MinimalAirbnb/src/Admin/MinimalAirbnb.Admin.csproj",
       "warningLevel": 1,
-      "message": "There are 2 package sources defined in your configuration. When using central package management, please map your package sources with package source mapping (https://aka.ms/nuget-package-source-mapping) or specify a single package source. The following sources are defined: nuget.org, github"
+      "filePath": "/media/mehmet/diskim/Project/MinimalAirbnb/src/Admin/MinimalAirbnb.Admin.csproj",
+      "targetGraphs": []
     }
   ]
 }

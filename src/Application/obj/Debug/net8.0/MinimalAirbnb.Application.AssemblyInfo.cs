@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © MinimalAirbnb, Ltd")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a49825c3acfe4adfb6105359175934c35dd17b8c")]
 [assembly: System.Reflection.AssemblyProductAttribute("MinimalAirbnb.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MinimalAirbnb.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
