@@ -1,0 +1,323 @@
+@model MinimalAirbnb.Application.Reviews.DTOs.ReviewDto
+@{
+    ViewData["Title"] = "Değerlendirme Detayı";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    Değerlendirme Detayı
+                </h2>
+                <div>
+                    <a href="@Url.Action("Edit", "Reviews", new { id = Model.Id })" class="btn btn-warning me-2">
+                        <i class="bi bi-pencil"></i>
+                        Düzenle
+                    </a>
+                    <a href="@Url.Action("Index", "Reviews")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Geri Dön
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Ana Değerlendirme -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">@Model.PropertyTitle</h5>
+                                <div class="d-flex align-items-center">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= Model.Rating)
+                                        {
+                                            <i class="bi bi-star-fill text-warning me-1"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-star text-muted me-1"></i>
+                                        }
+                                    }
+                                    <span class="ms-2 fw-bold">@Model.Rating/5</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Misafir:</strong> @Model.GuestName
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Ev Sahibi:</strong> @Model.HostName
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Yorum:</strong>
+                                <p class="mt-2">@Model.Comment</p>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.HostResponse))
+                            {
+                                <div class="mb-3">
+                                    <strong>Ev Sahibi Yanıtı:</strong>
+                                    <div class="bg-light p-3 rounded mt-2">
+                                        <p class="mb-0">@Model.HostResponse</p>
+                                        @if (Model.HostReplyDate.HasValue)
+                                        {
+                                            <small class="text-muted">@Model.HostReplyDate.Value.ToString("dd.MM.yyyy HH:mm")</small>
+                                        }
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Oluşturulma:</strong> @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                                @if (Model.UpdatedDate.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <strong>Güncellenme:</strong> @Model.UpdatedDate.Value.ToString("dd.MM.yyyy HH:mm")
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detaylı Puanlar -->
+                    @if (Model.CleanlinessRating.HasValue || Model.CommunicationRating.HasValue || 
+                         Model.CheckInRating.HasValue || Model.AccuracyRating.HasValue || 
+                         Model.LocationRating.HasValue || Model.ValueRating.HasValue)
+                    {
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Detaylı Puanlar</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    @if (Model.CleanlinessRating.HasValue)
+                                    {
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Temizlik</span>
+                                                <div class="d-flex align-items-center">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.CleanlinessRating.Value)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning me-1"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted me-1"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2">@Model.CleanlinessRating.Value</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (Model.CommunicationRating.HasValue)
+                                    {
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>İletişim</span>
+                                                <div class="d-flex align-items-center">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.CommunicationRating.Value)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning me-1"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted me-1"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2">@Model.CommunicationRating.Value</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (Model.CheckInRating.HasValue)
+                                    {
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Check-in</span>
+                                                <div class="d-flex align-items-center">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.CheckInRating.Value)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning me-1"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted me-1"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2">@Model.CheckInRating.Value</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (Model.AccuracyRating.HasValue)
+                                    {
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Doğruluk</span>
+                                                <div class="d-flex align-items-center">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.AccuracyRating.Value)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning me-1"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted me-1"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2">@Model.AccuracyRating.Value</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (Model.LocationRating.HasValue)
+                                    {
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Konum</span>
+                                                <div class="d-flex align-items-center">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.LocationRating.Value)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning me-1"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted me-1"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2">@Model.LocationRating.Value</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (Model.ValueRating.HasValue)
+                                    {
+                                        <div class="col-md-6 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>Değer</span>
+                                                <div class="d-flex align-items-center">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.ValueRating.Value)
+                                                        {
+                                                            <i class="bi bi-star-fill text-warning me-1"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-star text-muted me-1"></i>
+                                                        }
+                                                    }
+                                                    <span class="ms-2">@Model.ValueRating.Value</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- İstatistikler -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">İstatistikler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6 mb-3">
+                                    <div class="border-end">
+                                        <h4 class="text-primary mb-1">@Model.LikeCount</h4>
+                                        <small class="text-muted">Beğeni</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <h4 class="text-danger mb-1">@Model.DislikeCount</h4>
+                                    <small class="text-muted">Beğenmeme</small>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="border-end">
+                                        <h4 class="text-info mb-1">@Model.ReplyCount</h4>
+                                        <small class="text-muted">Yanıt</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <h4 class="text-success mb-1">@Model.ViewCount</h4>
+                                    <small class="text-muted">Görüntülenme</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Durum Bilgileri -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Durum Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <span class="badge @(Model.IsApproved ? "bg-success" : "bg-warning")">
+                                    @(Model.IsApproved ? "Onaylandı" : "Onay Bekliyor")
+                                </span>
+                            </div>
+                            @if (Model.IsRejected)
+                            {
+                                <div class="mb-2">
+                                    <span class="badge bg-danger">Reddedildi</span>
+                                    @if (!string.IsNullOrEmpty(Model.RejectionReason))
+                                    {
+                                        <small class="d-block text-muted mt-1">@Model.RejectionReason</small>
+                                    }
+                                </div>
+                            }
+                            @if (Model.IsAnonymous)
+                            {
+                                <div class="mb-2">
+                                    <span class="badge bg-secondary">Anonim</span>
+                                </div>
+                            }
+                            @if (Model.IsRecommended)
+                            {
+                                <div class="mb-2">
+                                    <span class="badge bg-primary">Önerilen</span>
+                                </div>
+                            }
+                            @if (Model.IsFeatured)
+                            {
+                                <div class="mb-2">
+                                    <span class="badge bg-info">Öne Çıkan</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

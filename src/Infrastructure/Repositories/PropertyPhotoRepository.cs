@@ -1,12 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using MinimalAirbnb.Application.Interfaces;
 using MinimalAirbnb.Domain.Entities;
 using MinimalAirbnb.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Infrastructure.Repositories;
 
 /// <summary>
-/// Ev Fotoğrafı Repository Implementasyonu
+/// PropertyPhoto Repository Implementation
 /// </summary>
 public class PropertyPhotoRepository : IPropertyPhotoRepository
 {
@@ -17,9 +17,27 @@ public class PropertyPhotoRepository : IPropertyPhotoRepository
         _context = context;
     }
 
-    public async Task<PropertyPhoto> AddAsync(PropertyPhoto photo)
+    public IQueryable<Domain.Entities.PropertyPhoto> GetAll()
+    {
+        return _context.PropertyPhotos.Include(p => p.Property);
+    }
+
+    public async Task<Domain.Entities.PropertyPhoto?> GetByIdAsync(Guid id)
+    {
+        return await _context.PropertyPhotos
+            .Include(p => p.Property)
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task<Domain.Entities.PropertyPhoto> AddAsync(Domain.Entities.PropertyPhoto photo)
     {
         await _context.PropertyPhotos.AddAsync(photo);
+        return photo;
+    }
+
+    public async Task<Domain.Entities.PropertyPhoto> UpdateAsync(Domain.Entities.PropertyPhoto photo)
+    {
+        _context.PropertyPhotos.Update(photo);
         return photo;
     }
 
@@ -32,63 +50,71 @@ public class PropertyPhotoRepository : IPropertyPhotoRepository
         }
     }
 
-    public async Task<IEnumerable<PropertyPhoto>> GetByPropertyIdAsync(Guid propertyId)
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Domain.Entities.PropertyPhoto>> GetByPropertyIdAsync(Guid propertyId)
     {
         return await _context.PropertyPhotos
             .Include(p => p.Property)
-            .Include(p => p.Property.Host)
             .Where(p => p.PropertyId == propertyId)
             .OrderBy(p => p.SortOrder)
             .ToListAsync();
     }
 
-    public async Task<PropertyPhoto?> GetMainPhotoAsync(Guid propertyId)
+    public async Task<Domain.Entities.PropertyPhoto?> GetMainPhotoAsync(Guid propertyId)
     {
         return await _context.PropertyPhotos
             .Include(p => p.Property)
-            .Include(p => p.Property.Host)
-            .FirstOrDefaultAsync(p => p.PropertyId == propertyId && p.IsMainPhoto);
+            .Where(p => p.PropertyId == propertyId && p.IsMainPhoto)
+            .FirstOrDefaultAsync();
     }
 
-    public async Task SetMainPhotoAsync(Guid propertyId, Guid photoId)
+    public async Task<IEnumerable<Domain.Entities.PropertyPhoto>> GetMainPhotosAsync()
     {
-        // Önce tüm fotoğrafları ana fotoğraf olmaktan çıkar
-        var photos = await _context.PropertyPhotos
-            .Where(p => p.PropertyId == propertyId)
+        return await _context.PropertyPhotos
+            .Include(p => p.Property)
+            .Where(p => p.IsMainPhoto)
             .ToListAsync();
+    }
 
-        foreach (var photo in photos)
+    public async Task<int> GetPhotoCountByPropertyAsync(Guid propertyId)
+    {
+        return await _context.PropertyPhotos
+            .CountAsync(p => p.PropertyId == propertyId);
+    }
+
+    public async Task UpdateOrderAsync(Guid photoId, int newOrder)
+    {
+        var photo = await _context.PropertyPhotos.FindAsync(photoId);
+        if (photo != null)
         {
-            photo.IsMainPhoto = false;
-        }
-
-        // Seçilen fotoğrafı ana fotoğraf yap
-        var mainPhoto = await _context.PropertyPhotos
-            .FirstOrDefaultAsync(p => p.Id == photoId && p.PropertyId == propertyId);
-
-        if (mainPhoto != null)
-        {
-            mainPhoto.IsMainPhoto = true;
+            photo.SortOrder = newOrder;
+            _context.PropertyPhotos.Update(photo);
         }
     }
 
-    public async Task UpdatePhotoOrderAsync(Guid propertyId, Dictionary<Guid, int> photoOrders)
+    public async Task SetMainPhotoAsync(Guid photoId)
     {
-        var photos = await _context.PropertyPhotos
-            .Where(p => p.PropertyId == propertyId)
-            .ToListAsync();
-
-        foreach (var photo in photos)
+        var photo = await _context.PropertyPhotos.FindAsync(photoId);
+        if (photo != null)
         {
-            if (photoOrders.ContainsKey(photo.Id))
+            // Önce aynı property'deki diğer fotoğrafları main olmaktan çıkar
+            var otherPhotos = await _context.PropertyPhotos
+                .Where(p => p.PropertyId == photo.PropertyId && p.IsMainPhoto)
+                .ToListAsync();
+
+            foreach (var otherPhoto in otherPhotos)
             {
-                photo.SortOrder = photoOrders[photo.Id];
+                otherPhoto.IsMainPhoto = false;
+                _context.PropertyPhotos.Update(otherPhoto);
             }
-        }
-    }
 
-    public async Task<int> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync();
+            // Seçilen fotoğrafı main yap
+            photo.IsMainPhoto = true;
+            _context.PropertyPhotos.Update(photo);
+        }
     }
 } 

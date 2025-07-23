@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MinimalAirbnb.Application.Common.Models;
+using Maggsoft.Core.Base;
+using Maggsoft.Core.Model;
 
 namespace MinimalAirbnb.API.Controllers;
 
@@ -21,38 +22,25 @@ public abstract class BaseApiController : ControllerBase
     /// <summary>
     /// Başarılı response döndürür
     /// </summary>
-    protected ActionResult<ApiResponse<T>> Success<T>(T data, string message = "İşlem başarılı")
+    protected ActionResult<Result<T>> Success<T>(T data, string message = "İşlem başarılı") where T : class
     {
-        return Ok(new ApiResponse<T>
-        {
-            Success = true,
-            Message = message,
-            Data = data
-        });
+        return Ok(Result<T>.Success(data, new SuccessMessage("200",message)));
     }
 
     /// <summary>
     /// Başarılı response döndürür (data olmadan)
     /// </summary>
-    protected ActionResult<ApiResponse<object>> Success(string message = "İşlem başarılı")
+    protected ActionResult<Result<object>> Success(string message = "İşlem başarılı")
     {
-        return Ok(new ApiResponse<object>
-        {
-            Success = true,
-            Message = message
-        });
+        return Ok(Result<object>.Success(null, new SuccessMessage("200",message)));
     }
 
     /// <summary>
     /// Hata response döndürür
     /// </summary>
-    protected ActionResult<ApiResponse<object>> Error(string message, int statusCode = 400)
+    protected ActionResult<Result<object>> Error(string message, int statusCode = 400)
     {
-        var response = new ApiResponse<object>
-        {
-            Success = false,
-            Message = message
-        };
+        var response = Result<object>.Failure(new Error(statusCode.ToString(), message));
 
         return statusCode switch
         {
@@ -68,13 +56,8 @@ public abstract class BaseApiController : ControllerBase
     /// <summary>
     /// Validation hatası response döndürür
     /// </summary>
-    protected ActionResult<ApiResponse<object>> ValidationError(string message, object? errors = null)
+    protected ActionResult<Result<object>> ValidationError(string message, object? errors = null)
     {
-        return BadRequest(new ApiResponse<object>
-        {
-            Success = false,
-            Message = message,
-            Errors = errors
-        });
+        return BadRequest(Result<object>.Failure(new Error("500",message)));
     }
 } 

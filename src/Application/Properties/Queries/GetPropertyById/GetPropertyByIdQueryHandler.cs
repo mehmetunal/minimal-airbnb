@@ -1,15 +1,16 @@
-using AutoMapper;
 using MediatR;
-using MinimalAirbnb.Application.Common.Models;
-using MinimalAirbnb.Application.Properties.DTOs;
 using MinimalAirbnb.Application.Interfaces;
+using MinimalAirbnb.Application.Properties.DTOs;
+using Maggsoft.Core.Base;
+using AutoMapper;
+using Maggsoft.Core.Model;
 
 namespace MinimalAirbnb.Application.Properties.Queries.GetPropertyById;
 
 /// <summary>
-/// GetPropertyByIdQuery için handler
+/// Property detayı için query handler
 /// </summary>
-public class GetPropertyByIdQueryHandler : IRequestHandler<GetPropertyByIdQuery, ApiResponse<PropertyDto>>
+public class GetPropertyByIdQueryHandler : IRequestHandler<GetPropertyByIdQuery, Result<PropertyDto>>
 {
     private readonly IPropertyRepository _propertyRepository;
     private readonly IMapper _mapper;
@@ -20,40 +21,23 @@ public class GetPropertyByIdQueryHandler : IRequestHandler<GetPropertyByIdQuery,
         _mapper = mapper;
     }
 
-    public async Task<ApiResponse<PropertyDto>> Handle(GetPropertyByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PropertyDto>> Handle(GetPropertyByIdQuery request, CancellationToken cancellationToken)
     {
         try
         {
             // Property'yi getir
-            var properties = await _propertyRepository.GetPublishedPropertiesAsync();
-            var property = properties.FirstOrDefault(p => p.Id == request.Id);
-
+            var property = await _propertyRepository.GetByIdAsync(request.Id);
             if (property == null)
-            {
-                return new ApiResponse<PropertyDto>
-                {
-                    Success = false,
-                    Message = "Ev bulunamadı"
-                };
-            }
+                return Result<PropertyDto>.Failure(new Error("404", "Property bulunamadı."));
 
-            // Property'yi DTO'ya dönüştür
+            // DTO'ya dönüştür
             var propertyDto = _mapper.Map<PropertyDto>(property);
 
-            return new ApiResponse<PropertyDto>
-            {
-                Success = true,
-                Message = "Ev başarıyla getirildi",
-                Data = propertyDto
-            };
+            return Result<PropertyDto>.Success(propertyDto);
         }
         catch (Exception ex)
         {
-            return new ApiResponse<PropertyDto>
-            {
-                Success = false,
-                Message = $"Ev getirilirken hata oluştu: {ex.Message}"
-            };
+            return Result<PropertyDto>.Failure(new Error("500", $"Property getirilirken hata oluştu: {ex.Message}"));
         }
     }
 } 

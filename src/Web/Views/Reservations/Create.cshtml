@@ -1,0 +1,200 @@
+@{
+    ViewData["Title"] = "Yeni Rezervasyon";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-calendar-plus text-success"></i>
+                        Yeni Rezervasyon
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Create">
+                        <input type="hidden" name="PropertyId" value="@ViewBag.PropertyId" />
+
+                        <!-- Ev Bilgileri -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Ev ID</label>
+                            <input type="text" class="form-control" value="@ViewBag.PropertyId" readonly>
+                            <small class="text-muted">Rezervasyon yapılacak ev</small>
+                        </div>
+
+                        <!-- Misafir ID -->
+                        <div class="mb-3">
+                            <label for="guestId" class="form-label fw-bold">Misafir ID</label>
+                            <input type="text" class="form-control" id="guestId" name="GuestId" 
+                                   placeholder="Misafir ID girin" required>
+                        </div>
+
+                        <!-- Tarih Seçimi -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="checkInDate" class="form-label fw-bold">Check-in Tarihi</label>
+                                <input type="date" class="form-control" id="checkInDate" name="CheckInDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="checkOutDate" class="form-label fw-bold">Check-out Tarihi</label>
+                                <input type="date" class="form-control" id="checkOutDate" name="CheckOutDate" required>
+                            </div>
+                        </div>
+
+                        <!-- Misafir Sayısı -->
+                        <div class="mb-3">
+                            <label for="guestCount" class="form-label fw-bold">Misafir Sayısı</label>
+                            <select class="form-select" id="guestCount" name="GuestCount" required>
+                                <option value="">Seçiniz</option>
+                                @for (int i = 1; i <= 10; i++)
+                                {
+                                    <option value="@i">@i kişi</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Fiyat Bilgileri -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="pricePerNight" class="form-label">Gecelik Fiyat (₺)</label>
+                                <input type="number" class="form-control" id="pricePerNight" name="PricePerNight" 
+                                       step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cleaningFee" class="form-label">Temizlik Ücreti (₺)</label>
+                                <input type="number" class="form-control" id="cleaningFee" name="CleaningFee" 
+                                       step="0.01" min="0" placeholder="0.00" value="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="serviceFee" class="form-label">Hizmet Ücreti (₺)</label>
+                                <input type="number" class="form-control" id="serviceFee" name="ServiceFee" 
+                                       step="0.01" min="0" placeholder="0.00" value="0">
+                            </div>
+                        </div>
+
+                        <!-- Toplam Fiyat (Otomatik Hesaplanacak) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Toplam Fiyat</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input type="text" class="form-control" id="totalPrice" name="TotalPrice" readonly>
+                            </div>
+                            <small class="text-muted">Toplam fiyat otomatik olarak hesaplanacaktır</small>
+                        </div>
+
+                        <!-- Özel İstekler -->
+                        <div class="mb-3">
+                            <label for="specialRequests" class="form-label">Özel İstekler</label>
+                            <textarea class="form-control" id="specialRequests" name="SpecialRequests" rows="3" 
+                                      placeholder="Varsa özel isteklerinizi yazın..." maxlength="1000"></textarea>
+                            <div class="form-text">
+                                <span id="requests-count">0</span>/1000 karakter
+                            </div>
+                        </div>
+
+                        <!-- Rezervasyon Durumu -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Rezervasyon Durumu</label>
+                            <select class="form-select" id="status" name="Status">
+                                <option value="Pending" selected>Beklemede</option>
+                                <option value="Confirmed">Onaylandı</option>
+                                <option value="Cancelled">İptal Edildi</option>
+                                <option value="Completed">Tamamlandı</option>
+                            </select>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Index", "Reservations")" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                İptal
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i>
+                                Rezervasyon Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkInDate = document.getElementById('checkInDate');
+            const checkOutDate = document.getElementById('checkOutDate');
+            const pricePerNight = document.getElementById('pricePerNight');
+            const cleaningFee = document.getElementById('cleaningFee');
+            const serviceFee = document.getElementById('serviceFee');
+            const totalPrice = document.getElementById('totalPrice');
+            const specialRequests = document.getElementById('specialRequests');
+            const requestsCount = document.getElementById('requests-count');
+
+            // Tarih kontrolü
+            checkInDate.addEventListener('change', function() {
+                const checkIn = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (checkIn < today) {
+                    alert('Check-in tarihi bugünden önce olamaz!');
+                    this.value = '';
+                }
+                
+                calculateTotal();
+            });
+
+            checkOutDate.addEventListener('change', function() {
+                const checkOut = new Date(this.value);
+                const checkIn = new Date(checkInDate.value);
+                
+                if (checkInDate.value && checkOut <= checkIn) {
+                    alert('Check-out tarihi check-in tarihinden sonra olmalıdır!');
+                    this.value = '';
+                }
+                
+                calculateTotal();
+            });
+
+            // Fiyat hesaplama
+            function calculateTotal() {
+                const price = parseFloat(pricePerNight.value) || 0;
+                const cleaning = parseFloat(cleaningFee.value) || 0;
+                const service = parseFloat(serviceFee.value) || 0;
+                
+                let total = 0;
+                
+                if (checkInDate.value && checkOutDate.value) {
+                    const checkIn = new Date(checkInDate.value);
+                    const checkOut = new Date(checkOutDate.value);
+                    const days = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                    total = (price * days) + cleaning + service;
+                }
+                
+                totalPrice.value = total.toFixed(2);
+            }
+
+            pricePerNight.addEventListener('input', calculateTotal);
+            cleaningFee.addEventListener('input', calculateTotal);
+            serviceFee.addEventListener('input', calculateTotal);
+
+            // Karakter sayacı
+            specialRequests.addEventListener('input', function() {
+                const length = this.value.length;
+                requestsCount.textContent = length;
+                
+                if (length > 1000) {
+                    requestsCount.style.color = '#dc3545';
+                } else if (length > 900) {
+                    requestsCount.style.color = '#ffc107';
+                } else {
+                    requestsCount.style.color = '#6c757d';
+                }
+            });
+        });
+    </script>
+} 

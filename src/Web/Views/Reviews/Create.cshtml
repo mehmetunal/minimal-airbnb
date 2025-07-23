@@ -1,0 +1,221 @@
+@{
+    ViewData["Title"] = "Yeni Değerlendirme";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        Yeni Değerlendirme
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Create">
+                        <input type="hidden" name="PropertyId" value="@ViewBag.PropertyId" />
+                        @if (ViewBag.ReservationId != null)
+                        {
+                            <input type="hidden" name="ReservationId" value="@ViewBag.ReservationId" />
+                        }
+
+                        <!-- Genel Puan -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Genel Puan</label>
+                            <div class="rating-stars mb-2">
+                                <div class="d-flex align-items-center">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="bi bi-star star-rating me-2" data-rating="@i" style="font-size: 2rem; cursor: pointer; color: #dee2e6;"></i>
+                                    }
+                                    <span class="ms-3 fw-bold" id="rating-display">0/5</span>
+                                </div>
+                            </div>
+                            <input type="hidden" name="Rating" id="rating-input" value="0" />
+                            <small class="text-muted">Yıldızlara tıklayarak puan verin</small>
+                        </div>
+
+                        <!-- Detaylı Puanlar -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Temizlik</label>
+                                <select class="form-select" name="CleanlinessRating">
+                                    <option value="">Seçiniz</option>
+                                    <option value="1">1 - Çok Kötü</option>
+                                    <option value="2">2 - Kötü</option>
+                                    <option value="3">3 - Orta</option>
+                                    <option value="4">4 - İyi</option>
+                                    <option value="5">5 - Mükemmel</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">İletişim</label>
+                                <select class="form-select" name="CommunicationRating">
+                                    <option value="">Seçiniz</option>
+                                    <option value="1">1 - Çok Kötü</option>
+                                    <option value="2">2 - Kötü</option>
+                                    <option value="3">3 - Orta</option>
+                                    <option value="4">4 - İyi</option>
+                                    <option value="5">5 - Mükemmel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Check-in</label>
+                                <select class="form-select" name="CheckInRating">
+                                    <option value="">Seçiniz</option>
+                                    <option value="1">1 - Çok Kötü</option>
+                                    <option value="2">2 - Kötü</option>
+                                    <option value="3">3 - Orta</option>
+                                    <option value="4">4 - İyi</option>
+                                    <option value="5">5 - Mükemmel</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Doğruluk</label>
+                                <select class="form-select" name="AccuracyRating">
+                                    <option value="">Seçiniz</option>
+                                    <option value="1">1 - Çok Kötü</option>
+                                    <option value="2">2 - Kötü</option>
+                                    <option value="3">3 - Orta</option>
+                                    <option value="4">4 - İyi</option>
+                                    <option value="5">5 - Mükemmel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Konum</label>
+                                <select class="form-select" name="LocationRating">
+                                    <option value="">Seçiniz</option>
+                                    <option value="1">1 - Çok Kötü</option>
+                                    <option value="2">2 - Kötü</option>
+                                    <option value="3">3 - Orta</option>
+                                    <option value="4">4 - İyi</option>
+                                    <option value="5">5 - Mükemmel</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Değer</label>
+                                <select class="form-select" name="ValueRating">
+                                    <option value="">Seçiniz</option>
+                                    <option value="1">1 - Çok Kötü</option>
+                                    <option value="2">2 - Kötü</option>
+                                    <option value="3">3 - Orta</option>
+                                    <option value="4">4 - İyi</option>
+                                    <option value="5">5 - Mükemmel</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Yorum -->
+                        <div class="mb-4">
+                            <label for="comment" class="form-label fw-bold">Yorumunuz</label>
+                            <textarea class="form-control" id="comment" name="Comment" rows="6" 
+                                      placeholder="Deneyiminizi paylaşın..." required></textarea>
+                            <div class="form-text">
+                                <span id="char-count">0</span>/2000 karakter
+                            </div>
+                        </div>
+
+                        <!-- Seçenekler -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="isAnonymous" name="IsAnonymous" value="true">
+                                <label class="form-check-label" for="isAnonymous">
+                                    Anonim olarak paylaş
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Index", "Reviews")" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                İptal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i>
+                                Değerlendirmeyi Gönder
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Yıldız derecelendirme sistemi
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star-rating');
+            const ratingInput = document.getElementById('rating-input');
+            const ratingDisplay = document.getElementById('rating-display');
+            const commentTextarea = document.getElementById('comment');
+            const charCount = document.getElementById('char-count');
+
+            // Yıldız tıklama olayları
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    ratingInput.value = rating;
+                    ratingDisplay.textContent = rating + '/5';
+                    
+                    // Yıldızları güncelle
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.remove('bi-star');
+                            s.classList.add('bi-star-fill');
+                            s.style.color = '#ffc107';
+                        } else {
+                            s.classList.remove('bi-star-fill');
+                            s.classList.add('bi-star');
+                            s.style.color = '#dee2e6';
+                        }
+                    });
+                });
+
+                // Hover efektleri
+                star.addEventListener('mouseenter', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.style.color = '#ffc107';
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseleave', function() {
+                    const currentRating = parseInt(ratingInput.value);
+                    stars.forEach((s, index) => {
+                        if (index < currentRating) {
+                            s.style.color = '#ffc107';
+                        } else {
+                            s.style.color = '#dee2e6';
+                        }
+                    });
+                });
+            });
+
+            // Karakter sayacı
+            commentTextarea.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = length;
+                
+                if (length > 2000) {
+                    charCount.style.color = '#dc3545';
+                } else if (length > 1800) {
+                    charCount.style.color = '#ffc107';
+                } else {
+                    charCount.style.color = '#6c757d';
+                }
+            });
+        });
+    </script>
+} 

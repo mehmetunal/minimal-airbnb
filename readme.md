@@ -175,7 +175,7 @@ MinimalAirbnb projesinde Maggsoft altyapısından doğrudan veya genişletilerek
   - Serilog ile gelişmiş loglama
   - Logların dosya, MSSQL veya Seq gibi servislere aktarımı
 
-- **Seed Data ve Test Verisi**
+- **Seed Data**
   - Başlangıçta admin ve örnek kullanıcı/rol/ilan verisi ekleme desteği
   - Bogus ile sahte veri üretimi
 
@@ -1630,3 +1630,28 @@ Afitap SSA projesi, MinimalAirbnb için mükemmel bir referans modeldir. Clean A
   - dotnet add package Maggsoft.Npgsql --version 1.0.5
   - dotnet add package Maggsoft.Logging --version 1.0.6
   - dotnet add package Maggsoft.Mongo --version 1.0.5
+
+
+
+# Tablo Remove
+
+-- FOREIGN KEY constraint'lerini kaldır
+DECLARE @sql NVARCHAR(MAX) = N'';
+
+SELECT @sql += 'ALTER TABLE [' + sch.name + '].[' + t.name + '] DROP CONSTRAINT [' + fk.name + '];' + CHAR(13)
+FROM sys.foreign_keys fk
+JOIN sys.tables t ON fk.parent_object_id = t.object_id
+JOIN sys.schemas sch ON t.schema_id = sch.schema_id;
+
+EXEC sp_executesql @sql;
+
+
+
+-- Tüm tabloları sil
+DECLARE @sql2 NVARCHAR(MAX) = N'';
+
+SELECT @sql2 += 'DROP TABLE [' + s.name + '].[' + t.name + '];' + CHAR(13)
+FROM sys.tables t
+JOIN sys.schemas s ON t.schema_id = s.schema_id;
+
+EXEC sp_executesql @sql2;

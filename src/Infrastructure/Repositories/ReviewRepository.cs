@@ -1,12 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using MinimalAirbnb.Application.Interfaces;
 using MinimalAirbnb.Domain.Entities;
 using MinimalAirbnb.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Infrastructure.Repositories;
 
 /// <summary>
-/// Yorum Repository Implementasyonu
+/// Review Repository Implementation
 /// </summary>
 public class ReviewRepository : IReviewRepository
 {
@@ -17,14 +17,17 @@ public class ReviewRepository : IReviewRepository
         _context = context;
     }
 
-    public async Task<Review?> GetByIdAsync(Guid id)
+    /// <summary>
+    /// Tüm review'ları getir (IQueryable)
+    /// </summary>
+    public IQueryable<Review> GetAll()
     {
-        return await _context.Reviews
+        return _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
-            .FirstOrDefaultAsync(r => r.Id == id);
+            .Include(r => r.HostResponseUser)
+            .Include(r => r.ModeratedByUser);
     }
 
     public async Task<IEnumerable<Review>> GetAllAsync()
@@ -32,21 +35,71 @@ public class ReviewRepository : IReviewRepository
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
+            .Include(r => r.HostResponseUser)
+            .Include(r => r.ModeratedByUser)
             .ToListAsync();
     }
 
-    public async Task<Review> AddAsync(Review entity)
+    public async Task<Review?> GetByIdAsync(Guid id)
     {
-        await _context.Reviews.AddAsync(entity);
-        return entity;
+        return await _context.Reviews
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Reservation)
+            .Include(r => r.HostResponseUser)
+            .Include(r => r.ModeratedByUser)
+            .FirstOrDefaultAsync(r => r.Id == id);
     }
 
-    public async Task<Review> UpdateAsync(Review entity)
+    /// <summary>
+    /// Property'ye göre review'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Review>> GetByPropertyAsync(Guid propertyId)
     {
-        _context.Reviews.Update(entity);
-        return entity;
+        return await _context.Reviews
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Reservation)
+            .Where(r => r.PropertyId == propertyId)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Kullanıcıya göre review'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Review>> GetByUserAsync(Guid userId)
+    {
+        return await _context.Reviews
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Reservation)
+            .Where(r => r.GuestId == userId)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Property ve kullanıcıya göre review getir
+    /// </summary>
+    public async Task<Review?> GetByPropertyAndUserAsync(Guid propertyId, Guid userId)
+    {
+        return await _context.Reviews
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Reservation)
+            .FirstOrDefaultAsync(r => r.PropertyId == propertyId && r.GuestId == userId);
+    }
+
+    public async Task<Review> AddAsync(Review review)
+    {
+        await _context.Reviews.AddAsync(review);
+        return review;
+    }
+
+    public async Task<Review> UpdateAsync(Review review)
+    {
+        _context.Reviews.Update(review);
+        return review;
     }
 
     public async Task DeleteAsync(Guid id)
@@ -58,12 +111,17 @@ public class ReviewRepository : IReviewRepository
         }
     }
 
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
+
+    // Additional methods for specific queries
     public async Task<IEnumerable<Review>> GetByGuestIdAsync(Guid guestId)
     {
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
             .Where(r => r.GuestId == guestId)
             .ToListAsync();
@@ -74,31 +132,48 @@ public class ReviewRepository : IReviewRepository
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
             .Where(r => r.PropertyId == propertyId)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Review>> GetByUserIdAsync(Guid userId)
+    public async Task<IEnumerable<Review>> GetByReservationIdAsync(Guid reservationId)
     {
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
-            .Where(r => r.GuestId == userId)
+            .Where(r => r.ReservationId == reservationId)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Review>> GetByHostIdAsync(Guid hostId)
+    public async Task<IEnumerable<Review>> GetApprovedReviewsAsync()
     {
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
-            .Where(r => r.Property.HostId == hostId)
+            .Where(r => r.IsApproved)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Review>> GetPendingReviewsAsync()
+    {
+        return await _context.Reviews
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Reservation)
+            .Where(r => !r.IsApproved && !r.IsRejected)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Review>> GetRejectedReviewsAsync()
+    {
+        return await _context.Reviews
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Reservation)
+            .Where(r => r.IsRejected)
             .ToListAsync();
     }
 
@@ -107,7 +182,6 @@ public class ReviewRepository : IReviewRepository
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
             .Where(r => r.Rating == rating)
             .ToListAsync();
@@ -118,109 +192,32 @@ public class ReviewRepository : IReviewRepository
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
             .Where(r => r.Rating >= minRating && r.Rating <= maxRating)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Review>> GetByReservationIdAsync(Guid reservationId)
+    public async Task<double> GetAverageRatingByPropertyIdAsync(Guid propertyId)
+    {
+        return await _context.Reviews
+            .Where(r => r.PropertyId == propertyId && r.IsApproved)
+            .AverageAsync(r => r.Rating);
+    }
+
+    public async Task<int> GetReviewCountByPropertyIdAsync(Guid propertyId)
+    {
+        return await _context.Reviews
+            .Where(r => r.PropertyId == propertyId && r.IsApproved)
+            .CountAsync();
+    }
+
+    public async Task<IEnumerable<Review>> GetByUserIdAsync(Guid userId)
     {
         return await _context.Reviews
             .Include(r => r.Guest)
             .Include(r => r.Property)
-            .Include(r => r.Property.Host)
             .Include(r => r.Reservation)
-            .Where(r => r.ReservationId == reservationId)
+            .Where(r => r.GuestId == userId)
             .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Review>> GetRecentReviewsAsync(int take = 10)
-    {
-        return await _context.Reviews
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reservation)
-            .OrderByDescending(r => r.CreatedDate)
-            .Take(take)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Review>> GetPositiveReviewsAsync(int minRating = 4)
-    {
-        return await _context.Reviews
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reservation)
-            .Where(r => r.Rating >= minRating)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Review>> GetNegativeReviewsAsync(int maxRating = 2)
-    {
-        return await _context.Reviews
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reservation)
-            .Where(r => r.Rating <= maxRating)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Review>> GetReviewsWithHostResponseAsync()
-    {
-        return await _context.Reviews
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reservation)
-            .Where(r => !string.IsNullOrEmpty(r.HostResponse))
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Review>> GetReviewsWithoutHostResponseAsync()
-    {
-        return await _context.Reviews
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reservation)
-            .Where(r => string.IsNullOrEmpty(r.HostResponse))
-            .ToListAsync();
-    }
-
-    public async Task<decimal> GetAverageRatingByPropertyAsync(Guid propertyId)
-    {
-        var reviews = await _context.Reviews
-            .Where(r => r.PropertyId == propertyId)
-            .ToListAsync();
-
-        if (!reviews.Any())
-            return 0;
-
-        return (decimal)reviews.Average(r => r.Rating);
-    }
-
-    public async Task<int> GetReviewCountByPropertyAsync(Guid propertyId)
-    {
-        return await _context.Reviews
-            .CountAsync(r => r.PropertyId == propertyId);
-    }
-
-    public async Task<bool> ExistsAsync(Guid id)
-    {
-        return await _context.Reviews.AnyAsync(r => r.Id == id);
-    }
-
-    public async Task<bool> ExistsByReservationAsync(Guid reservationId)
-    {
-        return await _context.Reviews.AnyAsync(r => r.ReservationId == reservationId);
-    }
-
-    public async Task<int> SaveChangesAsync()
-    {
-        return await _context.SaveChangesAsync();
     }
 } 

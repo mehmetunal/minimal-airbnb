@@ -47,6 +47,9 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
             entity.Property(e => e.CleaningFee).HasPrecision(18, 2);
             entity.Property(e => e.ServiceFee).HasPrecision(18, 2);
             entity.Property(e => e.AverageRating).HasPrecision(3, 2);
+            
+            // Enum konfigürasyonları
+            entity.Property(e => e.PropertyType).HasConversion<int>();
 
             // Navigation property'ler
             entity.HasOne(e => e.Host)
@@ -85,6 +88,9 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
             entity.Property(e => e.ServiceFee).HasPrecision(18, 2);
             entity.Property(e => e.SpecialRequests).HasMaxLength(1000);
             entity.Property(e => e.CancellationReason).HasMaxLength(500);
+            
+            // Enum konfigürasyonları
+            entity.Property(e => e.Status).HasConversion<int>();
 
             // Navigation property'ler
             entity.HasOne(e => e.Guest)
@@ -100,6 +106,11 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
             entity.HasOne(e => e.CancelledByUser)
                 .WithMany()
                 .HasForeignKey(e => e.CancelledByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.ConfirmedByUser)
+                .WithMany()
+                .HasForeignKey(e => e.ConfirmedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasMany(e => e.Payments)
@@ -131,6 +142,16 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
                 .WithMany(e => e.Reviews)
                 .HasForeignKey(e => e.ReservationId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.HostResponseUser)
+                .WithMany()
+                .HasForeignKey(e => e.HostResponseUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.ModeratedByUser)
+                .WithMany()
+                .HasForeignKey(e => e.ModeratedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Payment konfigürasyonu
@@ -138,8 +159,11 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Amount).HasPrecision(18, 2);
-            entity.Property(e => e.PaymentMethod).IsRequired().HasMaxLength(50);
             entity.Property(e => e.TransactionId).HasMaxLength(100);
+            
+            // Enum konfigürasyonları
+            entity.Property(e => e.PaymentMethod).HasConversion<int>();
+            entity.Property(e => e.Status).HasConversion<int>();
             entity.Property(e => e.ProviderReferenceId).HasMaxLength(100);
             entity.Property(e => e.RefundReason).HasMaxLength(500);
             entity.Property(e => e.ErrorMessage).HasMaxLength(1000);
@@ -163,6 +187,11 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Subject).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Content).IsRequired().HasMaxLength(2000);
+            
+            // Enum konfigürasyonları
+            entity.Property(e => e.MessageType).HasConversion<int>();
+            entity.Property(e => e.Priority).HasConversion<int>();
+            entity.Property(e => e.Category).HasConversion<int>();
 
             // Navigation property'ler
             entity.HasOne(e => e.Sender)
@@ -175,14 +204,19 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
                 .HasForeignKey(e => e.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(e => e.Property)
-                .WithMany()
-                .HasForeignKey(e => e.PropertyId)
+            // Property ilişkisi kaldırıldı çünkü Entity Framework otomatik kolon oluşturuyor
+
+            // Reservation ilişkisi kaldırıldı çünkü Entity Framework otomatik kolon oluşturuyor
+
+            // Self-referencing relationship for replies
+            entity.HasOne(e => e.ReplyToMessage)
+                .WithMany(e => e.Replies)
+                .HasForeignKey(e => e.ReplyToMessageId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(e => e.Reservation)
+            entity.HasOne(e => e.ArchivedByUser)
                 .WithMany()
-                .HasForeignKey(e => e.ReservationId)
+                .HasForeignKey(e => e.ArchivedByUserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

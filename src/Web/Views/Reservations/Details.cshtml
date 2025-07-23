@@ -1,0 +1,242 @@
+@model MinimalAirbnb.Application.Reservations.DTOs.ReservationDto
+@{
+    ViewData["Title"] = "Rezervasyon Detayı";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-calendar-check-fill text-success"></i>
+                    Rezervasyon Detayı
+                </h2>
+                <div>
+                    <a href="@Url.Action("Edit", "Reservations", new { id = Model.Id })" class="btn btn-warning me-2">
+                        <i class="bi bi-pencil"></i>
+                        Düzenle
+                    </a>
+                    <a href="@Url.Action("Index", "Reservations")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Geri Dön
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Ana Rezervasyon Bilgileri -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">@Model.PropertyTitle</h5>
+                                <span class="badge @(Model.Status.ToString() == "Confirmed" ? "bg-success" : Model.Status.ToString() == "Pending" ? "bg-warning" : Model.Status.ToString() == "Cancelled" ? "bg-danger" : "bg-secondary")">
+                                    @Model.Status
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Misafir:</strong> @Model.GuestName
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Ev Sahibi:</strong> @Model.HostName
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Check-in:</strong> @Model.CheckInDate.ToString("dd.MM.yyyy")
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Check-out:</strong> @Model.CheckOutDate.ToString("dd.MM.yyyy")
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Misafir Sayısı:</strong> @Model.GuestCount kişi
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Toplam Gün:</strong> @Model.TotalDays gün
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+                            {
+                                <div class="mb-3">
+                                    <strong>Özel İstekler:</strong>
+                                    <div class="bg-light p-3 rounded mt-2">
+                                        <p class="mb-0">@Model.SpecialRequests</p>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Oluşturulma:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                                @if (Model.UpdatedAt.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <strong>Güncellenme:</strong> @Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fiyat Detayları -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Fiyat Detayları</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Gecelik Fiyat:</span>
+                                        <span>₺@Model.PricePerNight</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Temizlik Ücreti:</span>
+                                        <span>₺@Model.CleaningFee</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Hizmet Ücreti:</span>
+                                        <span>₺@Model.ServiceFee</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="border-top pt-2">
+                                        <div class="d-flex justify-content-between fw-bold">
+                                            <span>Toplam:</span>
+                                            <span class="text-primary fs-5">₺@Model.TotalPrice</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İptal Bilgileri -->
+                    @if (Model.Status.ToString() == "Cancelled" && !string.IsNullOrEmpty(Model.CancellationReason))
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-danger">İptal Bilgileri</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <strong>İptal Nedeni:</strong>
+                                    <p class="mb-0">@Model.CancellationReason</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Hızlı İşlemler -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Hızlı İşlemler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                @if (Model.Status == ReservationStatus.Pending)
+                                {
+                                    <button type="button" class="btn btn-success">
+                                        <i class="bi bi-check-circle"></i>
+                                        Onayla
+                                    </button>
+                                    <button type="button" class="btn btn-danger">
+                                        <i class="bi bi-x-circle"></i>
+                                        Reddet
+                                    </button>
+                                }
+                                @if (Model.Status == ReservationStatus.Confirmed)
+                                {
+                                    <button type="button" class="btn btn-warning">
+                                        <i class="bi bi-pause-circle"></i>
+                                        Askıya Al
+                                    </button>
+                                }
+                                <a href="@Url.Action("Create", "Messages", new { receiverId = Model.GuestId, propertyId = Model.PropertyId, reservationId = Model.Id })" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-chat"></i>
+                                    Mesaj Gönder
+                                </a>
+                                <a href="@Url.Action("Details", "Properties", new { id = Model.PropertyId })" 
+                                   class="btn btn-outline-info">
+                                    <i class="bi bi-house"></i>
+                                    Evi Görüntüle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Durum Geçmişi -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Durum Geçmişi</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-marker bg-success"></div>
+                                    <div class="timeline-content">
+                                        <h6 class="mb-1">Rezervasyon Oluşturuldu</h6>
+                                        <small class="text-muted">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+                                    </div>
+                                </div>
+                                @if (Model.UpdatedAt.HasValue)
+                                {
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker bg-info"></div>
+                                        <div class="timeline-content">
+                                            <h6 class="mb-1">Güncellendi</h6>
+                                            <small class="text-muted">@Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")</small>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    
+    .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: -35px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+    
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: -29px;
+        top: 17px;
+        width: 2px;
+        height: calc(100% + 3px);
+        background-color: #dee2e6;
+    }
+</style> 

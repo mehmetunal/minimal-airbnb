@@ -1,125 +1,64 @@
 using MediatR;
-using MinimalAirbnb.Application.Common.Interfaces;
-using MinimalAirbnb.Application.Common.Models;
 using MinimalAirbnb.Application.Interfaces;
-using MinimalAirbnb.Domain.Entities;
+using MinimalAirbnb.Application.Properties.Commands.UpdateProperty;
+using Maggsoft.Core.Base;
+using Maggsoft.Core.Model;
 using MinimalAirbnb.Domain.Enums;
 
 namespace MinimalAirbnb.Application.Properties.Commands.UpdateProperty;
 
 /// <summary>
-/// UpdatePropertyCommand için handler
+/// Property güncelleme command handler'ı
 /// </summary>
-public class UpdatePropertyCommandHandler : IRequestHandler<UpdatePropertyCommand, ApiResponse<bool>>
+public class UpdatePropertyCommandHandler : IRequestHandler<UpdatePropertyCommand, Result<object>>
 {
     private readonly IPropertyRepository _propertyRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly ICurrentUserService _currentUserService;
 
-    public UpdatePropertyCommandHandler(
-        IPropertyRepository propertyRepository,
-        IUserRepository userRepository,
-        ICurrentUserService currentUserService)
+    public UpdatePropertyCommandHandler(IPropertyRepository propertyRepository)
     {
         _propertyRepository = propertyRepository;
-        _userRepository = userRepository;
-        _currentUserService = currentUserService;
     }
 
-    public async Task<ApiResponse<bool>> Handle(UpdatePropertyCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(UpdatePropertyCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // Mevcut kullanıcıyı al
-            var currentUserId = _currentUserService.UserId;
-            if (currentUserId == null)
-            {
-                return new ApiResponse<bool>
-                {
-                    Success = false,
-                    Message = "Kullanıcı girişi yapılmamış"
-                };
-            }
-
-            // Property'yi getir
-            var properties = await _propertyRepository.GetPublishedPropertiesAsync();
-            var property = properties.FirstOrDefault(p => p.Id == request.Id);
-
+            var property = await _propertyRepository.GetByIdAsync(request.Id);
+            
             if (property == null)
             {
-                return new ApiResponse<bool>
-                {
-                    Success = false,
-                    Message = "Ev bulunamadı"
-                };
+                return Result<object>.Failure(new Error("404", "Belirtilen ID'ye sahip property sistemde mevcut değil."));
             }
 
-            // Kullanıcının yetkisini kontrol et
-            var user = await _userRepository.GetByIdAsync(currentUserId.Value);
-            if (user == null)
+            if (!Enum.TryParse<PropertyType>(request.PropertyType, out var propertyType))
             {
-                return new ApiResponse<bool>
-                {
-                    Success = false,
-                    Message = "Kullanıcı bulunamadı"
-                };
+                return Result<object>.Failure(new Error("400", "Belirtilen property tipi sistemde tanımlı değil."));
             }
 
-            // Sadece ev sahibi veya admin güncelleyebilir
-            if (property.HostId != currentUserId.Value && user.UserType != UserType.Admin)
-            {
-                return new ApiResponse<bool>
-                {
-                    Success = false,
-                    Message = "Bu evi güncelleme yetkiniz yok"
-                };
-            }
-
-            // Property'yi güncelle
             property.Title = request.Title;
             property.Description = request.Description;
-            property.PropertyType = request.PropertyType;
-            property.BedroomCount = request.BedroomCount;
-            property.BedCount = request.BedCount;
-            property.BathroomCount = request.BathroomCount;
-            property.MaxGuestCount = request.MaxGuestCount;
+            property.PropertyType = propertyType;
             property.PricePerNight = request.PricePerNight;
-            property.CleaningFee = request.CleaningFee;
-            property.ServiceFee = request.ServiceFee;
             property.Address = request.Address;
             property.City = request.City;
             property.Country = request.Country;
             property.PostalCode = request.PostalCode;
-            property.Latitude = request.Latitude;
-            property.Longitude = request.Longitude;
-            property.HasWifi = request.HasWifi;
-            property.HasAirConditioning = request.HasAirConditioning;
-            property.HasKitchen = request.HasKitchen;
-            property.HasParking = request.HasParking;
-            property.HasPool = request.HasPool;
-            property.AllowsPets = request.AllowsPets;
-            property.AllowsSmoking = request.AllowsSmoking;
-            property.MinimumStayDays = request.MinStayDays;
-            property.MaximumStayDays = request.MaxStayDays;
-            property.CancellationPolicyDays = request.CancellationDays;
+            property.Latitude = (double)request.Latitude;
+            property.Longitude = (double)request.Longitude;
+            property.BedroomCount = request.Bedrooms;
+            property.BathroomCount = request.Bathrooms;
+            property.MaxGuestCount = request.MaxGuests;
+            property.MinimumStayDays = request.MinimumStay;
+            property.MaximumStayDays = request.MaximumStay;
 
-            // Değişiklikleri kaydet
+            await _propertyRepository.UpdateAsync(property);
             await _propertyRepository.SaveChangesAsync();
 
-            return new ApiResponse<bool>
-            {
-                Success = true,
-                Message = "Ev başarıyla güncellendi",
-                Data = true
-            };
+            return Result<object>.Success(true, new SuccessMessage("200", "Property bilgileri sisteme kaydedildi."));
         }
         catch (Exception ex)
         {
-            return new ApiResponse<bool>
-            {
-                Success = false,
-                Message = $"Ev güncellenirken hata oluştu: {ex.Message}"
-            };
+            return Result<object>.Failure(new Error("500", $"Property güncellenirken hata oluştu: {ex.Message}"));
         }
     }
-} 
+}

@@ -1,45 +1,62 @@
 using AutoMapper;
 using MinimalAirbnb.Application.DTOs.Message;
+using MinimalAirbnb.Application.Messages.DTOs;
 using MinimalAirbnb.Domain.Entities;
 
 namespace MinimalAirbnb.Application.Mappings;
 
 /// <summary>
-/// Mesaj Mapping Profili
+/// Message Mapping Profile
 /// </summary>
 public class MessageMappingProfile : Profile
 {
     public MessageMappingProfile()
     {
-        // Entity -> DTO mappings
-        CreateMap<Message, MessageResultDto>()
-            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => $"{src.Sender.FirstName} {src.Sender.LastName}"))
-            .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => $"{src.Receiver.FirstName} {src.Receiver.LastName}"))
-            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.Property != null ? src.Property.Title : null));
+        // Message -> MessageDto
+        CreateMap<Message, MessageDto>()
+            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => 
+                src.Sender != null ? $"{src.Sender.FirstName} {src.Sender.LastName}" : string.Empty))
+            .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => 
+                src.Sender != null ? (src.Sender.ProfilePictureUrl ?? src.Sender.ProfilePicture) : null))
+            .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => 
+                src.Receiver != null ? $"{src.Receiver.FirstName} {src.Receiver.LastName}" : string.Empty))
+            .ForMember(dest => dest.ReceiverPhotoUrl, opt => opt.MapFrom(src => 
+                src.Receiver != null ? (src.Receiver.ProfilePictureUrl ?? src.Receiver.ProfilePicture) : null))
+            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.Title : null))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedDate))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.ModifiedDate));
 
+        // Message -> MessageListDto
         CreateMap<Message, MessageListDto>()
-            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => $"{src.Sender.FirstName} {src.Sender.LastName}"))
-            .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => $"{src.Receiver.FirstName} {src.Receiver.LastName}"))
-            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.Property != null ? src.Property.Title : null));
+            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => 
+                src.Sender != null ? $"{src.Sender.FirstName} {src.Sender.LastName}" : string.Empty))
+            .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => 
+                src.Sender != null ? (src.Sender.ProfilePictureUrl ?? src.Sender.ProfilePicture) : null))
+            .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => 
+                src.Receiver != null ? $"{src.Receiver.FirstName} {src.Receiver.LastName}" : string.Empty))
+            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.Title : null))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedDate));
 
-        // DTO -> Entity mappings
+        // Message -> MessageResultDto
+        CreateMap<Message, MessageResultDto>()
+            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src => 
+                src.Sender != null ? $"{src.Sender.FirstName} {src.Sender.LastName}" : string.Empty))
+            .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => 
+                src.Sender != null ? (src.Sender.ProfilePictureUrl ?? src.Sender.ProfilePicture) : null))
+            .ForMember(dest => dest.ReceiverName, opt => opt.MapFrom(src => 
+                src.Receiver != null ? $"{src.Receiver.FirstName} {src.Receiver.LastName}" : string.Empty))
+            .ForMember(dest => dest.ReceiverPhotoUrl, opt => opt.MapFrom(src => 
+                src.Receiver != null ? (src.Receiver.ProfilePictureUrl ?? src.Receiver.ProfilePicture) : null))
+            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.Title : null))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedDate))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.ModifiedDate));
+
+        // AddMessageDto -> Message
         CreateMap<AddMessageDto, Message>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Sender, opt => opt.Ignore())
-            .ForMember(dest => dest.Receiver, opt => opt.Ignore())
-            .ForMember(dest => dest.Property, opt => opt.Ignore())
-            .ForMember(dest => dest.Reservation, opt => opt.Ignore());
-
-        CreateMap<UpdateMessageDto, Message>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.SenderId, opt => opt.Ignore())
-            .ForMember(dest => dest.ReceiverId, opt => opt.Ignore())
-            .ForMember(dest => dest.PropertyId, opt => opt.Ignore())
-            .ForMember(dest => dest.ReservationId, opt => opt.Ignore())
-            .ForMember(dest => dest.Sender, opt => opt.Ignore())
-            .ForMember(dest => dest.Receiver, opt => opt.Ignore())
-            .ForMember(dest => dest.Property, opt => opt.Ignore())
-            .ForMember(dest => dest.Reservation, opt => opt.Ignore())
-            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
     }
 } 

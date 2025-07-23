@@ -1,16 +1,19 @@
 using MediatR;
-using MinimalAirbnb.Application.Common.Models;
 using MinimalAirbnb.Application.Interfaces;
 using MinimalAirbnb.Application.Properties.DTOs;
-using MinimalAirbnb.Domain.Entities;
-using System.Linq.Expressions;
+using Maggsoft.Core.Model.Pagination;
+using Maggsoft.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
+using MinimalAirbnb.Domain.Enums;
+using Maggsoft.Core.Base;
+using Maggsoft.Core.Model;
 
 namespace MinimalAirbnb.Application.Properties.Queries.GetProperties;
 
 /// <summary>
-/// GetPropertiesQuery için handler
+/// Properties listesi query handler'ı
 /// </summary>
-public class GetPropertiesQueryHandler : IRequestHandler<GetPropertiesQuery, PaginatedApiResponse<PropertyDto>>
+public class GetPropertiesQueryHandler : IRequestHandler<GetPropertiesQuery, Result<PagedList<PropertyDto>>>
 {
     private readonly IPropertyRepository _propertyRepository;
 
@@ -19,141 +22,78 @@ public class GetPropertiesQueryHandler : IRequestHandler<GetPropertiesQuery, Pag
         _propertyRepository = propertyRepository;
     }
 
-    public async Task<PaginatedApiResponse<PropertyDto>> Handle(GetPropertiesQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<PropertyDto>>> Handle(GetPropertiesQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            // Repository'den tüm property'leri al
-            var properties = await _propertyRepository.GetPublishedPropertiesAsync();
+            var query = _propertyRepository.GetAll();
 
-            // Filtreleme
-            if (!string.IsNullOrEmpty(request.City))
+            // Filters
+            if (!string.IsNullOrWhiteSpace(request.City))
             {
-                properties = properties.Where(p => p.City.Contains(request.City));
-            }
-
-            if (request.PropertyType.HasValue)
-            {
-                properties = properties.Where(p => p.PropertyType == request.PropertyType.Value);
+                query = query.Where(p => p.City.Contains(request.City));
             }
 
             if (request.MinPrice.HasValue)
             {
-                properties = properties.Where(p => p.PricePerNight >= request.MinPrice.Value);
+                query = query.Where(p => p.PricePerNight >= request.MinPrice.Value);
             }
 
             if (request.MaxPrice.HasValue)
             {
-                properties = properties.Where(p => p.PricePerNight <= request.MaxPrice.Value);
+                query = query.Where(p => p.PricePerNight <= request.MaxPrice.Value);
             }
 
-            if (request.GuestCount.HasValue)
+            if (!string.IsNullOrWhiteSpace(request.PropertyType))
             {
-                properties = properties.Where(p => p.MaxGuestCount >= request.GuestCount.Value);
+                if (Enum.TryParse<PropertyType>(request.PropertyType, out var propertyType))
+                {
+                    query = query.Where(p => p.PropertyType == propertyType);
+                }
             }
 
-            // Sıralama
-            switch (request.SortBy?.ToLower())
+            // Order by creation date
+            query = query.OrderByDescending(p => p.CreatedDate);
+
+            // Get paged list
+            var pagedList = await query.ToPagedListAsync(request.PageNumber - 1, request.PageSize);
+
+            // Map to DTOs
+            var propertyDtos = pagedList.Data.Select(p => new PropertyDto
             {
-                case "price":
-                    properties = request.SortOrder?.ToLower() == "desc" 
-                        ? properties.OrderByDescending(p => p.PricePerNight)
-                        : properties.OrderBy(p => p.PricePerNight);
-                    break;
-                case "rating":
-                    properties = request.SortOrder?.ToLower() == "desc"
-                        ? properties.OrderByDescending(p => p.AverageRating)
-                        : properties.OrderBy(p => p.AverageRating);
-                    break;
-                case "createddate":
-                    properties = request.SortOrder?.ToLower() == "desc"
-                        ? properties.OrderByDescending(p => p.CreatedDate)
-                        : properties.OrderBy(p => p.CreatedDate);
-                    break;
-                default:
-                    properties = properties.OrderByDescending(p => p.CreatedDate);
-                    break;
-            }
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                PropertyType = p.PropertyType,
+                PricePerNight = p.PricePerNight,
+                Address = p.Address,
+                City = p.City,
+                Country = p.Country,
+                PostalCode = p.PostalCode,
+                Latitude = p.Latitude,
+                Longitude = p.Longitude,
+                BedroomCount = p.BedroomCount,
+                BathroomCount = p.BathroomCount,
+                MaxGuestCount = p.MaxGuestCount,
+                MinimumStayDays = p.MinimumStayDays,
+                MaximumStayDays = p.MaximumStayDays,
+                AverageRating = p.AverageRating,
+                CreatedDate = p.CreatedDate
+            }).ToList();
 
-            var totalCount = properties.Count();
-
-            // Sayfalama
-            var pagedProperties = properties
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
-                .ToList();
-
-            // DTO'lara dönüştür
-            var propertyDtos = pagedProperties.Select(MapToDto).ToList();
-
-            return new PaginatedApiResponse<PropertyDto>
-            {
-                Success = true,
-                Message = "Properties başarıyla getirildi",
-                Data = propertyDtos,
-                PageNumber = request.PageNumber,
-                PageSize = request.PageSize,
-                TotalCount = totalCount,
-                TotalPages = (int)Math.Ceiling((double)totalCount / request.PageSize)
-            };
+            // Create new PagedList with DTOs
+            var resultPagedList = new PagedList<PropertyDto>(
+                propertyDtos,
+                request.PageNumber - 1,
+                request.PageSize,
+                pagedList.TotalCount
+            );
+            
+            return Result<PagedList<PropertyDto>>.Success(resultPagedList, new SuccessMessage("200", "Properties başarıyla getirildi."));
         }
         catch (Exception ex)
         {
-            return new PaginatedApiResponse<PropertyDto>
-            {
-                Success = false,
-                Message = $"Properties getirilirken hata oluştu: {ex.Message}"
-            };
+            return Result<PagedList<PropertyDto>>.Failure(new Error("500", $"Properties getirilirken hata oluştu: {ex.Message}"));
         }
     }
-
-    /// <summary>
-    /// Property entity'sini DTO'ya dönüştürür
-    /// </summary>
-    private PropertyDto MapToDto(Property property)
-    {
-        return new PropertyDto
-        {
-            Id = property.Id,
-            Title = property.Title,
-            Description = property.Description,
-            HostId = property.HostId,
-            HostName = property.Host?.FirstName + " " + property.Host?.LastName,
-            PropertyType = property.PropertyType,
-            BedroomCount = property.BedroomCount,
-            BedCount = property.BedCount,
-            BathroomCount = property.BathroomCount,
-            MaxGuestCount = property.MaxGuestCount,
-            PricePerNight = property.PricePerNight,
-            CleaningFee = property.CleaningFee,
-            ServiceFee = property.ServiceFee,
-            TotalPricePerNight = property.PricePerNight + property.CleaningFee + property.ServiceFee,
-            Address = property.Address,
-            City = property.City,
-            Country = property.Country,
-            PostalCode = property.PostalCode,
-            FullAddress = $"{property.Address}, {property.City}, {property.Country}",
-            Latitude = property.Latitude,
-            Longitude = property.Longitude,
-            HasWifi = property.HasWifi,
-            HasAirConditioning = property.HasAirConditioning,
-            HasKitchen = property.HasKitchen,
-            HasParking = property.HasParking,
-            HasPool = property.HasPool,
-            AllowsPets = property.AllowsPets,
-            AllowsSmoking = property.AllowsSmoking,
-            MinimumStayDays = property.MinimumStayDays,
-            MaximumStayDays = property.MaximumStayDays,
-            CancellationPolicyDays = property.CancellationPolicyDays,
-            AverageRating = property.AverageRating,
-            TotalReviews = property.Reviews?.Count ?? 0,
-            ViewCount = property.ViewCount,
-            FavoriteCount = property.Favorites?.Count ?? 0,
-            ReservationCount = property.Reservations?.Count ?? 0,
-            MainPhotoUrl = property.Photos?.FirstOrDefault()?.PhotoUrl,
-            PhotoCount = property.Photos?.Count ?? 0,
-            CreatedDate = property.CreatedDate,
-            IsAvailable = true // Müsaitlik kontrolü CheckInDate ve CheckOutDate ile yapılacak
-        };
-    }
-} 
+}

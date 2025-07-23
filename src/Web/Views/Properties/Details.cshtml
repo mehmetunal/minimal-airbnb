@@ -1,0 +1,245 @@
+@model MinimalAirbnb.Application.Properties.DTOs.PropertyDto
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container-fluid">
+    <!-- Property Images -->
+    <div class="row mb-4">
+        <div class="col-12">
+            @if (!string.IsNullOrEmpty(Model.MainPhotoUrl))
+            {
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 500px;">
+                    <img src="@Model.MainPhotoUrl" class="d-block w-100" alt="@Model.Title" style="height: 500px; object-fit: cover;">
+                </div>
+            }
+            else
+            {
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="bi bi-house fs-1 text-muted"></i>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Property Details -->
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="h2">@Model.Title</h1>
+                    <p class="text-muted">
+                        <i class="bi bi-geo-alt"></i> @Model.City, @Model.Country
+                    </p>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="text-warning me-2">
+                            @for (int i = 0; i < Math.Min((int)Model.AverageRating, 5); i++)
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            @for (int i = (int)Model.AverageRating; i < 5; i++)
+                            {
+                                <i class="bi bi-star"></i>
+                            }
+                        </div>
+                        <span class="text-muted">(@Model.TotalReviews değerlendirme)</span>
+                        <span class="text-muted ms-3">@Model.ViewCount görüntülenme</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Info -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Bu ev hakkında</h5>
+                            <p class="card-text">@Model.Description</p>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h6>Özellikler</h6>
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-people text-primary"></i> @Model.MaxGuestCount misafir</li>
+                                        <li><i class="bi bi-door-open text-primary"></i> @Model.BedroomCount yatak odası</li>
+                                        <li><i class="bi bi-droplet text-primary"></i> @Model.BathroomCount banyo</li>
+                                        <li><i class="bi bi-bed text-primary"></i> @Model.BedCount yatak</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Olanaklar</h6>
+                                    <ul class="list-unstyled">
+                                        @if (Model.HasWifi)
+                                        {
+                                            <li><i class="bi bi-wifi text-success"></i> WiFi</li>
+                                        }
+                                        @if (Model.HasAirConditioning)
+                                        {
+                                            <li><i class="bi bi-snow text-success"></i> Klima</li>
+                                        }
+                                        @if (Model.HasKitchen)
+                                        {
+                                            <li><i class="bi bi-cup-hot text-success"></i> Mutfak</li>
+                                        }
+                                        @if (Model.HasParking)
+                                        {
+                                            <li><i class="bi bi-p-circle text-success"></i> Otopark</li>
+                                        }
+                                        @if (Model.HasPool)
+                                        {
+                                            <li><i class="bi bi-water text-success"></i> Havuz</li>
+                                        }
+                                        @if (Model.AllowsPets)
+                                        {
+                                            <li><i class="bi bi-heart text-success"></i> Evcil hayvan kabul</li>
+                                        }
+                                        @if (Model.AllowsSmoking)
+                                        {
+                                            <li><i class="bi bi-smoke text-warning"></i> Sigara içilebilir</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Değerlendirmeler (@Model.TotalReviews)</h5>
+                            @if (Model.TotalReviews > 0)
+                            {
+                                <div class="text-center py-3">
+                                    <div class="text-warning mb-2">
+                                        @for (int i = 0; i < Math.Min((int)Model.AverageRating, 5); i++)
+                                        {
+                                            <i class="bi bi-star-fill fs-1"></i>
+                                        }
+                                        @for (int i = (int)Model.AverageRating; i < 5; i++)
+                                        {
+                                            <i class="bi bi-star fs-1"></i>
+                                        }
+                                    </div>
+                                    <h4>@Model.AverageRating.ToString("F1") / 5</h4>
+                                    <p class="text-muted">@Model.TotalReviews değerlendirme</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">Henüz değerlendirme yapılmamış.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Card -->
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">₺@Model.PricePerNight</h5>
+                        <small class="text-muted">/gece</small>
+                    </div>
+                    
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="form-label">Giriş</label>
+                                <input type="date" class="form-control" id="checkInDate" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Çıkış</label>
+                                <input type="date" class="form-control" id="checkOutDate" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Misafir Sayısı</label>
+                                <select class="form-select" id="guestCount">
+                                    @for (int i = 1; i <= Model.MaxGuestCount; i++)
+                                    {
+                                        <option value="@i">@i misafir</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>₺@Model.PricePerNight x <span id="nightCount">1</span> gece</span>
+                            <span id="totalPrice">₺@Model.PricePerNight</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Temizlik ücreti</span>
+                            <span>₺@Model.CleaningFee</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Hizmet ücreti</span>
+                            <span>₺@Model.ServiceFee</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Toplam</span>
+                            <span id="grandTotal">₺@(Model.PricePerNight + Model.CleaningFee + Model.ServiceFee)</span>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mt-3">
+                            Rezervasyon Yap
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-shield-check"></i> 
+                            Ücretsiz iptal, 7 gün öncesine kadar
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Date picker logic
+        const checkInDate = document.getElementById('checkInDate');
+        const checkOutDate = document.getElementById('checkOutDate');
+        const nightCount = document.getElementById('nightCount');
+        const totalPrice = document.getElementById('totalPrice');
+        const grandTotal = document.getElementById('grandTotal');
+        
+        const pricePerNight = @Model.PricePerNight;
+        const cleaningFee = @Model.CleaningFee;
+        const serviceFee = @Model.ServiceFee;
+        
+        function updatePricing() {
+            if (checkInDate.value && checkOutDate.value) {
+                const checkIn = new Date(checkInDate.value);
+                const checkOut = new Date(checkOutDate.value);
+                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                
+                if (nights > 0) {
+                    nightCount.textContent = nights;
+                    const total = pricePerNight * nights;
+                    totalPrice.textContent = `₺${total}`;
+                    grandTotal.textContent = `₺${total + cleaningFee + serviceFee}`;
+                }
+            }
+        }
+        
+        checkInDate.addEventListener('change', updatePricing);
+        checkOutDate.addEventListener('change', updatePricing);
+        
+        // Set minimum dates
+        const today = new Date().toISOString().split('T')[0];
+        checkInDate.min = today;
+        checkOutDate.min = today;
+    </script>
+} 

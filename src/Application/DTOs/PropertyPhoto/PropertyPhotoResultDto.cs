@@ -53,5 +53,5 @@ public class PropertyPhotoResultDto
     /// <summary>
     /// Güncellenme tarihi
     /// </summary>
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 } 

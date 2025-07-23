@@ -1,12 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using MinimalAirbnb.Application.Interfaces;
 using MinimalAirbnb.Domain.Entities;
+using MinimalAirbnb.Domain.Enums;
 using MinimalAirbnb.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Infrastructure.Repositories;
 
 /// <summary>
-/// Kullanıcı Repository Implementasyonu
+/// User Repository Implementation
 /// </summary>
 public class UserRepository : IUserRepository
 {
@@ -17,15 +18,18 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<User?> GetByIdAsync(Guid id)
+    /// <summary>
+    /// Tüm kullanıcıları getir (IQueryable)
+    /// </summary>
+    public IQueryable<User> GetAll()
     {
-        return await _context.Users
+        return _context.Users
             .Include(u => u.Properties)
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .FirstOrDefaultAsync(u => u.Id == id);
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages);
     }
 
     public async Task<IEnumerable<User>> GetAllAsync()
@@ -35,29 +39,21 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .ToListAsync();
     }
 
-    public async Task<User> AddAsync(User entity)
+    public async Task<User?> GetByIdAsync(Guid id)
     {
-        await _context.Users.AddAsync(entity);
-        return entity;
-    }
-
-    public async Task<User> UpdateAsync(User entity)
-    {
-        _context.Users.Update(entity);
-        return entity;
-    }
-
-    public async Task DeleteAsync(Guid id)
-    {
-        var user = await _context.Users.FindAsync(id);
-        if (user != null)
-        {
-            _context.Users.Remove(user);
-        }
+        return await _context.Users
+            .Include(u => u.Properties)
+            .Include(u => u.Reservations)
+            .Include(u => u.Reviews)
+            .Include(u => u.Favorites)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User?> GetByEmailAsync(string email)
@@ -67,7 +63,8 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .FirstOrDefaultAsync(u => u.Email == email);
     }
 
@@ -78,18 +75,32 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .FirstOrDefaultAsync(u => u.UserName == userName);
     }
 
-    public async Task<IEnumerable<User>> GetByUserTypeAsync(Domain.Enums.UserType userType)
+    public async Task<User?> GetByPhoneNumberAsync(string phoneNumber)
     {
         return await _context.Users
             .Include(u => u.Properties)
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
+            .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+    }
+
+    public async Task<IEnumerable<User>> GetByUserTypeAsync(UserType userType)
+    {
+        return await _context.Users
+            .Include(u => u.Properties)
+            .Include(u => u.Reservations)
+            .Include(u => u.Reviews)
+            .Include(u => u.Favorites)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .Where(u => u.UserType == userType)
             .ToListAsync();
     }
@@ -101,59 +112,10 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .Where(u => u.IsActive)
             .ToListAsync();
-    }
-
-    public async Task<IEnumerable<User>> GetVerifiedUsersAsync()
-    {
-        return await _context.Users
-            .Include(u => u.Properties)
-            .Include(u => u.Reservations)
-            .Include(u => u.Reviews)
-            .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .Where(u => u.IsVerified)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<User>> GetUsersByCityAsync(string city)
-    {
-        return await _context.Users
-            .Include(u => u.Properties)
-            .Include(u => u.Reservations)
-            .Include(u => u.Reviews)
-            .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .Where(u => u.City == city)
-            .ToListAsync();
-    }
-
-    public async Task<bool> ExistsAsync(Guid id)
-    {
-        return await _context.Users.AnyAsync(u => u.Id == id);
-    }
-
-    public async Task<bool> EmailExistsAsync(string email)
-    {
-        return await _context.Users.AnyAsync(u => u.Email == email);
-    }
-
-    public async Task<bool> UserNameExistsAsync(string userName)
-    {
-        return await _context.Users.AnyAsync(u => u.UserName == userName);
-    }
-
-    public async Task<User?> GetByPhoneNumberAsync(string phoneNumber)
-    {
-        return await _context.Users
-            .Include(u => u.Properties)
-            .Include(u => u.Reservations)
-            .Include(u => u.Reviews)
-            .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
     }
 
     public async Task<IEnumerable<User>> GetEmailConfirmedUsersAsync()
@@ -163,7 +125,8 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .Where(u => u.EmailConfirmed)
             .ToListAsync();
     }
@@ -175,7 +138,8 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .Where(u => u.PhoneNumberConfirmed)
             .ToListAsync();
     }
@@ -187,7 +151,8 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
             .Where(u => u.TwoFactorEnabled)
             .ToListAsync();
     }
@@ -199,8 +164,9 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .Where(u => u.LockoutEnd.HasValue && u.LockoutEnd > DateTimeOffset.UtcNow)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
+            .Where(u => u.LockoutEnd > DateTime.UtcNow)
             .ToListAsync();
     }
 
@@ -211,8 +177,9 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .Where(u => u.City == city)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
+            .Where(u => u.City.Contains(city))
             .ToListAsync();
     }
 
@@ -223,8 +190,9 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .Where(u => u.UserType == Domain.Enums.UserType.Host)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
+            .Where(u => u.UserType == UserType.Host)
             .ToListAsync();
     }
 
@@ -235,9 +203,31 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
             .Include(u => u.Favorites)
-            .Include(u => u.Payments)
-            .Where(u => u.UserType == Domain.Enums.UserType.Guest)
+            .Include(u => u.SentMessages)
+            .Include(u => u.ReceivedMessages)
+            .Where(u => u.UserType == UserType.Guest)
             .ToListAsync();
+    }
+
+    public async Task<User> AddAsync(User user)
+    {
+        await _context.Users.AddAsync(user);
+        return user;
+    }
+
+    public async Task<User> UpdateAsync(User user)
+    {
+        _context.Users.Update(user);
+        return user;
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user != null)
+        {
+            _context.Users.Remove(user);
+        }
     }
 
     public async Task<int> SaveChangesAsync()

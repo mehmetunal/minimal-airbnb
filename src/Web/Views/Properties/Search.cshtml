@@ -1,0 +1,203 @@
+@{
+    ViewData["Title"] = "Property Arama";
+}
+
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row bg-primary text-white py-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 fw-bold">Detaylı Arama</h1>
+            <p class="lead">İhtiyaçlarınıza uygun mükemmel konaklama yerini bulun</p>
+        </div>
+    </div>
+
+    <div class="row py-4">
+        <!-- Search Filters -->
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Filtreler</h5>
+                    <form method="get" action="@Url.Action("Index")">
+                        <!-- Location -->
+                        <div class="mb-3">
+                            <label class="form-label">Konum</label>
+                            <input type="text" name="SearchTerm" class="form-control" placeholder="Şehir, ülke veya adres" value="@Context.Request.Query["SearchTerm"]">
+                        </div>
+
+                        <!-- Property Type -->
+                        <div class="mb-3">
+                            <label class="form-label">Ev Tipi</label>
+                            <select name="PropertyType" class="form-select">
+                                <option value="">Tümü</option>
+                                <option value="1" selected="@(Context.Request.Query["PropertyType"] == "1")">Daire</option>
+                                <option value="2" selected="@(Context.Request.Query["PropertyType"] == "2")">Villa</option>
+                                <option value="3" selected="@(Context.Request.Query["PropertyType"] == "3")">Ev</option>
+                                <option value="4" selected="@(Context.Request.Query["PropertyType"] == "4")">Stüdyo</option>
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="mb-3">
+                            <label class="form-label">Fiyat Aralığı</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" name="MinPrice" class="form-control" placeholder="Min" value="@Context.Request.Query["MinPrice"]">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" name="MaxPrice" class="form-control" placeholder="Max" value="@Context.Request.Query["MaxPrice"]">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guest Count -->
+                        <div class="mb-3">
+                            <label class="form-label">Misafir Sayısı</label>
+                            <select name="GuestCount" class="form-select">
+                                <option value="">Tümü</option>
+                                <option value="1" selected="@(Context.Request.Query["GuestCount"] == "1")">1 misafir</option>
+                                <option value="2" selected="@(Context.Request.Query["GuestCount"] == "2")">2 misafir</option>
+                                <option value="3" selected="@(Context.Request.Query["GuestCount"] == "3")">3 misafir</option>
+                                <option value="4" selected="@(Context.Request.Query["GuestCount"] == "4")">4 misafir</option>
+                                <option value="5" selected="@(Context.Request.Query["GuestCount"] == "5")">5+ misafir</option>
+                            </select>
+                        </div>
+
+                        <!-- Bedrooms -->
+                        <div class="mb-3">
+                            <label class="form-label">Yatak Odası Sayısı</label>
+                            <select name="BedroomCount" class="form-select">
+                                <option value="">Tümü</option>
+                                <option value="1" selected="@(Context.Request.Query["BedroomCount"] == "1")">1 yatak odası</option>
+                                <option value="2" selected="@(Context.Request.Query["BedroomCount"] == "2")">2 yatak odası</option>
+                                <option value="3" selected="@(Context.Request.Query["BedroomCount"] == "3")">3 yatak odası</option>
+                                <option value="4" selected="@(Context.Request.Query["BedroomCount"] == "4")">4+ yatak odası</option>
+                            </select>
+                        </div>
+
+                        <!-- Bathrooms -->
+                        <div class="mb-3">
+                            <label class="form-label">Banyo Sayısı</label>
+                            <select name="BathroomCount" class="form-select">
+                                <option value="">Tümü</option>
+                                <option value="1" selected="@(Context.Request.Query["BathroomCount"] == "1")">1 banyo</option>
+                                <option value="2" selected="@(Context.Request.Query["BathroomCount"] == "2")">2 banyo</option>
+                                <option value="3" selected="@(Context.Request.Query["BathroomCount"] == "3")">3+ banyo</option>
+                            </select>
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="mb-3">
+                            <label class="form-label">Olanaklar</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="HasWifi" value="true" checked="@(Context.Request.Query["HasWifi"] == "true")">
+                                <label class="form-check-label">
+                                    <i class="bi bi-wifi"></i> WiFi
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="HasAirConditioning" value="true" checked="@(Context.Request.Query["HasAirConditioning"] == "true")">
+                                <label class="form-check-label">
+                                    <i class="bi bi-snow"></i> Klima
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="HasKitchen" value="true" checked="@(Context.Request.Query["HasKitchen"] == "true")">
+                                <label class="form-check-label">
+                                    <i class="bi bi-cup-hot"></i> Mutfak
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="HasParking" value="true" checked="@(Context.Request.Query["HasParking"] == "true")">
+                                <label class="form-check-label">
+                                    <i class="bi bi-p-circle"></i> Otopark
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="HasPool" value="true" checked="@(Context.Request.Query["HasPool"] == "true")">
+                                <label class="form-check-label">
+                                    <i class="bi bi-water"></i> Havuz
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="AllowsPets" value="true" checked="@(Context.Request.Query["AllowsPets"] == "true")">
+                                <label class="form-check-label">
+                                    <i class="bi bi-heart"></i> Evcil hayvan kabul
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Rating -->
+                        <div class="mb-3">
+                            <label class="form-label">Minimum Değerlendirme</label>
+                            <select name="MinRating" class="form-select">
+                                <option value="">Tümü</option>
+                                <option value="4" selected="@(Context.Request.Query["MinRating"] == "4")">4+ yıldız</option>
+                                <option value="4.5" selected="@(Context.Request.Query["MinRating"] == "4.5")">4.5+ yıldız</option>
+                                <option value="5" selected="@(Context.Request.Query["MinRating"] == "5")">5 yıldız</option>
+                            </select>
+                        </div>
+
+                        <!-- Instant Booking -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="IsInstantBookable" value="true" checked="@(Context.Request.Query["IsInstantBookable"] == "true")">
+                                <label class="form-check-label">
+                                    Anında rezervasyon
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-search"></i> Ara
+                        </button>
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-clockwise"></i> Temizle
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Results Preview -->
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Arama Sonuçları</h5>
+                    <p class="text-muted">
+                        Filtrelerinizi ayarlayın ve "Ara" butonuna tıklayarak sonuçları görüntüleyin.
+                    </p>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-house fs-1 text-primary mb-3"></i>
+                                    <h6>Konum</h6>
+                                    <p class="text-muted small">Şehir, ülke veya adres belirtin</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-currency-dollar fs-1 text-success mb-3"></i>
+                                    <h6>Fiyat</h6>
+                                    <p class="text-muted small">Bütçenize uygun fiyat aralığı</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-star fs-1 text-warning mb-3"></i>
+                                    <h6>Değerlendirme</h6>
+                                    <p class="text-muted small">Kaliteli konaklama deneyimi</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

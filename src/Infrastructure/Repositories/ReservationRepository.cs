@@ -1,12 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using MinimalAirbnb.Application.Interfaces;
 using MinimalAirbnb.Domain.Entities;
+using MinimalAirbnb.Domain.Enums;
 using MinimalAirbnb.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Infrastructure.Repositories;
 
 /// <summary>
-/// Rezervasyon Repository Implementasyonu
+/// Reservation Repository Implementation
 /// </summary>
 public class ReservationRepository : IReservationRepository
 {
@@ -15,6 +16,156 @@ public class ReservationRepository : IReservationRepository
     public ReservationRepository(MinimalAirbnbDbContext context)
     {
         _context = context;
+    }
+
+    /// <summary>
+    /// Tüm reservation'ları getir (IQueryable)
+    /// </summary>
+    public IQueryable<Reservation> GetAll()
+    {
+        return _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments);
+    }
+
+    public async Task<IEnumerable<Reservation>> GetAllAsync()
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .ToListAsync();
+    }
+
+    public async Task<Reservation?> GetByIdAsync(Guid id)
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .FirstOrDefaultAsync(r => r.Id == id);
+    }
+
+    /// <summary>
+    /// Property'ye göre reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetByPropertyAsync(Guid propertyId)
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.PropertyId == propertyId)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Kullanıcıya göre reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetByUserAsync(Guid userId)
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.GuestId == userId)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Tarih aralığına göre reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.CheckInDate >= startDate && r.CheckOutDate <= endDate)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Property ve tarih aralığına göre çakışan reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetConflictingReservationsAsync(Guid propertyId, DateTime checkInDate, DateTime checkOutDate)
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.PropertyId == propertyId &&
+                       r.Status == ReservationStatus.Confirmed &&
+                       ((r.CheckInDate <= checkInDate && r.CheckOutDate > checkInDate) ||
+                        (r.CheckInDate < checkOutDate && r.CheckOutDate >= checkOutDate) ||
+                        (r.CheckInDate >= checkInDate && r.CheckOutDate <= checkOutDate)))
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Duruma göre reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetByStatusAsync(ReservationStatus status)
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.Status == status)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Aktif reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetActiveReservationsAsync()
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.Status == ReservationStatus.Confirmed &&
+                       r.CheckInDate <= DateTime.UtcNow &&
+                       r.CheckOutDate >= DateTime.UtcNow)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Geçmiş reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetPastReservationsAsync()
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.CheckOutDate < DateTime.UtcNow)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Gelecek reservation'ları getir
+    /// </summary>
+    public async Task<IEnumerable<Reservation>> GetUpcomingReservationsAsync()
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .Where(r => r.CheckInDate > DateTime.UtcNow)
+            .ToListAsync();
     }
 
     public async Task<Reservation> AddAsync(Reservation reservation)
@@ -36,157 +187,6 @@ public class ReservationRepository : IReservationRepository
         {
             _context.Reservations.Remove(reservation);
         }
-    }
-
-    public async Task<Reservation?> GetByIdAsync(Guid id)
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .FirstOrDefaultAsync(r => r.Id == id);
-    }
-
-    public async Task<IEnumerable<Reservation>> GetByGuestIdAsync(Guid guestId)
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.GuestId == guestId)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetByPropertyIdAsync(Guid propertyId)
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.PropertyId == propertyId)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetByHostIdAsync(Guid hostId)
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.Property.HostId == hostId)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetByStatusAsync(Domain.Enums.ReservationStatus status)
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.Status == status)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => (r.CheckInDate >= startDate && r.CheckInDate <= endDate) ||
-                       (r.CheckOutDate >= startDate && r.CheckOutDate <= endDate) ||
-                       (r.CheckInDate <= startDate && r.CheckOutDate >= endDate))
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetPendingReservationsAsync()
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.Status == Domain.Enums.ReservationStatus.Pending)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetConfirmedReservationsAsync()
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.Status == Domain.Enums.ReservationStatus.Confirmed)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetCancelledReservationsAsync()
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.Status == Domain.Enums.ReservationStatus.Cancelled)
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Reservation>> GetCompletedReservationsAsync()
-    {
-        return await _context.Reservations
-            .Include(r => r.Guest)
-            .Include(r => r.Property)
-            .Include(r => r.Property.Host)
-            .Include(r => r.Reviews)
-            .Include(r => r.Payments)
-            .Include(r => r.Messages)
-            .Include(r => r.CancelledByUser)
-            .Include(r => r.ConfirmedByUser)
-            .Where(r => r.Status == Domain.Enums.ReservationStatus.Completed)
-            .ToListAsync();
     }
 
     public async Task<int> SaveChangesAsync()

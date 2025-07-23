@@ -23,4 +23,8 @@
     <PackageReference Include="Bogus" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Application\MinimalAirbnb.Application.csproj" />
+  </ItemGroup>
+
 </Project>

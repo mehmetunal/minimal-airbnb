@@ -12,21 +12,21 @@ public class PropertyPhotoMappingProfile : Profile
     public PropertyPhotoMappingProfile()
     {
         // Entity -> DTO mappings
-        CreateMap<PropertyPhoto, PropertyPhotoResultDto>()
+        CreateMap<Domain.Entities.PropertyPhoto, PropertyPhotoResultDto>()    
             .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.Property.Title))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Caption))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Caption))
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMainPhoto))
             .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.SortOrder));
 
-        CreateMap<PropertyPhoto, PropertyPhotoListDto>()
+        CreateMap<Domain.Entities.PropertyPhoto, PropertyPhotoListDto>()
             .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.Property.Title))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Caption))
             .ForMember(dest => dest.IsMain, opt => opt.MapFrom(src => src.IsMainPhoto))
             .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.SortOrder));
 
         // DTO -> Entity mappings
-        CreateMap<AddPropertyPhotoDto, PropertyPhoto>()
+        CreateMap<AddPropertyPhotoDto, Domain.Entities.PropertyPhoto>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.Property, opt => opt.Ignore())
             .ForMember(dest => dest.Caption, opt => opt.MapFrom(src => src.Title))
@@ -35,7 +35,7 @@ public class PropertyPhotoMappingProfile : Profile
             .ForMember(dest => dest.FileSize, opt => opt.Ignore())
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
 
-        CreateMap<UpdatePropertyPhotoDto, PropertyPhoto>()
+        CreateMap<UpdatePropertyPhotoDto, Domain.Entities.PropertyPhoto>()
             .ForMember(dest => dest.Id, opt => opt.Ignore())
             .ForMember(dest => dest.PropertyId, opt => opt.Ignore())
             .ForMember(dest => dest.Property, opt => opt.Ignore())

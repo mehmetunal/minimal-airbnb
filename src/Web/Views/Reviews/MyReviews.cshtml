@@ -1,0 +1,213 @@
+@model Maggsoft.Core.Model.Pagination.PagedList<MinimalAirbnb.Application.Reviews.DTOs.ReviewDto>
+@{
+    ViewData["Title"] = "Değerlendirmelerim";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-person-star text-primary"></i>
+                    Değerlendirmelerim
+                </h2>
+                <a href="@Url.Action("Create", "Reviews")" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Yeni Değerlendirme
+                </a>
+            </div>
+
+            @if (Model.Data.Any())
+            {
+                <!-- İstatistikler -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h4 class="text-primary mb-1">@Model.Data.Count()</h4>
+                                <small class="text-muted">Toplam Değerlendirme</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h4 class="text-warning mb-1">@Model.Data.Average(r => r.Rating).ToString("F1")</h4>
+                                <small class="text-muted">Ortalama Puanım</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h4 class="text-success mb-1">@Model.Data.Count(r => r.IsApproved)</h4>
+                                <small class="text-muted">Onaylanan</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h4 class="text-info mb-1">@Model.Data.Count(r => r.LikeCount > 0)</h4>
+                                <small class="text-muted">Beğenilen</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Değerlendirme Listesi -->
+                <div class="row">
+                    @foreach (var review in Model.Data)
+                    {
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h6 class="card-title mb-1">@review.PropertyTitle</h6>
+                                            <small class="text-muted">@review.CreatedDate.ToString("dd.MM.yyyy")</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="d-flex align-items-center">
+                                                @for (int i = 1; i <= 5; i++)
+                                                {
+                                                    if (i <= review.Rating)
+                                                    {
+                                                        <i class="bi bi-star-fill text-warning me-1"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-star text-muted me-1"></i>
+                                                    }
+                                                }
+                                            </div>
+                                            <small class="text-muted">@review.Rating/5</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="card-text">@(review.Comment?.Length > 100 ? review.Comment.Substring(0, 100) + "..." : review.Comment)</p>
+                                    
+                                    @if (!string.IsNullOrEmpty(review.HostResponse))
+                                    {
+                                        <div class="bg-light p-2 rounded mb-3">
+                                            <small class="text-muted">
+                                                <strong>Ev Sahibi Yanıtı:</strong><br>
+                                                @(review.HostResponse.Length > 80 ? review.HostResponse.Substring(0, 80) + "..." : review.HostResponse)
+                                            </small>
+                                        </div>
+                                    }
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            @if (review.IsApproved)
+                                            {
+                                                <span class="badge bg-success me-2">Onaylandı</span>
+                                            }
+                                            else if (review.IsRejected)
+                                            {
+                                                <span class="badge bg-danger me-2">Reddedildi</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning me-2">Onay Bekliyor</span>
+                                            }
+                                            @if (review.IsAnonymous)
+                                            {
+                                                <span class="badge bg-secondary me-2">Anonim</span>
+                                            }
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="@Url.Action("Details", "Reviews", new { id = review.Id })" 
+                                               class="btn btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("Edit", "Reviews", new { id = review.Id })" 
+                                               class="btn btn-outline-warning">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <!-- İstatistikler -->
+                                    <div class="row mt-3 text-center">
+                                        <div class="col-4">
+                                            <small class="text-muted">
+                                                <i class="bi bi-hand-thumbs-up text-success"></i><br>
+                                                @review.LikeCount
+                                            </small>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">
+                                                <i class="bi bi-hand-thumbs-down text-danger"></i><br>
+                                                @review.DislikeCount
+                                            </small>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted">
+                                                <i class="bi bi-eye text-info"></i><br>
+                                                @review.ViewCount
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Sayfalama -->
+                @if (Model.TotalPages > 1)
+                {
+                    <nav aria-label="Değerlendirme sayfaları">
+                        <ul class="pagination justify-content-center">
+                            @if (Model.HasPreviousPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageIndex, pageSize = Model.PageSize })">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int i = Math.Max(1, Model.PageIndex + 1 - 2); i <= Math.Min(Model.TotalPages, Model.PageIndex + 1 + 2); i++)
+                            {
+                                <li class="page-item @(i == Model.PageIndex + 1 ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { userId = Context.Request.Query["userId"], pageNumber = i, pageSize = Model.PageSize })">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.HasNextPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageIndex + 2, pageSize = Model.PageSize })">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+
+                <!-- Toplam Bilgi -->
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Toplam @Model.TotalCount değerlendirme, @Model.TotalPages sayfa
+                    </small>
+                </div>
+            }
+            else
+            {
+                <!-- Boş Durum -->
+                <div class="text-center py-5">
+                    <i class="bi bi-person-star display-1 text-muted"></i>
+                    <h4 class="mt-3 text-muted">Henüz değerlendirme yapmamışsınız</h4>
+                    <p class="text-muted">İlk değerlendirmenizi yapın!</p>
+                    <a href="@Url.Action("Create", "Reviews")" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i>
+                        Değerlendirme Yap
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div> 

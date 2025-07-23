@@ -156,10 +156,7 @@ public class Reservation : BaseEntity
     /// </summary>
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-    /// <summary>
-    /// Mesajlar
-    /// </summary>
-    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+    // Messages navigation property'si kaldırıldı çünkü Entity Framework otomatik kolon oluşturuyor
 
     // Computed Properties
     /// <summary>

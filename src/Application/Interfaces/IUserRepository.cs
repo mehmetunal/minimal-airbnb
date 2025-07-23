@@ -11,6 +11,11 @@ public interface IUserRepository
     #region READ
     
     /// <summary>
+    /// Tüm kullanıcıları getir (IQueryable)
+    /// </summary>
+    IQueryable<User> GetAll();
+    
+    /// <summary>
     /// Tüm kullanıcıları getir
     /// </summary>
     Task<IEnumerable<User>> GetAllAsync();

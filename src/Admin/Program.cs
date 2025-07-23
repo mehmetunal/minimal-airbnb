@@ -1,7 +1,14 @@
+using Maggsoft.Framework.HttpClientApi;
+using MinimalAirbnb.Admin.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add HTTP Client for API communication
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IMaggsoftHttpClient, CustomHttpClient>();
 
 var app = builder.Build();
 

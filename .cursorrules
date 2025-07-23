@@ -1,0 +1,425 @@
+# Cursor Rules - Genel Proje Kuralları
+
+## 🏗️ Mimari ve Yapı Kuralları
+
+### Clean Architecture
+- **Domain Layer**: İş mantığı ve entity'ler
+- **Application Layer**: Use case'ler, DTO'lar, interface'ler
+- **Infrastructure Layer**: Veritabanı, external service'ler
+- **API Layer**: Controller'lar ve endpoint'ler
+- **Web/Admin Layer**: UI katmanları
+
+### Katman Bağımlılıkları
+- Domain → Hiçbir katmana bağımlı değil
+- Application → Sadece Domain'e bağımlı
+- Infrastructure → Domain ve Application'a bağımlı
+- API/Web/Admin → Application ve Infrastructure'a bağımlı
+
+### CQRS Pattern
+- **Commands**: Veri değiştiren işlemler (Create, Update, Delete)
+- **Queries**: Veri okuma işlemleri (Get, List, Search)
+- **MediatR**: Command/Query handler'ları için kullan
+
+## 📁 Dosya ve Klasör Yapısı
+
+### Application Layer
+```
+src/Application/
+├── [EntityName]/
+│   ├── Commands/
+│   │   ├── Create[Entity]/
+│   │   │   ├── Create[Entity]Command.cs
+│   │   │   └── Create[Entity]CommandHandler.cs
+│   │   ├── Update[Entity]/
+│   │   │   ├── Update[Entity]Command.cs
+│   │   │   └── Update[Entity]CommandHandler.cs
+│   │   └── Delete[Entity]/
+│   │       ├── Delete[Entity]Command.cs
+│   │       └── Delete[Entity]CommandHandler.cs
+│   ├── Queries/
+│   │   ├── Get[Entity]s/
+│   │   │   ├── Get[Entity]sQuery.cs
+│   │   │   └── Get[Entity]sQueryHandler.cs
+│   │   └── Get[Entity]ById/
+│   │       ├── Get[Entity]ByIdQuery.cs
+│   │       └── Get[Entity]ByIdQueryHandler.cs
+│   └── DTOs/
+│       └── [Entity]Dto.cs
+├── Common/
+│   ├── Models/
+│   │   ├── ApiResponse.cs
+│   │   └── PaginatedApiResponse.cs
+│   └── Interfaces/
+│       └── ICurrentUserService.cs
+├── Interfaces/
+│   └── I[Entity]Repository.cs
+├── Mappings/
+│   └── [Entity]MappingProfile.cs
+└── Validators/
+    └── [Entity]Validators/
+```
+
+### Infrastructure Layer
+```
+src/Infrastructure/
+├── Repositories/
+│   └── [Entity]Repository.cs
+├── Data/
+│   ├── [ProjectName]DbContext.cs
+│   └── Configurations/
+├── SeedData/
+│   └── SeedDataService.cs
+└── Services/
+    └── CurrentUserService.cs
+```
+
+### API Layer
+```
+src/API/
+├── Controllers/
+│   └── [Entity]sController.cs
+├── Middleware/
+│   ├── GlobalExceptionHandler.cs
+│   └── MaintenanceModeMiddleware.cs
+└── Program.cs
+```
+
+## 🔧 Teknoloji Stack'i
+
+### Backend
+- **Framework**: ASP.NET Core 8
+- **ORM**: Entity Framework Core
+- **Database**: Microsoft SQL Server (MSSQL)
+- **Authentication**: Microsoft.AspNetCore.Identity
+- **Caching**: IMemoryCache / IDistributedCache
+- **Logging**: Serilog veya ILogger
+- **Validation**: FluentValidation
+- **Mapping**: AutoMapper
+- **Migration**: FluentMigrator
+- **Fake Data**: Bogus
+
+### Maggsoft Framework
+- **Maggsoft.Core**: Temel utility'ler ve extension'lar
+- **Maggsoft.Mssql**: MSSQL entegrasyonu ve repository pattern
+- **Maggsoft.Cache**: Caching mekanizmaları
+- **Maggsoft.Logging**: Logging sistemi
+- **Maggsoft.Api**: API endpoint'leri ve response wrapper'ları
+- **Maggsoft.Identity**: Identity entegrasyonu
+- **Maggsoft.Validation**: Validation framework'ü
+- **Maggsoft.Mapping**: Object mapping utilities
+
+### Frontend
+- **Framework**: Bootstrap 5 (sadece)
+- **Approach**: Mobile-first, responsive
+- **No**: TailwindCSS, custom CSS (mümkün olduğunca)
+
+## 📝 Kod Yazım Kuralları
+
+### Naming Conventions
+- **PascalCase**: Class, Method, Property
+- **camelCase**: Local variables, parameters
+- **UPPER_CASE**: Constants
+- **PascalCase**: File names (C#)
+- **kebab-case**: File names (HTML, CSS, JS)
+
+### Repository Pattern
+```csharp
+public interface I[Entity]Repository
+{
+    // READ
+    Task<IEnumerable<[Entity]>> GetAllAsync();
+    Task<[Entity]?> GetByIdAsync(Guid id);
+    
+    // WRITE
+    Task<[Entity]> AddAsync([Entity] entity);
+    Task<[Entity]> UpdateAsync([Entity] entity);
+    Task DeleteAsync(Guid id);
+    Task<int> SaveChangesAsync();
+}
+```
+
+### Command/Query Pattern
+```csharp
+// Command
+public class Create[Entity]Command : IRequest<ApiResponse<Guid>>
+{
+    // Properties
+}
+
+public class Create[Entity]CommandHandler : IRequestHandler<Create[Entity]Command, ApiResponse<Guid>>
+{
+    public async Task<ApiResponse<Guid>> Handle(Create[Entity]Command request, CancellationToken cancellationToken)
+    {
+        // Implementation
+    }
+}
+
+// Query
+public class Get[Entity]sQuery : IRequest<PaginatedApiResponse<[Entity]Dto>>
+{
+    // Properties
+}
+```
+
+### API Response Pattern
+```csharp
+public class ApiResponse<T>
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public T? Data { get; set; }
+    public List<string> Errors { get; set; } = new();
+}
+
+public class PaginatedApiResponse<T> : ApiResponse<List<T>>
+{
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
+    public int TotalCount { get; set; }
+    public int TotalPages { get; set; }
+}
+```
+
+## 🎯 İş Mantığı Kuralları
+
+### Validation
+- **FluentValidation**: Tüm Command'ler için validator oluştur
+- **Business Rules**: Handler'larda iş kurallarını kontrol et
+- **Null Checks**: Null reference exception'ları önle
+
+### Error Handling
+- **Global Exception Handler**: Tüm exception'ları yakala
+- **Meaningful Messages**: Kullanıcı dostu hata mesajları
+- **Logging**: Tüm hataları logla
+
+### Security
+- **Authentication**: Identity kullan
+- **Authorization**: Role-based access control
+- **Input Validation**: Tüm input'ları validate et
+- **SQL Injection**: Parameterized queries kullan
+
+## 🌐 API Design Rules
+
+### RESTful Endpoints
+```
+GET    /api/[entity]s          # List
+GET    /api/[entity]s/{id}     # Get by ID
+POST   /api/[entity]s          # Create
+PUT    /api/[entity]s/{id}     # Update
+DELETE /api/[entity]s/{id}     # Delete
+```
+
+### HTTP Status Codes
+- **200**: Success
+- **201**: Created
+- **400**: Bad Request
+- **401**: Unauthorized
+- **403**: Forbidden
+- **404**: Not Found
+- **500**: Internal Server Error
+
+### Response Format
+```json
+{
+  "success": true,
+  "message": "İşlem başarılı",
+  "data": {},
+  "errors": []
+}
+```
+
+## 🔄 Development Workflow
+
+### Sıralı Geliştirme
+1. **Domain**: Entity'leri oluştur
+2. **Application**: Interface'leri, DTO'ları, Command/Query'leri oluştur
+3. **Infrastructure**: Repository'leri implement et
+4. **API**: Controller'ları oluştur
+5. **Web/Admin**: UI'ları geliştir
+
+### Repository Implementation
+- **IMssqlRepository**: Kullanma (circular dependency)
+- **Composition**: Repository<T> kullanma
+- **SaveChanges**: Handler'larda explicit çağır
+- **Async/Await**: Tüm database işlemleri async
+
+### Maggsoft Framework Kullanımı
+- **Maggsoft.Mssql.Repository**: Sealed class olduğu için inheritance kullanma
+- **Maggsoft.Mssql.IMssqlRepository**: Interface inheritance yapma (circular dependency)
+- **Maggsoft.Api.Response**: ApiResponse<T> yerine kendi ApiResponse'umuzu kullan
+- **Maggsoft.Cache**: Distributed cache için kullan
+- **Maggsoft.Logging**: Structured logging için kullan
+- **Maggsoft.Validation**: FluentValidation ile entegre et
+- **Maggsoft.Mapping**: AutoMapper ile entegre et
+- **Maggsoft.Mssql.Services**
+- **dotnet add package Maggsoft.Core --version 2.0.39
+- **dotnet add package Maggsoft.Data --version 2.0.20
+- **dotnet add package Maggsoft.Framework --version 2.3.6
+- **dotnet add package Maggsoft.Data.Mssql --version 2.0.10
+- **dotnet add package Maggsoft.Mssql --version 2.0.12
+- **dotnet add package Maggsoft.Cache --version 2.0.22
+- **dotnet add package Maggsoft.Cache.MemoryCache --version 2.0.7
+- **dotnet add package Maggsoft.Services --version 2.0.8
+- **dotnet add package Maggsoft.Aspect.Core --version 1.0.15
+- **dotnet add package Maggsoft.Mssql.Services --version 2.0.17
+- **dotnet add package Maggsoft.Endpoints --version 2.0.7
+- **dotnet add package Maggsoft.Sqlite --version 2.0.8
+- **dotnet add package Maggsoft.Data.Sqlite --version 2.0.12
+- **dotnet add package Maggsoft.Sqlite.Services --version 2.0.10
+- **dotnet add package Maggsoft.Ocelot.Core --version 1.0.6
+- **dotnet add package Maggsoft.Data.Npgsql --version 1.0.11
+- **dotnet add package Maggsoft.Cache.Redis --version 2.0.3
+- **dotnet add package Maggsoft.Data.Mongo --version 1.0.3
+- **dotnet add package Maggsoft.EventBus.IoC --version 1.0.16
+- **dotnet add package Maggsoft.EventBus.RabbitMQ --version 1.0.17
+- **dotnet add package Maggsoft.EventBus.AzureServiceBus --version 1.0.15
+- **dotnet add package Maggsoft.Dto.Sqlite --version 2.0.2
+- **dotnet add package Maggsoft.Dto.Mongo --version 1.0.2
+- **dotnet add package Maggsoft.Dto.Npgsql --version 1.0.2,
+- **dotnet add package Maggsoft.Mongo.Services --version 1.0.8
+- **dotnet add package Maggsoft.Dto.Mssql --version 1.0.2
+- **dotnet add package Maggsoft.Npgsql.Services --version 1.0.8
+- **dotnet add package Maggsoft.EventBus --version 1.0.19
+- **dotnet add package Maggsoft.Npgsql --version 1.0.5
+- **dotnet add package Maggsoft.Logging --version 1.0.6
+- **dotnet add package Maggsoft.Mongo --version 1.0.5
+
+### Seed Data
+- **Admin User**: admin@gmail.com / Super123!
+- **Bogus**: Fake data generation
+- **Migration**: FluentMigrator ile
+
+## 📚 Documentation
+
+### Code Comments
+- **Turkish**: Tüm yorumlar Türkçe
+- **XML Documentation**: Public method'lar için
+- **README**: Proje açıklaması
+
+### Swagger
+- **API Documentation**: Swagger/OpenAPI
+- **Versioning**: API versioning
+- **Examples**: Request/Response örnekleri
+
+## 🚀 Performance Rules
+
+### Caching
+- **Memory Cache**: Sık kullanılan veriler
+- **Distributed Cache**: Multi-instance deployment
+- **Cache Keys**: Anlamlı cache key'leri
+
+### Database
+- **Indexes**: Performans için index'ler
+- **Pagination**: Büyük listeler için
+- **Lazy Loading**: Navigation property'ler için
+
+## 🔧 Configuration
+
+### App Settings
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "..."
+  },
+  "JwtSettings": {
+    "SecretKey": "...",
+    "Issuer": "...",
+    "Audience": "..."
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information"
+    }
+  }
+}
+```
+
+### Dependency Injection
+```csharp
+// Application
+services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+services.AddAutoMapper(typeof(Program).Assembly);
+services.AddFluentValidationAutoValidation();
+
+// Infrastructure
+services.AddDbContext<[ProjectName]DbContext>();
+services.AddIdentity<[User], [Role]>();
+services.AddScoped<I[Entity]Repository, [Entity]Repository>();
+```
+
+## 🎨 UI/UX Rules
+
+### Bootstrap 5
+- **Components**: Navbar, Cards, Buttons, Modals, Forms, Tables
+- **Utilities**: Spacing, Colors, Typography
+- **Grid System**: Responsive layout
+- **No Custom CSS**: Mümkün olduğunca utility class'ları kullan
+
+### Accessibility
+- **Semantic HTML**: Doğru HTML element'leri
+- **Alt Text**: Tüm resimler için
+- **Form Labels**: Tüm form kontrol'leri için
+- **ARIA**: Gerekli yerlerde ARIA attribute'ları
+
+## 🔍 Code Quality
+
+### Best Practices
+- **SOLID Principles**: Single Responsibility, Open/Closed, etc.
+- **DRY**: Don't Repeat Yourself
+- **KISS**: Keep It Simple, Stupid
+- **YAGNI**: You Aren't Gonna Need It
+
+### Code Review Checklist
+- [ ] Naming conventions
+- [ ] Error handling
+- [ ] Validation
+- [ ] Security
+- [ ] Performance
+- [ ] Documentation
+
+## 🚨 Anti-Patterns (Yapma!)
+
+### ❌ Yapılmayacaklar
+- Business logic'i controller'lara yazma
+- Repository'lerde SaveChanges çağırma
+- Hard-coded connection string'ler
+- Exception'ları yakalamadan bırakma
+- Null reference exception'lara izin verme
+- Circular dependency oluşturma
+- IMssqlRepository inheritance kullanma
+- Maggsoft.Mssql.Repository'den inheritance yapma (sealed class)
+- Maggsoft.Api.Response kullanma (kendi ApiResponse'umuzu kullan)
+- Maggsoft framework'ü olmadan proje başlatma
+
+### ✅ Yapılacaklar
+- Clean Architecture'a uy
+- CQRS pattern kullan
+- Proper error handling
+- Comprehensive validation
+- Documentation ekle
+- Security best practices uygula
+
+## 📋 Checklist Template
+
+### Yeni Entity Ekleme
+- [ ] Domain Entity oluştur
+- [ ] Application Interface oluştur
+- [ ] DTO'ları oluştur
+- [ ] Command/Query'leri oluştur
+- [ ] Handler'ları implement et
+- [ ] Repository implement et
+- [ ] Controller oluştur
+- [ ] Validator'ları yaz
+- [ ] Mapping profile oluştur
+- [ ] Seed data ekle
+
+### Yeni Feature Ekleme
+- [ ] Requirements analiz et
+- [ ] Domain model'i güncelle
+- [ ] Application layer'ı güncelle
+- [ ] Infrastructure layer'ı güncelle
+- [ ] API endpoint'lerini ekle
+- [ ] UI'ı güncelle
+- [ ] Documentation güncelle
+
+Bu kurallar tüm projelerinizde tutarlılık sağlayacak ve Clean Architecture prensiplerine uygun geliştirme yapmanıza yardımcı olacaktır. 

@@ -1,16 +1,13 @@
 using MediatR;
-using MinimalAirbnb.Application.Common.Models;
+using Maggsoft.Core.Base;
 using MinimalAirbnb.Application.Properties.DTOs;
 
 namespace MinimalAirbnb.Application.Properties.Queries.GetPropertyById;
 
 /// <summary>
-/// Property ID'ye göre getirme query'si
+/// Property detayı için query
 /// </summary>
-public class GetPropertyByIdQuery : IRequest<ApiResponse<PropertyDto>>
+public class GetPropertyByIdQuery : IRequest<Result<PropertyDto>>
 {
-    /// <summary>
-    /// Property ID'si
-    /// </summary>
     public Guid Id { get; set; }
 } 

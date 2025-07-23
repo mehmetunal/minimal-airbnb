@@ -1,0 +1,148 @@
+@model MinimalAirbnb.Application.Users.DTOs.UserDto
+@{
+    ViewData["Title"] = "Kullanıcı Profili";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- Profil Kartı -->
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        @if (!string.IsNullOrEmpty(Model.ProfilePhotoUrl))
+                        {
+                            <img src="@Model.ProfilePhotoUrl" class="rounded-circle" alt="Profil Fotoğrafı" style="width: 120px; height: 120px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-primary d-inline-flex align-items-center justify-content-center text-white" style="width: 120px; height: 120px;">
+                                <i class="bi bi-person fs-1"></i>
+                            </div>
+                        }
+                    </div>
+                    <h4 class="card-title">@Model.FirstName @Model.LastName</h4>
+                    <p class="text-muted">@Model.Email</p>
+                    <div class="d-flex justify-content-center gap-2 mb-3">
+                        <span class="badge bg-primary">@Model.UserType.ToString()</span>
+                        @if (Model.IsVerified)
+                        {
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle"></i> Doğrulanmış
+                            </span>
+                        }
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Settings", new { id = Model.Id })" class="btn btn-outline-primary">
+                            <i class="bi bi-gear"></i> Ayarları Düzenle
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İletişim Bilgileri -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-telephone"></i> İletişim Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <small class="text-muted">Telefon:</small><br>
+                        <span>@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Belirtilmemiş" : Model.PhoneNumber)</span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Doğum Tarihi:</small><br>
+                        <span>@(Model.DateOfBirth?.ToString("dd.MM.yyyy") ?? "Belirtilmemiş")</span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Cinsiyet:</small><br>
+                        <span>@(Model.Gender?.ToString() ?? "Belirtilmemiş")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- Hakkında -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-person-lines-fill"></i> Hakkında</h6>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.Bio))
+                    {
+                        <p>@Model.Bio</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted">Henüz bir biyografi eklenmemiş.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Adres Bilgileri -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-geo-alt"></i> Adres Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <small class="text-muted">Ülke:</small><br>
+                            <span>@(string.IsNullOrEmpty(Model.Country) ? "Belirtilmemiş" : Model.Country)</span>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <small class="text-muted">Şehir:</small><br>
+                            <span>@(string.IsNullOrEmpty(Model.City) ? "Belirtilmemiş" : Model.City)</span>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <small class="text-muted">Adres:</small><br>
+                            <span>@(string.IsNullOrEmpty(Model.Address) ? "Belirtilmemiş" : Model.Address)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hesap Bilgileri -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-shield-check"></i> Hesap Bilgileri</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <small class="text-muted">Kayıt Tarihi:</small><br>
+                            <span>@Model.CreatedAt.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <small class="text-muted">Son Güncelleme:</small><br>
+                            <span>@Model.UpdatedAt.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <small class="text-muted">Durum:</small><br>
+                            @if (Model.IsActive)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Pasif</span>
+                            }
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <small class="text-muted">E-posta Doğrulama:</small><br>
+                            @if (Model.IsEmailVerified)
+                            {
+                                <span class="badge bg-success">Doğrulanmış</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">Doğrulanmamış</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

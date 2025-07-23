@@ -9,73 +9,77 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IReservationRepository
 {
     /// <summary>
-    /// Rezervasyon ekler
+    /// Tüm reservation'ları getir (IQueryable)
     /// </summary>
-    Task<Reservation> AddAsync(Reservation reservation);
+    IQueryable<Reservation> GetAll();
 
     /// <summary>
-    /// Rezervasyon günceller
+    /// Tüm reservation'ları getir
     /// </summary>
-    Task<Reservation> UpdateAsync(Reservation reservation);
+    Task<IEnumerable<Reservation>> GetAllAsync();
 
     /// <summary>
-    /// Rezervasyon siler
-    /// </summary>
-    Task DeleteAsync(Guid id);
-
-    /// <summary>
-    /// Değişiklikleri kaydeder
-    /// </summary>
-    /// <returns>Kaydedilen değişiklik sayısı</returns>
-    Task<int> SaveChangesAsync();
-
-    /// <summary>
-    /// ID'ye göre rezervasyon getir
+    /// ID'ye göre reservation getir
     /// </summary>
     Task<Reservation?> GetByIdAsync(Guid id);
 
     /// <summary>
-    /// Misafir ID'sine göre rezervasyonları getir
+    /// Property'ye göre reservation'ları getir
     /// </summary>
-    Task<IEnumerable<Reservation>> GetByGuestIdAsync(Guid guestId);
+    Task<IEnumerable<Reservation>> GetByPropertyAsync(Guid propertyId);
 
     /// <summary>
-    /// Ev ID'sine göre rezervasyonları getir
+    /// Kullanıcıya göre reservation'ları getir
     /// </summary>
-    Task<IEnumerable<Reservation>> GetByPropertyIdAsync(Guid propertyId);
+    Task<IEnumerable<Reservation>> GetByUserAsync(Guid userId);
 
     /// <summary>
-    /// Ev sahibi ID'sine göre rezervasyonları getir
-    /// </summary>
-    Task<IEnumerable<Reservation>> GetByHostIdAsync(Guid hostId);
-
-    /// <summary>
-    /// Duruma göre rezervasyonları getir
-    /// </summary>
-    Task<IEnumerable<Reservation>> GetByStatusAsync(ReservationStatus status);
-
-    /// <summary>
-    /// Tarih aralığına göre rezervasyonları getir
+    /// Tarih aralığına göre reservation'ları getir
     /// </summary>
     Task<IEnumerable<Reservation>> GetByDateRangeAsync(DateTime startDate, DateTime endDate);
 
     /// <summary>
-    /// Onay bekleyen rezervasyonları getir
+    /// Property ve tarih aralığına göre çakışan reservation'ları getir
     /// </summary>
-    Task<IEnumerable<Reservation>> GetPendingReservationsAsync();
+    Task<IEnumerable<Reservation>> GetConflictingReservationsAsync(Guid propertyId, DateTime checkInDate, DateTime checkOutDate);
 
     /// <summary>
-    /// Onaylanmış rezervasyonları getir
+    /// Duruma göre reservation'ları getir
     /// </summary>
-    Task<IEnumerable<Reservation>> GetConfirmedReservationsAsync();
+    Task<IEnumerable<Reservation>> GetByStatusAsync(ReservationStatus status);
 
     /// <summary>
-    /// İptal edilmiş rezervasyonları getir
+    /// Aktif reservation'ları getir
     /// </summary>
-    Task<IEnumerable<Reservation>> GetCancelledReservationsAsync();
+    Task<IEnumerable<Reservation>> GetActiveReservationsAsync();
 
     /// <summary>
-    /// Tamamlanmış rezervasyonları getir
+    /// Geçmiş reservation'ları getir
     /// </summary>
-    Task<IEnumerable<Reservation>> GetCompletedReservationsAsync();
+    Task<IEnumerable<Reservation>> GetPastReservationsAsync();
+
+    /// <summary>
+    /// Gelecek reservation'ları getir
+    /// </summary>
+    Task<IEnumerable<Reservation>> GetUpcomingReservationsAsync();
+
+    /// <summary>
+    /// Reservation ekle
+    /// </summary>
+    Task<Reservation> AddAsync(Reservation reservation);
+
+    /// <summary>
+    /// Reservation güncelle
+    /// </summary>
+    Task<Reservation> UpdateAsync(Reservation reservation);
+
+    /// <summary>
+    /// Reservation sil
+    /// </summary>
+    Task DeleteAsync(Guid id);
+
+    /// <summary>
+    /// Değişiklikleri kaydet
+    /// </summary>
+    Task<int> SaveChangesAsync();
 } 

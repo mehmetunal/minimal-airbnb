@@ -8,6 +8,16 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IMessageRepository
 {
     /// <summary>
+    /// Tüm mesajları getir (IQueryable)
+    /// </summary>
+    IQueryable<Message> GetAll();
+
+    /// <summary>
+    /// Tüm mesajları getir
+    /// </summary>
+    Task<IEnumerable<Message>> GetAllAsync();
+
+    /// <summary>
     /// Mesaj ekler
     /// </summary>
     Task<Message> AddAsync(Message message);
@@ -39,17 +49,7 @@ public interface IMessageRepository
     Task<IEnumerable<Message>> GetConversationAsync(Guid user1Id, Guid user2Id);
 
     /// <summary>
-    /// Okunmamış mesajları getir
+    /// Mesaj siler
     /// </summary>
-    Task<IEnumerable<Message>> GetUnreadMessagesAsync(Guid userId);
-
-    /// <summary>
-    /// Mesajı okundu olarak işaretle
-    /// </summary>
-    Task MarkAsReadAsync(Guid messageId);
-
-    /// <summary>
-    /// Tüm mesajları okundu olarak işaretle
-    /// </summary>
-    Task MarkAllAsReadAsync(Guid userId, Guid senderId);
+    Task DeleteAsync(Guid id);
 } 

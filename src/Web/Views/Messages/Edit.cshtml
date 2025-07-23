@@ -1,0 +1,216 @@
+@model MinimalAirbnb.Application.Messages.DTOs.MessageDto
+@{
+    ViewData["Title"] = "Mesaj Düzenle";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil-square text-primary"></i>
+                        Mesaj Düzenle
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Edit">
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="hidden" name="SenderId" value="@Model.SenderId" />
+                        <input type="hidden" name="ReceiverId" value="@Model.ReceiverId" />
+                        @if (Model.PropertyId.HasValue)
+                        {
+                            <input type="hidden" name="PropertyId" value="@Model.PropertyId" />
+                        }
+                        @if (Model.ReservationId.HasValue)
+                        {
+                            <input type="hidden" name="ReservationId" value="@Model.ReservationId" />
+                        }
+
+                        <!-- Alıcı (Sadece görüntüleme) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Alıcı</label>
+                            <input type="text" class="form-control" value="@Model.ReceiverName" readonly>
+                            <small class="text-muted">Alıcı değiştirilemez</small>
+                        </div>
+
+                        <!-- Konu -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label fw-bold">Konu</label>
+                            <input type="text" class="form-control" id="subject" name="Subject" 
+                                   value="@Model.Subject" placeholder="Mesaj konusunu girin" required maxlength="200">
+                            <div class="form-text">
+                                <span id="subject-count">@Model.Subject.Length</span>/200 karakter
+                            </div>
+                        </div>
+
+                        <!-- Mesaj İçeriği -->
+                        <div class="mb-3">
+                            <label for="content" class="form-label fw-bold">Mesaj</label>
+                            <textarea class="form-control" id="content" name="Content" rows="6" 
+                                      placeholder="Mesajınızı yazın..." required maxlength="2000">@Model.Content</textarea>
+                            <div class="form-text">
+                                <span id="content-count">@Model.Content.Length</span>/2000 karakter
+                            </div>
+                        </div>
+
+                        <!-- Mesaj Tipi -->
+                        <div class="mb-3">
+                            <label for="messageType" class="form-label">Mesaj Tipi</label>
+                            <select class="form-select" id="messageType" name="MessageType">
+                                <option value="Private">Özel</option>
+                                <option value="General">Genel</option>
+                                <option value="Support">Destek</option>
+                                <option value="Booking">Rezervasyon</option>
+                            </select>
+                        </div>
+
+                        <!-- Öncelik -->
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Öncelik</label>
+                            <select class="form-select" id="priority" name="Priority">
+                                <option value="Low">Düşük</option>
+                                <option value="Normal">Normal</option>
+                                <option value="High">Yüksek</option>
+                                <option value="Urgent">Acil</option>
+                            </select>
+                        </div>
+
+                        <!-- Kategori -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Kategori</label>
+                            <select class="form-select" id="category" name="Category">
+                                <option value="General">Genel</option>
+                                <option value="Booking">Rezervasyon</option>
+                                <option value="Payment">Ödeme</option>
+                                <option value="Support">Destek</option>
+                                <option value="Complaint">Şikayet</option>
+                                <option value="Suggestion">Öneri</option>
+                            </select>
+                        </div>
+
+                        <!-- Yanıtlanan Mesaj (Sadece görüntüleme) -->
+                        <div class="mb-3">
+                            <label class="form-label">Yanıtlanan Mesaj ID</label>
+                            @if (Model.ReplyToMessageId.HasValue)
+                            {
+                                <div class="input-group">
+                                    <input type="text" class="form-control" value="@Model.ReplyToMessageId" readonly>
+                                    <a href="@Url.Action("Details", "Messages", new { id = Model.ReplyToMessageId })" 
+                                       class="btn btn-outline-secondary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" value="Yok" readonly>
+                            }
+                            <small class="text-muted">Yanıtlanan mesaj değiştirilemez</small>
+                        </div>
+
+                        <!-- Durum Bilgileri -->
+                        <div class="mb-3">
+                            <label class="form-label">Durum Bilgileri</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <strong>Gönderilme:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                    </small>
+                                </div>
+                                @if (Model.IsRead && Model.ReadDate.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            <strong>Okunma:</strong> @Model.ReadDate.Value.ToString("dd.MM.yyyy HH:mm")
+                                        </small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Details", "Messages", new { id = Model.Id })" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                İptal
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i>
+                                Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const subjectInput = document.getElementById('subject');
+            const contentTextarea = document.getElementById('content');
+            const subjectCount = document.getElementById('subject-count');
+            const contentCount = document.getElementById('content-count');
+
+            // Konu karakter sayacı
+            subjectInput.addEventListener('input', function() {
+                const length = this.value.length;
+                subjectCount.textContent = length;
+                
+                if (length > 200) {
+                    subjectCount.style.color = '#dc3545';
+                } else if (length > 180) {
+                    subjectCount.style.color = '#ffc107';
+                } else {
+                    subjectCount.style.color = '#6c757d';
+                }
+            });
+
+            // İçerik karakter sayacı
+            contentTextarea.addEventListener('input', function() {
+                const length = this.value.length;
+                contentCount.textContent = length;
+                
+                if (length > 2000) {
+                    contentCount.style.color = '#dc3545';
+                } else if (length > 1800) {
+                    contentCount.style.color = '#ffc107';
+                } else {
+                    contentCount.style.color = '#6c757d';
+                }
+            });
+
+            // Selected değerlerini ayarla
+            const messageTypeSelect = document.getElementById('messageType');
+            const prioritySelect = document.getElementById('priority');
+            const categorySelect = document.getElementById('category');
+            
+            // Mesaj tipi
+            for (let i = 0; i < messageTypeSelect.options.length; i++) {
+                if (messageTypeSelect.options[i].value == '@Model.MessageType.ToString()') {
+                    messageTypeSelect.options[i].selected = true;
+                    break;
+                }
+            }
+            
+            // Öncelik
+            for (let i = 0; i < prioritySelect.options.length; i++) {
+                if (prioritySelect.options[i].value == '@Model.Priority.ToString()') {
+                    prioritySelect.options[i].selected = true;
+                    break;
+                }
+            }
+            
+            // Kategori
+            for (let i = 0; i < categorySelect.options.length; i++) {
+                if (categorySelect.options[i].value == '@Model.Category.ToString()') {
+                    categorySelect.options[i].selected = true;
+                    break;
+                }
+            }
+        });
+    </script>
+} 

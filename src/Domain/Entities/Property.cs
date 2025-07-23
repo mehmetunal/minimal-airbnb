@@ -39,6 +39,8 @@ public class Property : BaseEntity
     /// </summary>
     [Range(1, 20)]
     public int BedroomCount { get; set; }
+
+
     
     /// <summary>
     /// Yatak sayısı
@@ -51,12 +53,16 @@ public class Property : BaseEntity
     /// </summary>
     [Range(1, 10)]
     public int BathroomCount { get; set; }
+
+
     
     /// <summary>
     /// Maksimum misafir sayısı
     /// </summary>
     [Range(1, 20)]
     public int MaxGuestCount { get; set; }
+
+
     
     /// <summary>
     /// Günlük fiyat
@@ -155,16 +161,56 @@ public class Property : BaseEntity
     public int MinimumStayDays { get; set; } = 1;
 
     /// <summary>
+    /// Minimum konaklama süresi (gün) - alternatif
+    /// </summary>
+    [Range(1, 30)]
+    public int MinimumStay { get; set; } = 1;
+
+    /// <summary>
     /// Maksimum konaklama süresi (gün)
     /// </summary>
     [Range(1, 365)]
     public int MaximumStayDays { get; set; } = 30;
 
     /// <summary>
+    /// Maksimum konaklama süresi (gün) - alternatif
+    /// </summary>
+    [Range(1, 365)]
+    public int MaximumStay { get; set; } = 30;
+
+    /// <summary>
     /// İptal politikası (gün)
     /// </summary>
     [Range(0, 30)]
     public int CancellationPolicyDays { get; set; } = 24;
+
+    /// <summary>
+    /// İptal politikası (metin)
+    /// </summary>
+    [StringLength(500)]
+    public string? CancellationPolicy { get; set; }
+
+    /// <summary>
+    /// Ev kuralları
+    /// </summary>
+    [StringLength(1000)]
+    public string? HouseRules { get; set; }
+
+    /// <summary>
+    /// Olanaklar
+    /// </summary>
+    [StringLength(1000)]
+    public string? Amenities { get; set; }
+
+    /// <summary>
+    /// Aktif mi?
+    /// </summary>
+    public bool IsActive { get; set; } = true;
+
+    /// <summary>
+    /// Anında rezervasyon yapılabilir mi?
+    /// </summary>
+    public bool IsInstantBookable { get; set; } = false;
 
     /// <summary>
     /// Ortalama puan
@@ -218,10 +264,7 @@ public class Property : BaseEntity
     /// </summary>
     public virtual ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 
-    /// <summary>
-    /// Mesajlar
-    /// </summary>
-    public virtual ICollection<Message> Messages { get; set; } = new List<Message>();
+    // Messages navigation property'si kaldırıldı çünkü Entity Framework otomatik kolon oluşturuyor
 
     // Computed Properties
     /// <summary>

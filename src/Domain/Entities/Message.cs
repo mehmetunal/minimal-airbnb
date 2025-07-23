@@ -129,10 +129,7 @@ public class Message : BaseEntity
     /// </summary>
     public virtual User Receiver { get; set; } = null!;
     
-    /// <summary>
-    /// Rezervasyon (opsiyonel)
-    /// </summary>
-    public virtual Reservation? Reservation { get; set; }
+    // Navigation property'ler kaldırıldı çünkü Entity Framework otomatik kolon oluşturuyor
     
     /// <summary>
     /// Ev (opsiyonel)

@@ -1,0 +1,208 @@
+@model Maggsoft.Core.Model.Pagination.PagedList<MinimalAirbnb.Application.Reservations.DTOs.ReservationDto>
+@{
+    ViewData["Title"] = "Rezervasyonlar";
+    var currentPage = Model.PageIndex + 1;
+}
+
+<div class="container py-5">
+    <!-- Başlık -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold">
+                <i class="bi bi-calendar-check text-primary"></i> Rezervasyonlar
+            </h1>
+            <p class="text-muted">Tüm rezervasyonlarınızı buradan yönetebilirsiniz</p>
+        </div>
+    </div>
+
+    <!-- Filtreler -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Durum</label>
+                            <select name="Status" class="form-select">
+                                <option value="">Tümü</option>
+                                <option value="1" selected="@(Context.Request.Query["Status"] == "1")">Beklemede</option>
+                                <option value="2" selected="@(Context.Request.Query["Status"] == "2")">Onaylandı</option>
+                                <option value="3" selected="@(Context.Request.Query["Status"] == "3")">Reddedildi</option>
+                                <option value="4" selected="@(Context.Request.Query["Status"] == "4")">İptal Edildi</option>
+                                <option value="5" selected="@(Context.Request.Query["Status"] == "5")">Tamamlandı</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" name="StartDate" class="form-control" value="@Context.Request.Query["StartDate"]">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Bitiş Tarihi</label>
+                            <input type="date" name="EndDate" class="form-control" value="@Context.Request.Query["EndDate"]">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bi bi-search"></i> Filtrele
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-clockwise"></i> Temizle
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rezervasyon Listesi -->
+    <div class="row">
+        @if (Model?.Data != null && Model.Data.Any())
+        {
+            foreach (var reservation in Model.Data)
+            {
+                <div class="col-lg-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">@reservation.PropertyTitle</h5>
+                                <span class="badge @GetStatusBadgeClass(reservation.Status)">
+                                    @GetStatusText(reservation.Status)
+                                </span>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">Giriş Tarihi</small><br>
+                                    <strong>@reservation.CheckInDate.ToString("dd.MM.yyyy")</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Çıkış Tarihi</small><br>
+                                    <strong>@reservation.CheckOutDate.ToString("dd.MM.yyyy")</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">Misafir Sayısı</small><br>
+                                    <strong>@reservation.GuestCount kişi</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Toplam Tutar</small><br>
+                                    <strong class="text-primary">₺@reservation.TotalPrice</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("Details", new { id = reservation.Id })" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Detaylar
+                                </a>
+                                @if (reservation.Status == MinimalAirbnb.Domain.Enums.ReservationStatus.Pending)
+                                {
+                                    <a href="@Url.Action("Edit", new { id = reservation.Id })" class="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Düzenle
+                                    </a>
+                                }
+                                @if (reservation.Status == MinimalAirbnb.Domain.Enums.ReservationStatus.Confirmed || 
+                                     reservation.Status == MinimalAirbnb.Domain.Enums.ReservationStatus.Pending)
+                                {
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="cancelReservation('@reservation.Id')">
+                                        <i class="bi bi-x-circle"></i> İptal Et
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-calendar-x fs-1 text-muted mb-3"></i>
+                <h3>Henüz rezervasyonunuz bulunmuyor</h3>
+                <p class="text-muted">İlk rezervasyonunuzu yapmak için ev aramaya başlayın.</p>
+                <a href="@Url.Action("Index", "Properties")" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Ev Ara
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Sayfalama -->
+    @if (Model?.TotalPages > 1)
+    {
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Rezervasyon sayfalama">
+                    <ul class="pagination justify-content-center">
+                        @if (currentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = currentPage - 1, PageSize = Model.PageSize, Status = Context.Request.Query["Status"], StartDate = Context.Request.Query["StartDate"], EndDate = Context.Request.Query["EndDate"] })">
+                                    Önceki
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(Model.TotalPages, currentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = i, PageSize = Model.PageSize, Status = Context.Request.Query["Status"], StartDate = Context.Request.Query["StartDate"], EndDate = Context.Request.Query["EndDate"] })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        @if (currentPage < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = currentPage + 1, PageSize = Model.PageSize, Status = Context.Request.Query["Status"], StartDate = Context.Request.Query["StartDate"], EndDate = Context.Request.Query["EndDate"] })">
+                                    Sonraki
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+</div>
+
+@functions {
+    private string GetStatusBadgeClass(MinimalAirbnb.Domain.Enums.ReservationStatus status)
+    {
+        return status switch
+        {
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Pending => "bg-warning",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Confirmed => "bg-success",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Rejected => "bg-danger",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Cancelled => "bg-secondary",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Completed => "bg-info",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetStatusText(MinimalAirbnb.Domain.Enums.ReservationStatus status)
+    {
+        return status switch
+        {
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Pending => "Beklemede",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Confirmed => "Onaylandı",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Rejected => "Reddedildi",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Cancelled => "İptal Edildi",
+            MinimalAirbnb.Domain.Enums.ReservationStatus.Completed => "Tamamlandı",
+            _ => "Bilinmiyor"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        function cancelReservation(reservationId) {
+            if (confirm('Bu rezervasyonu iptal etmek istediğinizden emin misiniz?')) {
+                // AJAX ile iptal işlemi yapılabilir
+                window.location.href = `/Reservations/Cancel/${reservationId}`;
+            }
+        }
+    </script>
+} 

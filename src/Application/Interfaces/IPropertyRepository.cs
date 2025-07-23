@@ -1,5 +1,6 @@
 using MinimalAirbnb.Domain.Entities;
 using MinimalAirbnb.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Application.Interfaces;
 
@@ -9,11 +10,43 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IPropertyRepository
 {
     /// <summary>
+    /// Tüm property'leri getir (IQueryable)
+    /// </summary>
+    IQueryable<Property> GetAll();
+
+    /// <summary>
+    /// Tüm property'leri getir
+    /// </summary>
+    /// <returns>Property listesi</returns>
+    Task<IEnumerable<Property>> GetAllAsync();
+
+    /// <summary>
+    /// ID'ye göre property getir
+    /// </summary>
+    /// <param name="id">Property ID</param>
+    /// <returns>Property</returns>
+    Task<Property?> GetByIdAsync(Guid id);
+
+    /// <summary>
     /// Property ekler
     /// </summary>
     /// <param name="property">Eklenecek property</param>
     /// <returns>Eklenen property</returns>
     Task<Property> AddAsync(Property property);
+
+    /// <summary>
+    /// Property günceller
+    /// </summary>
+    /// <param name="property">Güncellenecek property</param>
+    /// <returns>Güncellenen property</returns>
+    Task<Property> UpdateAsync(Property property);
+
+    /// <summary>
+    /// Property siler
+    /// </summary>
+    /// <param name="id">Silinecek property ID</param>
+    /// <returns>Task</returns>
+    Task DeleteAsync(Guid id);
 
     /// <summary>
     /// Değişiklikleri kaydeder

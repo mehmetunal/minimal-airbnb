@@ -1,0 +1,212 @@
+@model MinimalAirbnb.Application.Users.DTOs.UserDto
+@{
+    ViewData["Title"] = "Hesap Ayarları";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-3">
+            <!-- Ayarlar Menüsü -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-gear"></i> Ayarlar</h6>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="#profile" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                        <i class="bi bi-person"></i> Profil Bilgileri
+                    </a>
+                    <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="bi bi-shield-lock"></i> Güvenlik
+                    </a>
+                    <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="bi bi-bell"></i> Bildirimler
+                    </a>
+                    <a href="#privacy" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                        <i class="bi bi-eye"></i> Gizlilik
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="tab-content">
+                <!-- Profil Bilgileri -->
+                <div class="tab-pane fade show active" id="profile">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-person"></i> Profil Bilgileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" asp-action="UpdateProfile">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="firstName" class="form-label">Ad</label>
+                                        <input type="text" class="form-control" id="firstName" name="firstName" value="@Model.FirstName" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="lastName" class="form-label">Soyad</label>
+                                        <input type="text" class="form-control" id="lastName" name="lastName" value="@Model.LastName" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-posta Adresi</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="@Model.Email" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="phoneNumber" class="form-label">Telefon Numarası</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="@Model.PhoneNumber">
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="dateOfBirth" class="form-label">Doğum Tarihi</label>
+                                        <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="@Model.DateOfBirth?.ToString("yyyy-MM-dd")">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="gender" class="form-label">Cinsiyet</label>
+                                        <select class="form-select" id="gender" name="gender">
+                                            <option value="">Seçiniz</option>
+                                            <option value="1" selected="@(Model.Gender == MinimalAirbnb.Domain.Enums.Gender.Male)">Erkek</option>
+                                            <option value="2" selected="@(Model.Gender == MinimalAirbnb.Domain.Enums.Gender.Female)">Kadın</option>
+                                            <option value="3" selected="@(Model.Gender == MinimalAirbnb.Domain.Enums.Gender.Other)">Diğer</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="bio" class="form-label">Hakkında</label>
+                                    <textarea class="form-control" id="bio" name="bio" rows="3">@Model.Bio</textarea>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle"></i> Değişiklikleri Kaydet
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Güvenlik -->
+                <div class="tab-pane fade" id="security">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-shield-lock"></i> Güvenlik</h6>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" asp-action="ChangePassword">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                
+                                <div class="mb-3">
+                                    <label for="currentPassword" class="form-label">Mevcut Şifre</label>
+                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="newPassword" class="form-label">Yeni Şifre</label>
+                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="confirmNewPassword" class="form-label">Yeni Şifre Tekrar</label>
+                                    <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="bi bi-key"></i> Şifreyi Değiştir
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bildirimler -->
+                <div class="tab-pane fade" id="notifications">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-bell"></i> Bildirimler</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                                    <label class="form-check-label" for="emailNotifications">
+                                        E-posta bildirimleri
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="smsNotifications">
+                                    <label class="form-check-label" for="smsNotifications">
+                                        SMS bildirimleri
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="pushNotifications" checked>
+                                    <label class="form-check-label" for="pushNotifications">
+                                        Push bildirimleri
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Ayarları Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gizlilik -->
+                <div class="tab-pane fade" id="privacy">
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-eye"></i> Gizlilik</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="profileVisibility" checked>
+                                    <label class="form-check-label" for="profileVisibility">
+                                        Profilimi herkese açık göster
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="onlineStatus" checked>
+                                    <label class="form-check-label" for="onlineStatus">
+                                        Çevrimiçi durumumu göster
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="activityStatus">
+                                    <label class="form-check-label" for="activityStatus">
+                                        Son aktivite zamanımı göster
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Ayarları Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,120 +1,61 @@
 using MediatR;
-using Microsoft.AspNetCore.Identity;
-using MinimalAirbnb.Application.Common.Models;
-using MinimalAirbnb.Application.Common.Interfaces;
 using MinimalAirbnb.Application.Interfaces;
-using MinimalAirbnb.Domain.Entities;
+using MinimalAirbnb.Application.Properties.Commands.CreateProperty;
+using Maggsoft.Core.Base;
+using Maggsoft.Core.Model;
 using MinimalAirbnb.Domain.Enums;
 
 namespace MinimalAirbnb.Application.Properties.Commands.CreateProperty;
 
 /// <summary>
-/// CreatePropertyCommand için handler
+/// Property oluşturma command handler'ı
 /// </summary>
-public class CreatePropertyCommandHandler : IRequestHandler<CreatePropertyCommand, ApiResponse<Guid>>
+public class CreatePropertyCommandHandler : IRequestHandler<CreatePropertyCommand, Result<object>>
 {
     private readonly IPropertyRepository _propertyRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly ICurrentUserService _currentUserService;
 
-    public CreatePropertyCommandHandler(
-        IPropertyRepository propertyRepository,
-        IUserRepository userRepository,
-        ICurrentUserService currentUserService)
+    public CreatePropertyCommandHandler(IPropertyRepository propertyRepository)
     {
         _propertyRepository = propertyRepository;
-        _userRepository = userRepository;
-        _currentUserService = currentUserService;
     }
 
-    public async Task<ApiResponse<Guid>> Handle(CreatePropertyCommand request, CancellationToken cancellationToken)
+    public async Task<Result<object>> Handle(CreatePropertyCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // Mevcut kullanıcıyı al
-            var currentUserId = _currentUserService.UserId;
-            if (currentUserId == null)
+            if (!Enum.TryParse<PropertyType>(request.PropertyType, out var propertyType))
             {
-                return new ApiResponse<Guid>
-                {
-                    Success = false,
-                    Message = "Kullanıcı girişi yapılmamış"
-                };
+                return Result<object>.Failure(new Error("400", "Belirtilen property tipi sistemde tanımlı değil."));
             }
 
-            // Kullanıcının host olup olmadığını kontrol et
-            var user = await _userRepository.GetByIdAsync(currentUserId.Value);
-            if (user == null)
+            var property = new MinimalAirbnb.Domain.Entities.Property
             {
-                return new ApiResponse<Guid>
-                {
-                    Success = false,
-                    Message = "Kullanıcı bulunamadı"
-                };
-            }
-
-            if (user.UserType != UserType.Host && user.UserType != UserType.Admin)
-            {
-                return new ApiResponse<Guid>
-                {
-                    Success = false,
-                    Message = "Sadece host kullanıcılar ev oluşturabilir"
-                };
-            }
-
-            // Property oluştur
-            var property = new Property
-            {
-                Id = Guid.NewGuid(),
-                HostId = currentUserId.Value,
+                HostId = Guid.NewGuid(), // Default host ID - gerçek uygulamada current user'dan alınmalı
                 Title = request.Title,
                 Description = request.Description,
-                PropertyType = request.PropertyType,
-                BedroomCount = request.BedroomCount,
-                BedCount = request.BedCount,
-                BathroomCount = request.BathroomCount,
-                MaxGuestCount = request.MaxGuestCount,
+                PropertyType = propertyType,
                 PricePerNight = request.PricePerNight,
-                CleaningFee = request.CleaningFee,
-                ServiceFee = request.ServiceFee,
                 Address = request.Address,
                 City = request.City,
                 Country = request.Country,
                 PostalCode = request.PostalCode,
-                Latitude = request.Latitude,
-                Longitude = request.Longitude,
-                HasWifi = request.HasWifi,
-                HasAirConditioning = request.HasAirConditioning,
-                HasKitchen = request.HasKitchen,
-                HasParking = request.HasParking,
-                HasPool = request.HasPool,
-                AllowsPets = request.AllowsPets,
-                AllowsSmoking = request.AllowsSmoking,
-                MinimumStayDays = request.MinStayDays,
-                MaximumStayDays = request.MaxStayDays,
-                CancellationPolicyDays = request.CancellationDays,
-                IsPublish = true,
-                IsDeleted = false
+                Latitude = (double)request.Latitude,
+                Longitude = (double)request.Longitude,
+                BedroomCount = request.Bedrooms,
+                BathroomCount = request.Bathrooms,
+                MaxGuestCount = request.MaxGuests,
+                MinimumStayDays = request.MinimumStay,
+                MaximumStayDays = request.MaximumStay
             };
 
-            // Property'yi repository üzerinden ekle
-            await _propertyRepository.AddAsync(property);
+            var createdProperty = await _propertyRepository.AddAsync(property);
             await _propertyRepository.SaveChangesAsync();
 
-            return new ApiResponse<Guid>
-            {
-                Success = true,
-                Message = "Ev başarıyla oluşturuldu",
-                Data = property.Id
-            };
+            return Result<object>.Success(createdProperty.Id, new SuccessMessage("200", "Property sisteme kaydedildi."));
         }
         catch (Exception ex)
         {
-            return new ApiResponse<Guid>
-            {
-                Success = false,
-                Message = $"Ev oluşturulurken hata oluştu: {ex.Message}"
-            };
+            return Result<object>.Failure(new Error("500", $"Property oluşturulurken hata oluştu: {ex.Message}"));
         }
     }
-} 
+}

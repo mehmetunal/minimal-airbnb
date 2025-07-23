@@ -1,15 +1,12 @@
 using MediatR;
-using MinimalAirbnb.Application.Common.Models;
+using Maggsoft.Core.Base;
 
 namespace MinimalAirbnb.Application.Properties.Commands.DeleteProperty;
 
 /// <summary>
 /// Property silme command'i
 /// </summary>
-public class DeletePropertyCommand : IRequest<ApiResponse<bool>>
+public class DeletePropertyCommand : IRequest<Result<object>>
 {
-    /// <summary>
-    /// Property ID'si
-    /// </summary>
     public Guid Id { get; set; }
 } 

@@ -1,0 +1,288 @@
+@model MinimalAirbnb.Application.Reservations.DTOs.ReservationDto
+@{
+    ViewData["Title"] = "Rezervasyon Düzenle";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil-square text-success"></i>
+                        Rezervasyon Düzenle
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Edit">
+                        <input type="hidden" name="Id" value="@Model.Id" />
+                        <input type="hidden" name="PropertyId" value="@Model.PropertyId" />
+                        <input type="hidden" name="GuestId" value="@Model.GuestId" />
+                        <input type="hidden" name="HostId" value="@Model.HostId" />
+
+                        <!-- Ev Bilgileri (Sadece görüntüleme) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Ev</label>
+                            <input type="text" class="form-control" value="@Model.PropertyTitle" readonly>
+                            <small class="text-muted">Ev değiştirilemez</small>
+                        </div>
+
+                        <!-- Misafir Bilgileri (Sadece görüntüleme) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Misafir</label>
+                            <input type="text" class="form-control" value="@Model.GuestName" readonly>
+                            <small class="text-muted">Misafir değiştirilemez</small>
+                        </div>
+
+                        <!-- Tarih Seçimi -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="checkInDate" class="form-label fw-bold">Check-in Tarihi</label>
+                                <input type="date" class="form-control" id="checkInDate" name="CheckInDate" 
+                                       value="@Model.CheckInDate.ToString("yyyy-MM-dd")" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="checkOutDate" class="form-label fw-bold">Check-out Tarihi</label>
+                                <input type="date" class="form-control" id="checkOutDate" name="CheckOutDate" 
+                                       value="@Model.CheckOutDate.ToString("yyyy-MM-dd")" required>
+                            </div>
+                        </div>
+
+                        <!-- Misafir Sayısı -->
+                        <div class="mb-3">
+                            <label for="guestCount" class="form-label fw-bold">Misafir Sayısı</label>
+                            <select class="form-select" id="guestCount" name="GuestCount" required>
+                                @for (int i = 1; i <= 10; i++)
+                                {
+                                    <option value="@i">@i kişi</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Fiyat Bilgileri -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="pricePerNight" class="form-label">Gecelik Fiyat (₺)</label>
+                                <input type="number" class="form-control" id="pricePerNight" name="PricePerNight" 
+                                       step="0.01" min="0" value="@Model.PricePerNight" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cleaningFee" class="form-label">Temizlik Ücreti (₺)</label>
+                                <input type="number" class="form-control" id="cleaningFee" name="CleaningFee" 
+                                       step="0.01" min="0" value="@Model.CleaningFee">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="serviceFee" class="form-label">Hizmet Ücreti (₺)</label>
+                                <input type="number" class="form-control" id="serviceFee" name="ServiceFee" 
+                                       step="0.01" min="0" value="@Model.ServiceFee">
+                            </div>
+                        </div>
+
+                        <!-- Toplam Fiyat (Otomatik Hesaplanacak) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Toplam Fiyat</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input type="text" class="form-control" id="totalPrice" name="TotalPrice" 
+                                       value="@Model.TotalPrice" readonly>
+                            </div>
+                            <small class="text-muted">Toplam fiyat otomatik olarak hesaplanacaktır</small>
+                        </div>
+
+                        <!-- Özel İstekler -->
+                        <div class="mb-3">
+                            <label for="specialRequests" class="form-label">Özel İstekler</label>
+                            <textarea class="form-control" id="specialRequests" name="SpecialRequests" rows="3" 
+                                      placeholder="Varsa özel isteklerinizi yazın..." maxlength="1000">@Model.SpecialRequests</textarea>
+                            <div class="form-text">
+                                <span id="requests-count">@(Model.SpecialRequests?.Length ?? 0)</span>/1000 karakter
+                            </div>
+                        </div>
+
+                        <!-- Rezervasyon Durumu -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Rezervasyon Durumu</label>
+                            <select class="form-select" id="status" name="Status">
+                                <option value="Pending">Beklemede</option>
+                                <option value="Confirmed">Onaylandı</option>
+                                <option value="Cancelled">İptal Edildi</option>
+                                <option value="Completed">Tamamlandı</option>
+                            </select>
+                        </div>
+
+                        <!-- İptal Nedeni (Sadece iptal durumunda) -->
+                        <div class="mb-3" id="cancellationReasonDiv" style="display: none;">
+                            <label for="cancellationReason" class="form-label">İptal Nedeni</label>
+                            <textarea class="form-control" id="cancellationReason" name="CancellationReason" rows="2" 
+                                      placeholder="İptal nedenini yazın..." maxlength="500">@Model.CancellationReason</textarea>
+                            <div class="form-text">
+                                <span id="reason-count">@(Model.CancellationReason?.Length ?? 0)</span>/500 karakter
+                            </div>
+                        </div>
+
+                        <!-- Tarih Bilgileri -->
+                        <div class="mb-3">
+                            <label class="form-label">Tarih Bilgileri</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small class="text-muted">
+                                        <strong>Oluşturulma:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                    </small>
+                                </div>
+                                @if (Model.UpdatedAt.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            <strong>Güncellenme:</strong> @Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")
+                                        </small>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Details", "Reservations", new { id = Model.Id })" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                İptal
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i>
+                                Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkInDate = document.getElementById('checkInDate');
+            const checkOutDate = document.getElementById('checkOutDate');
+            const pricePerNight = document.getElementById('pricePerNight');
+            const cleaningFee = document.getElementById('cleaningFee');
+            const serviceFee = document.getElementById('serviceFee');
+            const totalPrice = document.getElementById('totalPrice');
+            const specialRequests = document.getElementById('specialRequests');
+            const requestsCount = document.getElementById('requests-count');
+            const status = document.getElementById('status');
+            const cancellationReason = document.getElementById('cancellationReason');
+            const cancellationReasonDiv = document.getElementById('cancellationReasonDiv');
+            const reasonCount = document.getElementById('reason-count');
+
+            // Tarih kontrolü
+            checkInDate.addEventListener('change', function() {
+                const checkIn = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (checkIn < today) {
+                    alert('Check-in tarihi bugünden önce olamaz!');
+                    this.value = '';
+                }
+                
+                calculateTotal();
+            });
+
+            checkOutDate.addEventListener('change', function() {
+                const checkOut = new Date(this.value);
+                const checkIn = new Date(checkInDate.value);
+                
+                if (checkInDate.value && checkOut <= checkIn) {
+                    alert('Check-out tarihi check-in tarihinden sonra olmalıdır!');
+                    this.value = '';
+                }
+                
+                calculateTotal();
+            });
+
+            // Fiyat hesaplama
+            function calculateTotal() {
+                const price = parseFloat(pricePerNight.value) || 0;
+                const cleaning = parseFloat(cleaningFee.value) || 0;
+                const service = parseFloat(serviceFee.value) || 0;
+                
+                let total = 0;
+                
+                if (checkInDate.value && checkOutDate.value) {
+                    const checkIn = new Date(checkInDate.value);
+                    const checkOut = new Date(checkOutDate.value);
+                    const days = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                    total = (price * days) + cleaning + service;
+                }
+                
+                totalPrice.value = total.toFixed(2);
+            }
+
+            pricePerNight.addEventListener('input', calculateTotal);
+            cleaningFee.addEventListener('input', calculateTotal);
+            serviceFee.addEventListener('input', calculateTotal);
+
+            // Durum değişikliği
+            status.addEventListener('change', function() {
+                if (this.value === 'Cancelled') {
+                    cancellationReasonDiv.style.display = 'block';
+                } else {
+                    cancellationReasonDiv.style.display = 'none';
+                }
+            });
+
+            // Karakter sayacı - Özel İstekler
+            specialRequests.addEventListener('input', function() {
+                const length = this.value.length;
+                requestsCount.textContent = length;
+                
+                if (length > 1000) {
+                    requestsCount.style.color = '#dc3545';
+                } else if (length > 900) {
+                    requestsCount.style.color = '#ffc107';
+                } else {
+                    requestsCount.style.color = '#6c757d';
+                }
+            });
+
+            // Karakter sayacı - İptal Nedeni
+            cancellationReason.addEventListener('input', function() {
+                const length = this.value.length;
+                reasonCount.textContent = length;
+                
+                if (length > 500) {
+                    reasonCount.style.color = '#dc3545';
+                } else if (length > 450) {
+                    reasonCount.style.color = '#ffc107';
+                } else {
+                    reasonCount.style.color = '#6c757d';
+                }
+            });
+
+            // Sayfa yüklendiğinde durum kontrolü
+            if (status.value === 'Cancelled') {
+                cancellationReasonDiv.style.display = 'block';
+            }
+
+            // Selected değerlerini ayarla
+            const guestCountSelect = document.getElementById('guestCount');
+            const statusSelect = document.getElementById('status');
+            
+            // Misafir sayısı
+            for (let i = 0; i < guestCountSelect.options.length; i++) {
+                if (guestCountSelect.options[i].value == '@Model.GuestCount') {
+                    guestCountSelect.options[i].selected = true;
+                    break;
+                }
+            }
+            
+            // Durum
+            for (let i = 0; i < statusSelect.options.length; i++) {
+                if (statusSelect.options[i].value == '@Model.Status.ToString()') {
+                    statusSelect.options[i].selected = true;
+                    break;
+                }
+            }
+        });
+    </script>
+} 

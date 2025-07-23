@@ -1,0 +1,178 @@
+@model MinimalAirbnb.Application.Messages.DTOs.MessageDto
+@{
+    ViewData["Title"] = "Mesaj Detayı";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-chat-dots-fill text-primary"></i>
+                    Mesaj Detayı
+                </h2>
+                <div>
+                    <a href="@Url.Action("Edit", "Messages", new { id = Model.Id })" class="btn btn-warning me-2">
+                        <i class="bi bi-pencil"></i>
+                        Düzenle
+                    </a>
+                    <a href="@Url.Action("Index", "Messages")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i>
+                        Geri Dön
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Ana Mesaj -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">@Model.Subject</h5>
+                                <div class="d-flex align-items-center">
+                                    @if (!Model.IsRead)
+                                    {
+                                        <span class="badge bg-warning me-2">Okunmamış</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success me-2">Okunmuş</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Gönderen:</strong> @Model.SenderName
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Alıcı:</strong> @Model.ReceiverName
+                                </div>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(Model.PropertyTitle))
+                            {
+                                <div class="mb-3">
+                                    <strong>İlgili Ev:</strong> @Model.PropertyTitle
+                                </div>
+                            }
+                            
+                            <div class="mb-3">
+                                <strong>Mesaj:</strong>
+                                <div class="bg-light p-3 rounded mt-2">
+                                    <p class="mb-0">@Model.Content</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Gönderilme:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                </div>
+                                @if (Model.IsRead && Model.ReadDate.HasValue)
+                                {
+                                    <div class="col-md-6">
+                                        <strong>Okunma:</strong> @Model.ReadDate.Value.ToString("dd.MM.yyyy HH:mm")
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mesaj Bilgileri -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Mesaj Bilgileri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Mesaj Tipi:</strong> 
+                                    <span class="badge bg-info">@Model.MessageType</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Öncelik:</strong> 
+                                    <span class="badge @(Model.Priority.ToString() == "High" ? "bg-danger" : Model.Priority.ToString() == "Medium" ? "bg-warning" : "bg-secondary")">
+                                        @Model.Priority
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <strong>Kategori:</strong> 
+                                    <span class="badge bg-primary">@Model.Category</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Yanıtlanan Mesaj:</strong> 
+                                    @if (Model.ReplyToMessageId.HasValue)
+                                    {
+                                        <a href="@Url.Action("Details", "Messages", new { id = Model.ReplyToMessageId })" class="text-decoration-none">
+                                            <i class="bi bi-arrow-up-circle"></i> Görüntüle
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Yok</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Hızlı İşlemler -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Hızlı İşlemler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("Create", "Messages", new { receiverId = Model.SenderId, propertyId = Model.PropertyId })" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-reply"></i>
+                                    Yanıtla
+                                </a>
+                                @if (!string.IsNullOrEmpty(Model.PropertyTitle))
+                                {
+                                    <a href="@Url.Action("Details", "Properties", new { id = Model.PropertyId })" 
+                                       class="btn btn-outline-info">
+                                        <i class="bi bi-house"></i>
+                                        Evi Görüntüle
+                                    </a>
+                                }
+                                <a href="@Url.Action("Create", "Reservations", new { propertyId = Model.PropertyId })" 
+                                   class="btn btn-outline-success">
+                                    <i class="bi bi-calendar-check"></i>
+                                    Rezervasyon Yap
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İstatistikler -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">İstatistikler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6 mb-3">
+                                    <div class="border-end">
+                                        <h4 class="text-primary mb-1">@Model.ViewCount</h4>
+                                        <small class="text-muted">Görüntülenme</small>
+                                    </div>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <h4 class="text-success mb-1">@Model.ReplyCount</h4>
+                                    <small class="text-muted">Yanıt</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

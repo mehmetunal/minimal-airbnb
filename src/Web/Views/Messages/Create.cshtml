@@ -1,0 +1,162 @@
+@{
+    ViewData["Title"] = "Yeni Mesaj";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="bi bi-chat-dots-fill text-primary"></i>
+                        Yeni Mesaj
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="Create">
+                        @if (ViewBag.ReceiverId != null)
+                        {
+                            <input type="hidden" name="ReceiverId" value="@ViewBag.ReceiverId" />
+                        }
+                        @if (ViewBag.PropertyId != null)
+                        {
+                            <input type="hidden" name="PropertyId" value="@ViewBag.PropertyId" />
+                        }
+                        @if (ViewBag.ReservationId != null)
+                        {
+                            <input type="hidden" name="ReservationId" value="@ViewBag.ReservationId" />
+                        }
+
+                        <!-- Alıcı -->
+                        <div class="mb-3">
+                            <label for="receiverId" class="form-label fw-bold">Alıcı</label>
+                            @if (ViewBag.ReceiverId != null)
+                            {
+                                <input type="text" class="form-control" value="Alıcı ID: @ViewBag.ReceiverId" readonly>
+                                <small class="text-muted">Alıcı ID otomatik olarak ayarlandı</small>
+                            }
+                            else
+                            {
+                                <input type="text" class="form-control" id="receiverId" name="ReceiverId" 
+                                       placeholder="Alıcı ID girin" required>
+                            }
+                        </div>
+
+                        <!-- Konu -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label fw-bold">Konu</label>
+                            <input type="text" class="form-control" id="subject" name="Subject" 
+                                   placeholder="Mesaj konusunu girin" required maxlength="200">
+                            <div class="form-text">
+                                <span id="subject-count">0</span>/200 karakter
+                            </div>
+                        </div>
+
+                        <!-- Mesaj İçeriği -->
+                        <div class="mb-3">
+                            <label for="content" class="form-label fw-bold">Mesaj</label>
+                            <textarea class="form-control" id="content" name="Content" rows="6" 
+                                      placeholder="Mesajınızı yazın..." required maxlength="2000"></textarea>
+                            <div class="form-text">
+                                <span id="content-count">0</span>/2000 karakter
+                            </div>
+                        </div>
+
+                        <!-- Mesaj Tipi -->
+                        <div class="mb-3">
+                            <label for="messageType" class="form-label">Mesaj Tipi</label>
+                            <select class="form-select" id="messageType" name="MessageType">
+                                <option value="Private">Özel</option>
+                                <option value="General">Genel</option>
+                                <option value="Support">Destek</option>
+                                <option value="Booking">Rezervasyon</option>
+                            </select>
+                        </div>
+
+                        <!-- Öncelik -->
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Öncelik</label>
+                            <select class="form-select" id="priority" name="Priority">
+                                <option value="Low">Düşük</option>
+                                <option value="Normal" selected>Normal</option>
+                                <option value="High">Yüksek</option>
+                                <option value="Urgent">Acil</option>
+                            </select>
+                        </div>
+
+                        <!-- Kategori -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Kategori</label>
+                            <select class="form-select" id="category" name="Category">
+                                <option value="General">Genel</option>
+                                <option value="Booking">Rezervasyon</option>
+                                <option value="Payment">Ödeme</option>
+                                <option value="Support">Destek</option>
+                                <option value="Complaint">Şikayet</option>
+                                <option value="Suggestion">Öneri</option>
+                            </select>
+                        </div>
+
+                        <!-- Yanıtlanan Mesaj -->
+                        <div class="mb-3">
+                            <label for="replyToMessageId" class="form-label">Yanıtlanan Mesaj ID</label>
+                            <input type="text" class="form-control" id="replyToMessageId" name="ReplyToMessageId" 
+                                   placeholder="Yanıtlanan mesaj ID'si (opsiyonel)">
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("Index", "Messages")" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i>
+                                İptal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i>
+                                Mesajı Gönder
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const subjectInput = document.getElementById('subject');
+            const contentTextarea = document.getElementById('content');
+            const subjectCount = document.getElementById('subject-count');
+            const contentCount = document.getElementById('content-count');
+
+            // Konu karakter sayacı
+            subjectInput.addEventListener('input', function() {
+                const length = this.value.length;
+                subjectCount.textContent = length;
+                
+                if (length > 200) {
+                    subjectCount.style.color = '#dc3545';
+                } else if (length > 180) {
+                    subjectCount.style.color = '#ffc107';
+                } else {
+                    subjectCount.style.color = '#6c757d';
+                }
+            });
+
+            // İçerik karakter sayacı
+            contentTextarea.addEventListener('input', function() {
+                const length = this.value.length;
+                contentCount.textContent = length;
+                
+                if (length > 2000) {
+                    contentCount.style.color = '#dc3545';
+                } else if (length > 1800) {
+                    contentCount.style.color = '#ffc107';
+                } else {
+                    contentCount.style.color = '#6c757d';
+                }
+            });
+        });
+    </script>
+} 

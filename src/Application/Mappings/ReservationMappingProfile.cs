@@ -1,50 +1,59 @@
 using AutoMapper;
-using MinimalAirbnb.Application.DTOs.Reservation;
+using MinimalAirbnb.Application.Reservations.DTOs;
 using MinimalAirbnb.Domain.Entities;
 
 namespace MinimalAirbnb.Application.Mappings;
 
 /// <summary>
-/// Rezervasyon Mapping Profili
+/// Reservation Mapping Profile
 /// </summary>
 public class ReservationMappingProfile : Profile
 {
     public ReservationMappingProfile()
     {
-        // Entity -> DTO mappings
-        CreateMap<Reservation, ReservationResultDto>()
-            .ForMember(dest => dest.GuestName, opt => opt.MapFrom(src => $"{src.Guest.FirstName} {src.Guest.LastName}"))
-            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.Property.Title))
-            .ForMember(dest => dest.HostName, opt => opt.MapFrom(src => $"{src.Property.Host.FirstName} {src.Property.Host.LastName}"))
-            .ForMember(dest => dest.HostId, opt => opt.MapFrom(src => src.Property.HostId));
+        // Reservation -> ReservationDto
+        CreateMap<Reservation, ReservationDto>()
+            .ForMember(dest => dest.GuestName, opt => opt.MapFrom(src => 
+                src.Guest != null ? $"{src.Guest.FirstName} {src.Guest.LastName}" : string.Empty))
+            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.Title : string.Empty))
+            .ForMember(dest => dest.HostId, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.HostId : Guid.Empty))
+            .ForMember(dest => dest.HostName, opt => opt.MapFrom(src => 
+                src.Property != null && src.Property.Host != null ? $"{src.Property.Host.FirstName} {src.Property.Host.LastName}" : string.Empty))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedDate))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.ModifiedDate));
 
-        CreateMap<Reservation, ReservationListDto>()
-            .ForMember(dest => dest.GuestName, opt => opt.MapFrom(src => $"{src.Guest.FirstName} {src.Guest.LastName}"))
-            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => src.Property.Title))
-            .ForMember(dest => dest.HostName, opt => opt.MapFrom(src => $"{src.Property.Host.FirstName} {src.Property.Host.LastName}"));
+        // Reservation -> ReservationListDto
+        CreateMap<Reservation, DTOs.Reservation.ReservationListDto>()
+            .ForMember(dest => dest.GuestName, opt => opt.MapFrom(src => 
+                src.Guest != null ? $"{src.Guest.FirstName} {src.Guest.LastName}" : string.Empty))
+            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.Title : string.Empty))
+            .ForMember(dest => dest.HostName, opt => opt.MapFrom(src => 
+                src.Property != null && src.Property.Host != null ? $"{src.Property.Host.FirstName} {src.Property.Host.LastName}" : string.Empty))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedDate));
 
-        // DTO -> Entity mappings
-        CreateMap<AddReservationDto, Reservation>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Guest, opt => opt.Ignore())
-            .ForMember(dest => dest.Property, opt => opt.Ignore())
-            .ForMember(dest => dest.Reviews, opt => opt.Ignore())
-            .ForMember(dest => dest.Payments, opt => opt.Ignore())
-            .ForMember(dest => dest.Messages, opt => opt.Ignore())
-            .ForMember(dest => dest.CancelledByUser, opt => opt.Ignore())
-            .ForMember(dest => dest.ConfirmedByUser, opt => opt.Ignore());
+        // Reservation -> ReservationResultDto
+        CreateMap<Reservation, DTOs.Reservation.ReservationResultDto>()
+            .ForMember(dest => dest.GuestName, opt => opt.MapFrom(src => 
+                src.Guest != null ? $"{src.Guest.FirstName} {src.Guest.LastName}" : string.Empty))
+            .ForMember(dest => dest.PropertyTitle, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.Title : string.Empty))
+            .ForMember(dest => dest.HostId, opt => opt.MapFrom(src => 
+                src.Property != null ? src.Property.HostId : Guid.Empty))
+            .ForMember(dest => dest.HostName, opt => opt.MapFrom(src => 
+                src.Property != null && src.Property.Host != null ? $"{src.Property.Host.FirstName} {src.Property.Host.LastName}" : string.Empty))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedDate))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.ModifiedDate));
 
-        CreateMap<UpdateReservationDto, Reservation>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.GuestId, opt => opt.Ignore())
-            .ForMember(dest => dest.PropertyId, opt => opt.Ignore())
-            .ForMember(dest => dest.Guest, opt => opt.Ignore())
-            .ForMember(dest => dest.Property, opt => opt.Ignore())
-            .ForMember(dest => dest.Reviews, opt => opt.Ignore())
-            .ForMember(dest => dest.Payments, opt => opt.Ignore())
-            .ForMember(dest => dest.Messages, opt => opt.Ignore())
-            .ForMember(dest => dest.CancelledByUser, opt => opt.Ignore())
-            .ForMember(dest => dest.ConfirmedByUser, opt => opt.Ignore())
-            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        // AddReservationDto -> Reservation
+        CreateMap<DTOs.Reservation.AddReservationDto, Reservation>()
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+            .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+        // UpdateReservationDto -> Reservation
+        CreateMap<DTOs.Reservation.UpdateReservationDto, Reservation>()
+            .ForMember(dest => dest.ModifiedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
     }
 }

@@ -1,4 +1,5 @@
 using MinimalAirbnb.Application.Interfaces;
+using MinimalAirbnb.Infrastructure.SeedData;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -46,6 +47,28 @@ public class MigrationService : IMigrationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Database migration sırasında hata oluştu.");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Seed data ekle
+    /// </summary>
+    public async Task SeedDataAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Seed data ekleniyor...");
+
+            using var scope = _serviceProvider.CreateScope();
+            var seedDataService = scope.ServiceProvider.GetRequiredService<SeedDataService>();
+            
+            await seedDataService.SeedAllAsync();
+            _logger.LogInformation("Seed data başarıyla eklendi.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Seed data eklenirken hata oluştu.");
             throw;
         }
     }

@@ -31,6 +31,18 @@ public class User : IdentityUser<Guid>
     public string? ProfilePicture { get; set; }
 
     /// <summary>
+    /// Profil fotoğrafı URL'i (alternatif)
+    /// </summary>
+    [StringLength(500)]
+    public string? ProfilePictureUrl { get; set; }
+
+    /// <summary>
+    /// Biyografi
+    /// </summary>
+    [StringLength(1000)]
+    public string? Bio { get; set; }
+
+    /// <summary>
     /// Doğum tarihi
     /// </summary>
     public DateTime? DateOfBirth { get; set; }
@@ -78,6 +90,11 @@ public class User : IdentityUser<Guid>
     /// Son giriş tarihi
     /// </summary>
     public DateTime? LastLoginDate { get; set; }
+
+    /// <summary>
+    /// Giriş sayısı
+    /// </summary>
+    public int LoginCount { get; set; }
 
     // Navigation Properties
     /// <summary>

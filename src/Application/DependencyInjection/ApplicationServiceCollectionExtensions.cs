@@ -1,8 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using MediatR;
 using FluentValidation;
-using AutoMapper;
 
 namespace MinimalAirbnb.Application.DependencyInjection;
 

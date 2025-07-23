@@ -1,4 +1,5 @@
 using MinimalAirbnb.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Application.Interfaces;
 
@@ -8,38 +9,52 @@ namespace MinimalAirbnb.Application.Interfaces;
 public interface IFavoriteRepository
 {
     /// <summary>
-    /// Favori ekler
+    /// Tüm favorite'ları getir (IQueryable)
+    /// </summary>
+    IQueryable<Favorite> GetAll();
+
+    /// <summary>
+    /// Tüm favorite'ları getir
+    /// </summary>
+    Task<IEnumerable<Favorite>> GetAllAsync();
+
+    /// <summary>
+    /// ID'ye göre favorite getir
+    /// </summary>
+    Task<Favorite?> GetByIdAsync(Guid id);
+
+    /// <summary>
+    /// Kullanıcıya göre favorite'ları getir
+    /// </summary>
+    Task<IEnumerable<Favorite>> GetByUserAsync(Guid userId);
+
+    /// <summary>
+    /// Property'ye göre favorite'ları getir
+    /// </summary>
+    Task<IEnumerable<Favorite>> GetByPropertyAsync(Guid propertyId);
+
+    /// <summary>
+    /// Kullanıcı ve property'ye göre favorite getir
+    /// </summary>
+    Task<Favorite?> GetByUserAndPropertyAsync(Guid userId, Guid propertyId);
+
+    /// <summary>
+    /// Favorite ekle
     /// </summary>
     Task<Favorite> AddAsync(Favorite favorite);
 
     /// <summary>
-    /// Favori siler
+    /// Favorite güncelle
+    /// </summary>
+    Task<Favorite> UpdateAsync(Favorite favorite);
+
+    /// <summary>
+    /// Favorite sil
     /// </summary>
     Task DeleteAsync(Guid id);
 
     /// <summary>
-    /// Değişiklikleri kaydeder
+    /// Değişiklikleri kaydet
     /// </summary>
-    /// <returns>Kaydedilen değişiklik sayısı</returns>
     Task<int> SaveChangesAsync();
-
-    /// <summary>
-    /// Kullanıcı ID'sine göre favorileri getir
-    /// </summary>
-    Task<IEnumerable<Favorite>> GetByUserIdAsync(Guid userId);
-
-    /// <summary>
-    /// Ev ID'sine göre favorileri getir
-    /// </summary>
-    Task<IEnumerable<Favorite>> GetByPropertyIdAsync(Guid propertyId);
-
-    /// <summary>
-    /// Kullanıcının favori evlerini getir
-    /// </summary>
-    Task<IEnumerable<Property>> GetFavoritePropertiesAsync(Guid userId);
-
-    /// <summary>
-    /// Favori var mı kontrol et
-    /// </summary>
-    Task<bool> ExistsAsync(Guid userId, Guid propertyId);
 } 

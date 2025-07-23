@@ -1,0 +1,154 @@
+@model MinimalAirbnb.Web.Models.PagedListWrapper<MinimalAirbnb.Application.Properties.DTOs.PropertyDto>
+@{
+    ViewData["Title"] = "Properties";
+    var currentPage = Model.CurrentPage; // Already 1-based
+}
+
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <div class="row bg-primary text-white py-5">
+        <div class="col-12 text-center">
+            <h1 class="display-4 fw-bold">Mükemmel Konaklama Yerleri</h1>
+            <p class="lead">Dünyanın her yerinde unutulmaz deneyimler yaşayın</p>
+        </div>
+    </div>
+
+    <!-- Search Filters -->
+    <div class="row bg-light py-4">
+        <div class="col-12">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="City" class="form-control" placeholder="Nerede?" value="@Context.Request.Query["City"]">
+                </div>
+                <div class="col-md-2">
+                    <select name="PropertyType" class="form-select">
+                        <option value="">Ev Tipi</option>
+                        <option value="1" selected="@(Context.Request.Query["PropertyType"] == "1")">Daire</option>
+                        <option value="2" selected="@(Context.Request.Query["PropertyType"] == "2")">Villa</option>
+                        <option value="3" selected="@(Context.Request.Query["PropertyType"] == "3")">Ev</option>
+                        <option value="4" selected="@(Context.Request.Query["PropertyType"] == "4")">Stüdyo</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="MinPrice" class="form-control" placeholder="Min Fiyat" value="@Context.Request.Query["MinPrice"]">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" name="MaxPrice" class="form-control" placeholder="Max Fiyat" value="@Context.Request.Query["MaxPrice"]">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary me-2">Ara</button>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Temizle</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Properties Grid -->
+    <div class="row py-4">
+        @if (Model?.Data != null && Model.Data.Any())
+        {
+            foreach (var property in Model.Data)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(property.MainPhotoUrl))
+                        {
+                            <img src="@property.MainPhotoUrl" class="card-img-top" alt="@property.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-house fs-1 text-muted"></i>
+                            </div>
+                        }
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">@property.Title</h5>
+                            <p class="card-text text-muted">
+                                <i class="bi bi-geo-alt"></i> @property.City, @property.Country
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-primary">@property.PropertyType.ToString()</span>
+                                <div class="text-warning">
+                                    @for (int i = 0; i < Math.Min((int)property.AverageRating, 5); i++)
+                                    {
+                                        <i class="bi bi-star-fill"></i>
+                                    }
+                                    @for (int i = (int)property.AverageRating; i < 5; i++)
+                                    {
+                                        <i class="bi bi-star"></i>
+                                    }
+                                    <small class="text-muted">(@property.TotalReviews)</small>
+                                </div>
+                            </div>
+                            <p class="card-text">
+                                <i class="bi bi-people"></i> @property.MaxGuestCount misafir
+                                <i class="bi bi-door-open ms-3"></i> @property.BedroomCount yatak odası
+                                <i class="bi bi-droplet ms-3"></i> @property.BathroomCount banyo
+                            </p>
+                        </div>
+                        
+                        <div class="card-footer bg-white border-top-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong class="text-primary">₺@property.PricePerNight</strong>
+                                    <small class="text-muted">/gece</small>
+                                </div>
+                                <a href="@Url.Action("Details", new { id = property.Id })" class="btn btn-outline-primary btn-sm">
+                                    Detaylar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-search fs-1 text-muted mb-3"></i>
+                <h3>Aradığınız kriterlere uygun property bulunamadı</h3>
+                <p class="text-muted">Farklı arama kriterleri deneyebilirsiniz.</p>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (Model?.TotalPages > 1)
+    {
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Properties pagination">
+                    <ul class="pagination justify-content-center">
+                        @if (currentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = currentPage - 1, PageSize = Model.PageSize, City = Context.Request.Query["City"], MinPrice = Context.Request.Query["MinPrice"], MaxPrice = Context.Request.Query["MaxPrice"], PropertyType = Context.Request.Query["PropertyType"] })">
+                                    Önceki
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(Model.TotalPages, currentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = i, PageSize = Model.PageSize, City = Context.Request.Query["City"], MinPrice = Context.Request.Query["MinPrice"], MaxPrice = Context.Request.Query["MaxPrice"], PropertyType = Context.Request.Query["PropertyType"] })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        @if (currentPage < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = currentPage + 1, PageSize = Model.PageSize, City = Context.Request.Query["City"], MinPrice = Context.Request.Query["MinPrice"], MaxPrice = Context.Request.Query["MaxPrice"], PropertyType = Context.Request.Query["PropertyType"] })">
+                                    Sonraki
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+</div> 

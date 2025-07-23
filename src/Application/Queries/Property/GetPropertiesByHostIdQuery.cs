@@ -1,12 +1,13 @@
 using MediatR;
-using MinimalAirbnb.Application.DTOs.Property;
+using MinimalAirbnb.Application.Properties.DTOs;
+using Maggsoft.Core.Base;
 
 namespace MinimalAirbnb.Application.Queries.Property;
 
 /// <summary>
 /// Ev Sahibine Göre Evleri Getirme Sorgusu
 /// </summary>
-public class GetPropertiesByHostIdQuery : IRequest<IEnumerable<PropertyListDto>>
+public class GetPropertiesByHostIdQuery : IRequest<Result<List<PropertyDto>>>
 {
     /// <summary>
     /// Ev sahibi ID

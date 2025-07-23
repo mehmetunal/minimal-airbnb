@@ -31,15 +31,30 @@ public class SeedDataService
     /// </summary>
     public async Task SeedAllAsync()
     {
-        await SeedRolesAsync();
-        await SeedUsersAsync();
-        await SeedPropertiesAsync();
-        await SeedReservationsAsync();
-        await SeedReviewsAsync();
-        await SeedPaymentsAsync();
-        await SeedMessagesAsync();
-        await SeedFavoritesAsync();
-        await SeedPropertyPhotosAsync();
+        try
+        {
+            await SeedRolesAsync();
+            await SeedUsersAsync();
+            await SeedPropertiesAsync();
+            await SeedReservationsAsync();
+            await SeedReviewsAsync();
+            await SeedPaymentsAsync();
+            await SeedMessagesAsync();
+            await SeedFavoritesAsync();
+            await SeedPropertyPhotosAsync(); //
+        }
+        catch (Exception ex)
+        {
+            var innerException = ex.InnerException;
+            var errorMessage = $"Seed data hatası: {ex.Message}";
+
+            if (innerException != null)
+            {
+                errorMessage += $" | Inner Exception: {innerException.Message}";
+            }
+
+            throw new Exception(errorMessage, ex);
+        }
     }
 
     /// <summary>
@@ -104,7 +119,6 @@ public class SeedDataService
             .RuleFor(u => u.City, f => f.Address.City())
             .RuleFor(u => u.Country, f => f.Address.Country())
             .RuleFor(u => u.PostalCode, f => f.Address.ZipCode())
-            .RuleFor(u => u.ProfilePicture, f => f.Image.PicsumUrl(200, 200))
             .RuleFor(u => u.UserType, UserType.Host)
             .RuleFor(u => u.IsVerified, f => f.Random.Bool(0.8f))
             .RuleFor(u => u.IsActive, f => f.Random.Bool(0.9f));
@@ -114,7 +128,7 @@ public class SeedDataService
         {
             if (await _userManager.FindByEmailAsync(host.Email) == null)
             {
-                var result = await _userManager.CreateAsync(host, "Test123!");
+                var result = await _userManager.CreateAsync(host, "Password123!");
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(host, "Host");
@@ -138,7 +152,6 @@ public class SeedDataService
             .RuleFor(u => u.City, f => f.Address.City())
             .RuleFor(u => u.Country, f => f.Address.Country())
             .RuleFor(u => u.PostalCode, f => f.Address.ZipCode())
-            .RuleFor(u => u.ProfilePicture, f => f.Image.PicsumUrl(200, 200))
             .RuleFor(u => u.UserType, UserType.Guest)
             .RuleFor(u => u.IsVerified, f => f.Random.Bool(0.7f))
             .RuleFor(u => u.IsActive, f => f.Random.Bool(0.9f));
@@ -148,7 +161,7 @@ public class SeedDataService
         {
             if (await _userManager.FindByEmailAsync(guest.Email) == null)
             {
-                var result = await _userManager.CreateAsync(guest, "Test123!");
+                var result = await _userManager.CreateAsync(guest, "Password123!");
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(guest, "Guest");
@@ -230,6 +243,7 @@ public class SeedDataService
             .RuleFor(r => r.CleaningFee, f => f.Random.Decimal(50, 200))
             .RuleFor(r => r.ServiceFee, f => f.Random.Decimal(20, 100))
             .RuleFor(r => r.TotalPrice, (f, r) => (r.PricePerNight * r.TotalDays) + r.CleaningFee + r.ServiceFee)
+
             .RuleFor(r => r.Status, f => f.PickRandom<ReservationStatus>())
             .RuleFor(r => r.SpecialRequests, f => f.Random.Bool(0.3f) ? f.Lorem.Sentence() : null)
             .RuleFor(r => r.IsPublish, true)
@@ -400,4 +414,4 @@ public class SeedDataService
         await _context.PropertyPhotos.AddRangeAsync(photos);
         await _context.SaveChangesAsync();
     }
-} 
+}

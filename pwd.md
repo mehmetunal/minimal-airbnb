@@ -175,7 +175,7 @@ MinimalAirbnb projesinde Maggsoft altyapısından doğrudan veya genişletilerek
   - Serilog ile gelişmiş loglama
   - Logların dosya, MSSQL veya Seq gibi servislere aktarımı
 
-- **Seed Data ve Test Verisi**
+- **Seed Data**
   - Başlangıçta admin ve örnek kullanıcı/rol/ilan verisi ekleme desteği
   - Bogus ile sahte veri üretimi
 
