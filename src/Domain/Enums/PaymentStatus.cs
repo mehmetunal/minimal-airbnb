@@ -6,42 +6,32 @@ namespace MinimalAirbnb.Domain.Enums;
 public enum PaymentStatus
 {
     /// <summary>
-    /// Beklemede - Ödeme bekleniyor
+    /// Beklemede
     /// </summary>
-    Pending = 1,
-
+    Pending = 0,
+    
     /// <summary>
-    /// Başarılı - Ödeme başarıyla tamamlandı
+    /// Başarılı
     /// </summary>
-    Completed = 2,
-
+    Success = 1,
+    
     /// <summary>
-    /// Başarısız - Ödeme başarısız oldu
+    /// Başarısız
     /// </summary>
-    Failed = 3,
-
+    Failed = 2,
+    
     /// <summary>
-    /// İptal edildi - Ödeme iptal edildi
+    /// İptal edildi
     /// </summary>
-    Cancelled = 4,
-
+    Cancelled = 3,
+    
     /// <summary>
-    /// İade edildi - Ödeme iade edildi
+    /// İade edildi
     /// </summary>
-    Refunded = 5,
-
+    Refunded = 4,
+    
     /// <summary>
-    /// Kısmi iade - Kısmi iade yapıldı
+    /// İşleniyor
     /// </summary>
-    PartialRefund = 6,
-
-    /// <summary>
-    /// İşleniyor - Ödeme işleniyor
-    /// </summary>
-    Processing = 7,
-
-    /// <summary>
-    /// Onay bekliyor - Ödeme onay bekliyor
-    /// </summary>
-    AwaitingConfirmation = 8
+    Processing = 5
 } 

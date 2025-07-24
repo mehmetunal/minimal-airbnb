@@ -1,16 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MinimalAirbnb.Application.Messages.Queries.GetMessages;
 using MinimalAirbnb.Application.Messages.Queries.GetMessageById;
 using MinimalAirbnb.Application.Messages.DTOs;
 using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
+using MinimalAirbnb.Web.Models;
 
 namespace MinimalAirbnb.Web.Controllers;
 
 /// <summary>
 /// Messages Web Controller
 /// </summary>
+[Authorize]
 public class MessagesController : Controller
 {
     private readonly IMaggsoftHttpClient _httpClient;
@@ -29,7 +32,11 @@ public class MessagesController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<MessageDto>>($"/api/messages?PageNumber={query.PageNumber}&PageSize={query.PageSize}&SenderId={query.SenderId}&ReceiverId={query.ReceiverId}");
+            // Session'dan UserId'yi al
+            var userId = HttpContext.Session.GetString("UserId");
+            var currentUserId = !string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var parsedUserId) ? parsedUserId.ToString() : query.SenderId?.ToString();
+
+            var response = await _httpClient.GetAsync<PagedListWrapper<MessageDto>>($"/api/messages?PageNumber={query.PageNumber}&PageSize={query.PageSize}&SenderId={currentUserId}&ReceiverId={query.ReceiverId}");
             
             if (response != null)
             {
@@ -41,7 +48,7 @@ public class MessagesController : Controller
             ModelState.AddModelError("", "Mesajlar yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<MessageDto>(new List<MessageDto>(), 0, query.PageNumber, query.PageSize));
+        return View(PagedListWrapper<MessageDto>.Empty(query.PageNumber, query.PageSize));
     }
 
     /// <summary>
@@ -102,11 +109,18 @@ public class MessagesController : Controller
     /// <summary>
     /// Kullanıcının mesajlarını göster
     /// </summary>
-    public async Task<IActionResult> MyMessages(Guid userId, [FromQuery] int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> MyMessages([FromQuery] int pageNumber = 1, int pageSize = 10)
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<MessageDto>>($"/api/messages?SenderId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
+            // Session'dan UserId'yi al
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
+            var response = await _httpClient.GetAsync<PagedListWrapper<MessageDto>>($"/api/messages?SenderId={parsedUserId}&PageNumber={pageNumber}&PageSize={pageSize}");
             
             if (response != null)
             {
@@ -118,17 +132,24 @@ public class MessagesController : Controller
             ModelState.AddModelError("", "Mesajlarınız yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<MessageDto>(new List<MessageDto>(), 0, pageNumber, pageSize));
+        return View(PagedListWrapper<MessageDto>.Empty(pageNumber, pageSize));
     }
 
     /// <summary>
     /// Gelen mesajları göster
     /// </summary>
-    public async Task<IActionResult> Inbox(Guid userId, [FromQuery] int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> Inbox([FromQuery] int pageNumber = 1, int pageSize = 10)
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<MessageDto>>($"/api/messages?ReceiverId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
+            // Session'dan UserId'yi al
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
+            var response = await _httpClient.GetAsync<PagedListWrapper<MessageDto>>($"/api/messages?ReceiverId={parsedUserId}&PageNumber={pageNumber}&PageSize={pageSize}");
             
             if (response != null)
             {
@@ -140,6 +161,6 @@ public class MessagesController : Controller
             ModelState.AddModelError("", "Gelen mesajlar yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<MessageDto>(new List<MessageDto>(), 0, pageNumber, pageSize));
+        return View(PagedListWrapper<MessageDto>.Empty(pageNumber, pageSize));
     }
 } 

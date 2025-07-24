@@ -1,3 +1,5 @@
+using MinimalAirbnb.Domain.Enums;
+
 namespace MinimalAirbnb.Application.Payments.DTOs;
 
 /// <summary>
@@ -93,12 +95,17 @@ public class PaymentDto
     /// <summary>
     /// Ödeme yöntemi
     /// </summary>
-    public string PaymentMethod { get; set; } = string.Empty;
+    public PaymentMethod PaymentMethod { get; set; }
 
     /// <summary>
     /// Ödeme durumu
     /// </summary>
-    public string Status { get; set; } = string.Empty;
+    public PaymentStatus Status { get; set; }
+
+    /// <summary>
+    /// Ödeme sağlayıcısı
+    /// </summary>
+    public PaymentProvider Provider { get; set; }
 
     /// <summary>
     /// Ödeme tarihi
@@ -111,14 +118,9 @@ public class PaymentDto
     public string? TransactionId { get; set; }
 
     /// <summary>
-    /// Ödeme sağlayıcısı
+    /// Sağlayıcı işlem ID'si
     /// </summary>
-    public string? PaymentProvider { get; set; }
-
-    /// <summary>
-    /// Ödeme sağlayıcısı referans numarası
-    /// </summary>
-    public string? ProviderReference { get; set; }
+    public string? ProviderTransactionId { get; set; }
 
     /// <summary>
     /// Ödeme açıklaması
@@ -384,6 +386,11 @@ public class PaymentDto
     /// Güncellenme tarihi
     /// </summary>
     public DateTime? UpdatedDate { get; set; }
+
+    /// <summary>
+    /// Değiştirilme tarihi
+    /// </summary>
+    public DateTime? ModifiedDate { get; set; }
 
     /// <summary>
     /// Ödeme süresi (oluşturulma tarihinden itibaren)

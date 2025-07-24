@@ -13,7 +13,7 @@
     <PackageReference Include="Maggsoft.EventBus" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+
     <PackageReference Include="Asp.Versioning.Http" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
@@ -25,6 +25,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Application\MinimalAirbnb.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Maggsoft.Core">
+      <HintPath>..\..\..\..\..\..\..\home\mehmet\.nuget\packages\maggsoft.core\2.0.39\lib\net8.0\Maggsoft.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

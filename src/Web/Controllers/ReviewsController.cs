@@ -1,16 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MinimalAirbnb.Application.Reviews.Queries.GetReviews;
 using MinimalAirbnb.Application.Reviews.Queries.GetReviewById;
 using MinimalAirbnb.Application.Reviews.DTOs;
 using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
+using MinimalAirbnb.Web.Models;
 
 namespace MinimalAirbnb.Web.Controllers;
 
 /// <summary>
 /// Reviews Web Controller
 /// </summary>
+[Authorize]
 public class ReviewsController : Controller
 {
     private readonly IMaggsoftHttpClient _httpClient;
@@ -29,7 +32,7 @@ public class ReviewsController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<ReviewDto>>($"/api/reviews?PageNumber={query.PageNumber}&PageSize={query.PageSize}&PropertyId={query.PropertyId}&UserId={query.UserId}");
+            var response = await _httpClient.GetAsync<PagedListWrapper<ReviewDto>>($"/api/reviews?PageNumber={query.PageNumber}&PageSize={query.PageSize}&PropertyId={query.PropertyId}&UserId={query.UserId}");
             
             if (response != null)
             {
@@ -41,7 +44,7 @@ public class ReviewsController : Controller
             ModelState.AddModelError("", "Değerlendirmeler yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<ReviewDto>(new List<ReviewDto>(), 0, query.PageNumber, query.PageSize));
+        return View(PagedListWrapper<ReviewDto>.Empty(query.PageNumber, query.PageSize));
     }
 
     /// <summary>
@@ -105,7 +108,7 @@ public class ReviewsController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<ReviewDto>>($"/api/reviews?PropertyId={propertyId}&PageNumber={pageNumber}&PageSize={pageSize}");
+            var response = await _httpClient.GetAsync<PagedListWrapper<ReviewDto>>($"/api/reviews?PropertyId={propertyId}&PageNumber={pageNumber}&PageSize={pageSize}");
             
             if (response != null)
             {
@@ -117,7 +120,7 @@ public class ReviewsController : Controller
             ModelState.AddModelError("", "Property değerlendirmeleri yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<ReviewDto>(new List<ReviewDto>(), 0, pageNumber, pageSize));
+        return View(PagedListWrapper<ReviewDto>.Empty(pageNumber, pageSize));
     }
 
     /// <summary>
@@ -127,7 +130,7 @@ public class ReviewsController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<ReviewDto>>($"/api/reviews?UserId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
+            var response = await _httpClient.GetAsync<PagedListWrapper<ReviewDto>>($"/api/reviews?UserId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
             
             if (response != null)
             {
@@ -139,6 +142,6 @@ public class ReviewsController : Controller
             ModelState.AddModelError("", "Değerlendirmeleriniz yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<ReviewDto>(new List<ReviewDto>(), 0, pageNumber, pageSize));
+        return View(PagedListWrapper<ReviewDto>.Empty(pageNumber, pageSize));
     }
 } 

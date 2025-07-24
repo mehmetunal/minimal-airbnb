@@ -1,7 +1,7 @@
-@model Maggsoft.Core.Model.Pagination.PagedList<MinimalAirbnb.Application.Reservations.DTOs.ReservationDto>
+@model MinimalAirbnb.Web.Models.PagedListWrapper<MinimalAirbnb.Application.Reservations.DTOs.ReservationDto>
 @{
     ViewData["Title"] = "Rezervasyonlar";
-    var currentPage = Model.PageIndex + 1;
+    var currentPage = Model.PageNumber;
 }
 
 <div class="container py-5">

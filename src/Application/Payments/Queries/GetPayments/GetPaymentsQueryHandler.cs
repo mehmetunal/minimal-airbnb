@@ -49,9 +49,20 @@ public class GetPaymentsQueryHandler : IRequestHandler<GetPaymentsQuery, PagedLi
                 ReservationId = p.ReservationId,
                 UserId = p.UserId,
                 Amount = p.Amount,
-                PaymentMethod = p.PaymentMethod.ToString(),
-                Status = p.Status.ToString(),
-                TransactionId = p.TransactionId
+                PaymentMethod = p.PaymentMethod,
+                Status = p.Status,
+                Provider = p.Provider,
+                TransactionId = p.TransactionId,
+                ProviderTransactionId = p.ProviderTransactionId,
+                PaymentDate = p.PaymentDate ?? DateTime.UtcNow,
+                Currency = p.Currency,
+                Description = p.Description,
+                RefundAmount = p.RefundAmount,
+                RefundDate = p.RefundDate,
+                RefundReason = p.RefundReason,
+                ErrorMessage = p.ErrorMessage,
+                CreatedDate = p.CreatedDate,
+                ModifiedDate = p.ModifiedDate
             }).ToList();
 
             // Create new PagedList with DTOs

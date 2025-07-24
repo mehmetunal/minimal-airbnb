@@ -47,7 +47,7 @@ public class MinimalAirbnbDbContext : IdentityDbContext<User, Microsoft.AspNetCo
             entity.Property(e => e.CleaningFee).HasPrecision(18, 2);
             entity.Property(e => e.ServiceFee).HasPrecision(18, 2);
             entity.Property(e => e.AverageRating).HasPrecision(3, 2);
-            
+
             // Enum konfigürasyonları
             entity.Property(e => e.PropertyType).HasConversion<int>();
 

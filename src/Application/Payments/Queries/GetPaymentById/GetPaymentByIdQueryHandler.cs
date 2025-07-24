@@ -35,19 +35,21 @@ public class GetPaymentByIdQueryHandler : IRequestHandler<GetPaymentByIdQuery, R
                 UserId = payment.UserId,
                 ReservationId = payment.ReservationId,
                 Amount = payment.Amount,
-                PaymentMethod = payment.PaymentMethod.ToString(),
-                Status = payment.Status.ToString(),
+                PaymentMethod = payment.PaymentMethod,
+                Status = payment.Status,
+                Provider = payment.Provider,
                 TransactionId = payment.TransactionId,
-                PaymentProvider = payment.PaymentProvider,
-                ProviderReference = payment.ProviderReferenceId,
+                ProviderTransactionId = payment.ProviderTransactionId,
                 PaymentDate = payment.PaymentDate ?? DateTime.UtcNow,
                 RefundAmount = payment.RefundAmount,
                 RefundDate = payment.RefundDate,
                 RefundReason = payment.RefundReason,
                 ErrorMessage = payment.ErrorMessage,
                 Currency = payment.Currency,
+                Description = payment.Description,
                 CreatedDate = payment.CreatedDate,
-                UpdatedDate = payment.ModifiedDate
+                UpdatedDate = payment.ModifiedDate,
+                ModifiedDate = payment.ModifiedDate
             };
 
             return Result<PaymentDto>.Success(paymentDto, new SuccessMessage("200", "Ödeme bilgileri başarıyla getirildi."));

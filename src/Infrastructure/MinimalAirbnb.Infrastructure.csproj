@@ -10,6 +10,7 @@
     <PackageReference Include="FluentMigrator" />
     <PackageReference Include="FluentMigrator.Runner" />
     <PackageReference Include="FluentMigrator.Runner.SqlServer" />
+    <PackageReference Include="Maggsoft.Core" />
     <PackageReference Include="Maggsoft.Mssql" />
     <PackageReference Include="Maggsoft.Mssql.Services" />
     <PackageReference Include="Maggsoft.Cache" />

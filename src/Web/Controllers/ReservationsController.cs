@@ -1,16 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using MinimalAirbnb.Application.Reservations.Queries.GetReservations;
 using MinimalAirbnb.Application.Reservations.Queries.GetReservationById;
 using MinimalAirbnb.Application.Reservations.DTOs;
 using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
+using MinimalAirbnb.Web.Models;
 
 namespace MinimalAirbnb.Web.Controllers;
 
 /// <summary>
 /// Reservations Web Controller
 /// </summary>
+[Authorize]
 public class ReservationsController : Controller
 {
     private readonly IMaggsoftHttpClient _httpClient;
@@ -29,9 +33,12 @@ public class ReservationsController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<ReservationDto>>($"/api/reservations?PageNumber={query.PageNumber}&PageSize={query.PageSize}&UserId={query.UserId}&PropertyId={query.PropertyId}");
-            
-            if (response != null)
+            var startDateParam = query.StartDate.HasValue ? $"&StartDate={query.StartDate.Value:yyyy-MM-dd}" : "";
+            var endDateParam = query.EndDate.HasValue ? $"&EndDate={query.EndDate.Value:yyyy-MM-dd}" : "";
+
+            var response = await _httpClient.GetAsync<PagedListWrapper<ReservationDto>>($"/api/reservations?PageNumber={query.PageNumber}&PageSize={query.PageSize}&UserId={query.UserId}&PropertyId={query.PropertyId}{startDateParam}{endDateParam}");
+
+            if (response is { Data: not null })
             {
                 return View(response);
             }
@@ -41,7 +48,7 @@ public class ReservationsController : Controller
             ModelState.AddModelError("", "Rezervasyonlar yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<ReservationDto>(new List<ReservationDto>(), 0, query.PageNumber, query.PageSize));
+        return View(PagedListWrapper<ReservationDto>.Empty(query.PageNumber, query.PageSize));
     }
 
     /// <summary>
@@ -52,8 +59,8 @@ public class ReservationsController : Controller
         try
         {
             var response = await _httpClient.GetAsync<Result<ReservationDto>>($"/api/reservations/{id}");
-            
-            if (response != null && response.IsSuccess && response.Data != null)
+
+            if (response is { IsSuccess: true, Data: not null })
             {
                 return View(response.Data);
             }
@@ -83,7 +90,7 @@ public class ReservationsController : Controller
         try
         {
             var response = await _httpClient.GetAsync<Result<ReservationDto>>($"/api/reservations/{id}");
-            
+
             if (response != null && response.IsSuccess && response.Data != null)
             {
                 return View(response.Data);
@@ -100,13 +107,20 @@ public class ReservationsController : Controller
     /// <summary>
     /// Kullanıcının rezervasyonlarını göster
     /// </summary>
-    public async Task<IActionResult> MyReservations(Guid userId, [FromQuery] int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> MyReservations([FromQuery] int pageNumber = 1, int pageSize = 10)
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<ReservationDto>>($"/api/reservations?UserId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
-            
-            if (response != null)
+            // Claims'den UserId'yi al
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
+            var response = await _httpClient.GetAsync<PagedListWrapper<ReservationDto>>($"/api/reservations?UserId={parsedUserId}&PageNumber={pageNumber}&PageSize={pageSize}");
+
+            if (response is { Data: not null })
             {
                 return View(response);
             }
@@ -116,6 +130,6 @@ public class ReservationsController : Controller
             ModelState.AddModelError("", "Rezervasyonlarınız yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<ReservationDto>(new List<ReservationDto>(), 0, pageNumber, pageSize));
+        return View(PagedListWrapper<ReservationDto>.Empty(pageNumber, pageSize));
     }
-} 
+}

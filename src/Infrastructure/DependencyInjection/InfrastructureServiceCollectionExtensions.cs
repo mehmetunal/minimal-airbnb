@@ -52,6 +52,9 @@ public static class InfrastructureServiceCollectionExtensions
         // Logging ve Migration Servisleri
         services.AddScoped<ILoggingService, LoggingService>();
         services.AddScoped<IMigrationService, MigrationService>();
+        
+        // Ödeme Servisi
+        services.AddScoped<IPaymentService, PaymentService>();
 
         return services;
     }

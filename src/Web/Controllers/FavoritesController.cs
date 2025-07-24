@@ -1,24 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using MinimalAirbnb.Application.Favorites.Queries.GetFavorites;
 using MinimalAirbnb.Application.Favorites.DTOs;
 using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
+using MinimalAirbnb.Web.Models;
 
 namespace MinimalAirbnb.Web.Controllers;
 
 /// <summary>
 /// Favorites Web Controller
 /// </summary>
+[Authorize]
 public class FavoritesController : Controller
 {
     private readonly IMaggsoftHttpClient _httpClient;
-    private readonly IConfiguration _configuration;
 
-    public FavoritesController(IMaggsoftHttpClient httpClient, IConfiguration configuration)
+    public FavoritesController(IMaggsoftHttpClient httpClient)
     {
         _httpClient = httpClient;
-        _configuration = configuration;
     }
 
     /// <summary>
@@ -28,8 +30,15 @@ public class FavoritesController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<FavoriteDto>>($"/api/favorites?PageNumber={query.PageNumber}&PageSize={query.PageSize}&UserId={query.UserId}");
-            
+            // Current user'dan UserId'yi al
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
+            var response = await _httpClient.GetAsync<PagedListWrapper<FavoriteDto>>($"/api/favorites?PageNumber={query.PageNumber}&PageSize={query.PageSize}&UserId={userId}");
+
             if (response != null)
             {
                 return View(response);
@@ -40,18 +49,25 @@ public class FavoritesController : Controller
             ModelState.AddModelError("", "Favoriler yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<FavoriteDto>(new List<FavoriteDto>(), 0, query.PageNumber, query.PageSize));
+        return View(PagedListWrapper<FavoriteDto>.Empty(query.PageNumber, query.PageSize));
     }
 
     /// <summary>
     /// Kullanıcının favorilerini göster
     /// </summary>
-    public async Task<IActionResult> MyFavorites(Guid userId, [FromQuery] int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> MyFavorites([FromQuery] int pageNumber = 1, int pageSize = 10)
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<FavoriteDto>>($"/api/favorites?UserId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
-            
+            // Current user'dan UserId'yi al
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
+            var response = await _httpClient.GetAsync<PagedListWrapper<FavoriteDto>>($"/api/favorites?UserId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
+
             if (response != null)
             {
                 return View(response);
@@ -62,6 +78,6 @@ public class FavoritesController : Controller
             ModelState.AddModelError("", "Favorileriniz yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<FavoriteDto>(new List<FavoriteDto>(), 0, pageNumber, pageSize));
+        return View(PagedListWrapper<FavoriteDto>.Empty(pageNumber, pageSize));
     }
-} 
+}

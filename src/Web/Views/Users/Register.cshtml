@@ -4,98 +4,154 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+        <div class="col-lg-8 col-md-10">
             <div class="card shadow">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="bi bi-house-heart text-primary fs-1 mb-3"></i>
-                        <h2 class="fw-bold">Kayıt Ol</h2>
-                        <p class="text-muted">Yeni hesap oluşturun</p>
-                    </div>
-
-                    <form method="post" asp-action="Register">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-plus"></i> Kayıt Ol
+                    </h3>
+                    <p class="mb-0">MinimalAirbnb'e katılın</p>
+                </div>
+                <div class="card-body p-4">
+                    <form id="registerForm">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="firstName" class="form-label">Ad</label>
+                                <label class="form-label">Ad *</label>
                                 <input type="text" class="form-control" id="firstName" name="firstName" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="lastName" class="form-label">Soyad</label>
+                                <label class="form-label">Soyad *</label>
                                 <input type="text" class="form-control" id="lastName" name="lastName" required>
                             </div>
                         </div>
-
+                        
                         <div class="mb-3">
-                            <label for="email" class="form-label">E-posta Adresi</label>
+                            <label class="form-label">E-posta *</label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
-
+                        
                         <div class="mb-3">
-                            <label for="phoneNumber" class="form-label">Telefon Numarası</label>
-                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber">
+                            <label class="form-label">Telefon *</label>
+                            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
                         </div>
-
+                        
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="password" class="form-label">Şifre</label>
+                                <label class="form-label">Şifre *</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="confirmPassword" class="form-label">Şifre Tekrar</label>
+                                <label class="form-label">Şifre Tekrar *</label>
                                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="dateOfBirth" class="form-label">Doğum Tarihi</label>
-                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="gender" class="form-label">Cinsiyet</label>
-                                <select class="form-select" id="gender" name="gender">
-                                    <option value="">Seçiniz</option>
-                                    <option value="1">Erkek</option>
-                                    <option value="2">Kadın</option>
-                                    <option value="3">Diğer</option>
-                                </select>
-                            </div>
-                        </div>
-
+                        
                         <div class="mb-3">
-                            <label for="userType" class="form-label">Kullanıcı Tipi</label>
-                            <select class="form-select" id="userType" name="userType" required>
+                            <label class="form-label">Doğum Tarihi</label>
+                            <input type="date" class="form-control" id="birthDate" name="birthDate">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Cinsiyet</label>
+                            <select class="form-select" id="gender" name="gender">
                                 <option value="">Seçiniz</option>
-                                <option value="1">Misafir</option>
-                                <option value="2">Ev Sahibi</option>
+                                <option value="1">Erkek</option>
+                                <option value="2">Kadın</option>
+                                <option value="3">Diğer</option>
                             </select>
                         </div>
-
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Adres</label>
+                            <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Şehir</label>
+                                <input type="text" class="form-control" id="city" name="city">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ülke</label>
+                                <input type="text" class="form-control" id="country" name="country" value="Türkiye">
+                            </div>
+                        </div>
+                        
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
-                            <label class="form-check-label" for="terms">
+                            <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
                                 <a href="#" class="text-decoration-none">Kullanım Şartları</a> ve 
-                                <a href="#" class="text-decoration-none">Gizlilik Politikası</a>'nı kabul ediyorum
+                                <a href="#" class="text-decoration-none">Gizlilik Politikası</a>'nı kabul ediyorum *
                             </label>
                         </div>
-
-                        <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary btn-lg">
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-person-plus"></i> Kayıt Ol
                             </button>
                         </div>
+                        
+                        <div class="text-center mt-3">
+                            <a href="@Url.Action("Login")" class="text-decoration-none">
+                                Zaten hesabınız var mı? Giriş yapın
+                            </a>
+                        </div>
                     </form>
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <p class="text-muted mb-3">Zaten hesabınız var mı?</p>
-                        <a href="@Url.Action("Login")" class="btn btn-outline-primary">
-                            <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Şifreler eşleşmiyor!');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const registerData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                phoneNumber: formData.get('phoneNumber'),
+                password: formData.get('password'),
+                confirmPassword: formData.get('confirmPassword'),
+                dateOfBirth: formData.get('birthDate'),
+                gender: parseInt(formData.get('gender') || 0),
+                address: formData.get('address'),
+                city: formData.get('city'),
+                country: formData.get('country')
+            };
+            
+            try {
+                const response = await fetch('/Users/Register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registerData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    // RedirectUrl varsa oraya yönlendir, yoksa login sayfasına
+                    window.location.href = result.redirectUrl || '/Users/Login';
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+            } catch (error) {
+                alert('Kayıt olurken bir hata oluştu: ' + error.message);
+            }
+        });
+    </script>
+} 

@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MinimalAirbnb.Application.Reservations.Commands.CreateReservation;
+using MinimalAirbnb.Application.Reservations.Commands.DeleteReservation;
 using MinimalAirbnb.Application.Reservations.Queries.GetReservations;
 using MinimalAirbnb.Application.Reservations.DTOs;
 using Maggsoft.Core.Base;
@@ -36,13 +37,28 @@ public class ReservationsController : BaseApiController
     /// Yeni reservation oluştur
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<Result<object>>> CreateReservation([FromBody] CreateReservationCommand command)
+    public async Task<ActionResult<Result<CreateReservationResponseDto>>> CreateReservation([FromBody] CreateReservationCommand command)
     {
         var result = await _mediator.Send(command);
         
         if (!result.IsSuccess)
             return BadRequest(result);
             
-        return CreatedAtAction(nameof(GetReservations), result);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Rezervasyon sil
+    /// </summary>
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Result<object>>> DeleteReservation(Guid id)
+    {
+        var command = new DeleteReservationCommand { ReservationId = id };
+        var result = await _mediator.Send(command);
+        
+        if (!result.IsSuccess)
+            return BadRequest(result);
+            
+        return Ok(result);
     }
 } 

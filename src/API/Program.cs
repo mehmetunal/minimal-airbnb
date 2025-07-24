@@ -35,6 +35,8 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<MinimalAirbnbDbContext>()
 .AddDefaultTokenProviders();
 
+
+
 // Seed Data Service
 builder.Services.AddScoped<SeedDataService>();
 
@@ -65,6 +67,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+
 
 // Controllers
 app.MapControllers();

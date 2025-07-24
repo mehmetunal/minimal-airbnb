@@ -1,4 +1,4 @@
-@model Maggsoft.Core.Model.Pagination.PagedList<MinimalAirbnb.Application.Favorites.DTOs.FavoriteDto>
+@model MinimalAirbnb.Web.Models.PagedListWrapper<MinimalAirbnb.Application.Favorites.DTOs.FavoriteDto>
 @{
     ViewData["Title"] = "Favorilerim";
 }
@@ -134,15 +134,15 @@
                             @if (Model.HasPreviousPage)
                             {
                                 <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("MyFavorites", "Favorites", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageIndex, pageSize = Model.PageSize })">
+                                    <a class="page-link" href="@Url.Action("MyFavorites", "Favorites", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageNumber, pageSize = Model.PageSize })">
                                         <i class="bi bi-chevron-left"></i>
                                     </a>
                                 </li>
                             }
 
-                            @for (int i = Math.Max(1, Model.PageIndex + 1 - 2); i <= Math.Min(Model.TotalPages, Model.PageIndex + 1 + 2); i++)
+                            @for (int i = Math.Max(1, Model.PageNumber + 1 - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 1 + 2); i++)
                             {
-                                <li class="page-item @(i == Model.PageIndex + 1 ? "active" : "")">
+                                <li class="page-item @(i == Model.PageNumber + 1 ? "active" : "")">
                                     <a class="page-link" href="@Url.Action("MyFavorites", "Favorites", new { userId = Context.Request.Query["userId"], pageNumber = i, pageSize = Model.PageSize })">@i</a>
                                 </li>
                             }
@@ -150,7 +150,7 @@
                             @if (Model.HasNextPage)
                             {
                                 <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("MyFavorites", "Favorites", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageIndex + 2, pageSize = Model.PageSize })">
+                                    <a class="page-link" href="@Url.Action("MyFavorites", "Favorites", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageNumber + 2, pageSize = Model.PageSize })">
                                         <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>

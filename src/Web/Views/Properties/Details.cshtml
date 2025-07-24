@@ -32,19 +32,24 @@
                     <p class="text-muted">
                         <i class="bi bi-geo-alt"></i> @Model.City, @Model.Country
                     </p>
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="text-warning me-2">
-                            @for (int i = 0; i < Math.Min((int)Model.AverageRating, 5); i++)
-                            {
-                                <i class="bi bi-star-fill"></i>
-                            }
-                            @for (int i = (int)Model.AverageRating; i < 5; i++)
-                            {
-                                <i class="bi bi-star"></i>
-                            }
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="text-warning me-2">
+                                @for (int i = 0; i < Math.Min((int)Model.AverageRating, 5); i++)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                                @for (int i = (int)Model.AverageRating; i < 5; i++)
+                                {
+                                    <i class="bi bi-star"></i>
+                                }
+                            </div>
+                            <span class="text-muted">(@Model.TotalReviews değerlendirme)</span>
+                            <span class="text-muted ms-3">@Model.ViewCount görüntülenme</span>
                         </div>
-                        <span class="text-muted">(@Model.TotalReviews değerlendirme)</span>
-                        <span class="text-muted ms-3">@Model.ViewCount görüntülenme</span>
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="favoriteBtn">
+                            <i class="bi bi-heart"></i> Favorilere Ekle
+                        </button>
                     </div>
                 </div>
             </div>
@@ -189,7 +194,7 @@
                             <span id="grandTotal">₺@(Model.PricePerNight + Model.CleaningFee + Model.ServiceFee)</span>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary w-100 mt-3">
+                        <button type="button" class="btn btn-primary w-100 mt-3" id="createReservationBtn" data-bs-toggle="modal" data-bs-target="#paymentModal">
                             Rezervasyon Yap
                         </button>
                     </form>
@@ -201,6 +206,113 @@
                         </small>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ödeme Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">
+                    <i class="bi bi-credit-card text-primary"></i>
+                    Ödeme Bilgileri
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <form id="paymentForm">
+                            <div class="mb-3">
+                                <label class="form-label">Kart Üzerindeki İsim</label>
+                                <input type="text" class="form-control" id="cardHolderName" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Kart Numarası</label>
+                                <input type="text" class="form-control" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Son Kullanma Tarihi</label>
+                                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">CVV</label>
+                                        <input type="text" class="form-control" id="cvv" maxlength="4" placeholder="123" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Ödeme Yöntemi</label>
+                                <select class="form-select" id="paymentMethod" required>
+                                    <option value="">Ödeme yöntemi seçin</option>
+                                    <option value="CreditCard">Kredi Kartı</option>
+                                    <option value="DebitCard">Banka Kartı</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Notlar (Opsiyonel)</label>
+                                <textarea class="form-control" id="notes" rows="3" placeholder="Özel istekleriniz varsa buraya yazabilirsiniz..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Rezervasyon Özeti</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Giriş:</small>
+                                    <small id="modalCheckIn">-</small>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Çıkış:</small>
+                                    <small id="modalCheckOut">-</small>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Misafir:</small>
+                                    <small id="modalGuestCount">-</small>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Konaklama:</small>
+                                    <small id="modalAccommodation">-</small>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Temizlik:</small>
+                                    <small>₺@Model.CleaningFee</small>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <small>Hizmet:</small>
+                                    <small>₺@Model.ServiceFee</small>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Toplam:</span>
+                                    <span id="modalTotal">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="confirmPaymentBtn">
+                    <i class="bi bi-lock"></i>
+                    Ödemeyi Tamamla
+                </button>
             </div>
         </div>
     </div>
@@ -241,5 +353,178 @@
         const today = new Date().toISOString().split('T')[0];
         checkInDate.min = today;
         checkOutDate.min = today;
+
+        // Kart numarası formatlaması
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || '';
+            e.target.value = formattedValue;
+        });
+
+        // Son kullanma tarihi formatlaması
+        document.getElementById('expiryDate').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // CVV sadece sayı
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // Modal açıldığında rezervasyon bilgilerini güncelle
+        document.getElementById('paymentModal').addEventListener('show.bs.modal', function() {
+            const checkIn = checkInDate.value;
+            const checkOut = checkOutDate.value;
+            const guestCount = document.getElementById('guestCount').value;
+            
+            if (!checkIn || !checkOut) {
+                alert('Lütfen giriş ve çıkış tarihlerini seçin.');
+                return false; // Modal'ı açma
+            }
+            
+            if (new Date(checkIn) >= new Date(checkOut)) {
+                alert('Çıkış tarihi giriş tarihinden sonra olmalıdır.');
+                return false; // Modal'ı açma
+            }
+            
+            // Modal içindeki bilgileri güncelle
+            document.getElementById('modalCheckIn').textContent = checkIn;
+            document.getElementById('modalCheckOut').textContent = checkOut;
+            document.getElementById('modalGuestCount').textContent = guestCount + ' misafir';
+            document.getElementById('modalAccommodation').textContent = totalPrice.textContent;
+            document.getElementById('modalTotal').textContent = grandTotal.textContent;
+        });
+
+        // Ödeme tamamlama işlemi
+        document.getElementById('confirmPaymentBtn').addEventListener('click', async function() {
+            const checkIn = checkInDate.value;
+            const checkOut = checkOutDate.value;
+            const guestCount = document.getElementById('guestCount').value;
+            const totalPrice = parseFloat(grandTotal.textContent.replace('₺', ''));
+            
+            // Ödeme formu validasyonu
+            const cardHolderName = document.getElementById('cardHolderName').value;
+            const cardNumber = document.getElementById('cardNumber').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+            const cvv = document.getElementById('cvv').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const notes = document.getElementById('notes').value;
+            
+            if (!cardHolderName || !cardNumber || !expiryDate || !cvv || !paymentMethod) {
+                alert('Lütfen tüm ödeme bilgilerini doldurun.');
+                return;
+            }
+            
+            // Kart numarası formatı kontrolü
+            if (cardNumber.replace(/\s/g, '').length !== 16) {
+                alert('Geçerli bir kart numarası girin.');
+                return;
+            }
+            
+            // CVV kontrolü
+            if (cvv.length < 3 || cvv.length > 4) {
+                alert('Geçerli bir CVV girin.');
+                return;
+            }
+            
+            // Son kullanma tarihi kontrolü
+            if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                alert('Son kullanma tarihini MM/YY formatında girin.');
+                return;
+            }
+            
+            const reservationData = {
+                checkInDate: checkIn,
+                checkOutDate: checkOut,
+                guestCount: parseInt(guestCount),
+                totalPrice: totalPrice,
+                notes: notes,
+                paymentMethod: paymentMethod,
+                cardNumber: cardNumber.replace(/\s/g, ''),
+                expiryDate: expiryDate,
+                cvv: cvv,
+                cardHolderName: cardHolderName
+            };
+            
+            // Butonu devre dışı bırak
+            const confirmBtn = document.getElementById('confirmPaymentBtn');
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> İşleniyor...';
+            
+            try {
+                const response = await fetch(`/Properties/CreateReservation/@Model.Id`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(reservationData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Modal'ı kapat
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+                    modal.hide();
+                    
+                    // Başarı mesajı göster
+                    alert('Rezervasyon ve ödeme başarıyla tamamlandı!');
+                    
+                    // Başarılı rezervasyon sonrası yönlendirme
+                    window.location.href = '/Reservations/MyReservations';
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+            } catch (error) {
+                alert('İşlem sırasında bir hata oluştu: ' + error.message);
+            } finally {
+                // Butonu tekrar aktif et
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
+            }
+        });
+
+        // Favori ekleme işlemi
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            if (favoriteBtn) {
+                favoriteBtn.addEventListener('click', async function() {
+                    try {
+                        const response = await fetch(`/Properties/ToggleFavorite/@Model.Id`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            const icon = favoriteBtn.querySelector('i');
+                            if (icon.classList.contains('bi-heart')) {
+                                icon.classList.remove('bi-heart');
+                                icon.classList.add('bi-heart-fill');
+                                favoriteBtn.classList.remove('btn-outline-danger');
+                                favoriteBtn.classList.add('btn-danger');
+                            } else {
+                                icon.classList.remove('bi-heart-fill');
+                                icon.classList.add('bi-heart');
+                                favoriteBtn.classList.remove('btn-danger');
+                                favoriteBtn.classList.add('btn-outline-danger');
+                            }
+                        } else {
+                            alert('Hata: ' + result.message);
+                        }
+                    } catch (error) {
+                        alert('Favori işlemi sırasında hata: ' + error.message);
+                    }
+                });
+            }
+        });
     </script>
 } 

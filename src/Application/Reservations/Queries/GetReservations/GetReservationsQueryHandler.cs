@@ -32,8 +32,8 @@ public class GetReservationsQueryHandler : IRequestHandler<GetReservationsQuery,
                 query = query.Where(r => r.PropertyId == request.PropertyId.Value);
             }
 
-            // User filter (GuestId olarak)
-            if (request.UserId.HasValue)
+            // User filter (GuestId olarak) - eğer UserId null ise tüm kayıtları getir
+            if (request.UserId.HasValue && request.UserId.Value != Guid.Empty)
             {
                 query = query.Where(r => r.GuestId == request.UserId.Value);
             }
@@ -52,6 +52,13 @@ public class GetReservationsQueryHandler : IRequestHandler<GetReservationsQuery,
             // Order by creation date
             query = query.OrderByDescending(r => r.CreatedDate);
 
+            // Include navigation properties
+            query = query.Include(r => r.Property)
+                        .ThenInclude(p => p.Host)
+                        .Include(r => r.Property)
+                        .ThenInclude(p => p.Photos)
+                        .Include(r => r.Guest);
+
             // Get paged list
             var pagedList = await query.ToPagedListAsync(request.PageNumber - 1, request.PageSize);
 
@@ -60,11 +67,17 @@ public class GetReservationsQueryHandler : IRequestHandler<GetReservationsQuery,
             {
                 Id = r.Id,
                 GuestId = r.GuestId,
+                GuestName = r.Guest != null ? $"{r.Guest.FirstName} {r.Guest.LastName}" : string.Empty,
                 PropertyId = r.PropertyId,
+                PropertyTitle = r.Property?.Title ?? string.Empty,
+                PropertyPhotoUrl = r.Property?.Photos?.FirstOrDefault(p => p.IsMainPhoto)?.PhotoUrl,
+                HostId = r.Property?.HostId ?? Guid.Empty,
+                HostName = r.Property?.Host != null ? $"{r.Property.Host.FirstName} {r.Property.Host.LastName}" : string.Empty,
                 CheckInDate = r.CheckInDate,
                 CheckOutDate = r.CheckOutDate,
                 GuestCount = r.GuestCount,
                 TotalDays = r.TotalDays,
+                TotalNights = r.TotalDays,
                 PricePerNight = r.PricePerNight,
                 CleaningFee = r.CleaningFee,
                 ServiceFee = r.ServiceFee,
@@ -77,7 +90,9 @@ public class GetReservationsQueryHandler : IRequestHandler<GetReservationsQuery,
                 ConfirmationDate = r.ConfirmationDate,
                 ConfirmedByUserId = r.ConfirmedByUserId,
                 CheckInTime = r.CheckInTime,
-                CheckOutTime = r.CheckOutTime
+                CheckOutTime = r.CheckOutTime,
+                CreatedAt = r.CreatedDate,
+                CreatedDate = r.CreatedDate
             }).ToList();
 
             // Create new PagedList with DTOs

@@ -6,52 +6,37 @@ namespace MinimalAirbnb.Domain.Enums;
 public enum PaymentMethod
 {
     /// <summary>
-    /// Kredi kartı
+    /// Kredi Kartı
     /// </summary>
-    CreditCard = 1,
-
+    CreditCard = 0,
+    
     /// <summary>
-    /// Banka kartı
+    /// Banka Kartı
     /// </summary>
-    DebitCard = 2,
-
+    DebitCard = 1,
+    
     /// <summary>
     /// PayPal
     /// </summary>
-    PayPal = 3,
-
+    PayPal = 2,
+    
     /// <summary>
     /// Apple Pay
     /// </summary>
-    ApplePay = 4,
-
+    ApplePay = 3,
+    
     /// <summary>
     /// Google Pay
     /// </summary>
-    GooglePay = 5,
-
+    GooglePay = 4,
+    
     /// <summary>
-    /// Banka havalesi
+    /// Banka Transferi
     /// </summary>
-    BankTransfer = 6,
-
+    BankTransfer = 5,
+    
     /// <summary>
     /// Nakit
     /// </summary>
-    Cash = 7,
-
-    /// <summary>
-    /// Çek
-    /// </summary>
-    Check = 8,
-
-    /// <summary>
-    /// Kripto para
-    /// </summary>
-    Cryptocurrency = 9,
-
-    /// <summary>
-    /// Diğer
-    /// </summary>
-    Other = 99
+    Cash = 6
 } 

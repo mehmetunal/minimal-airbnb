@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using Maggsoft.Core.Model;
+using System.Text.Json.Serialization;
 
 namespace MinimalAirbnb.Web.Services;
 

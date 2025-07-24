@@ -45,10 +45,27 @@ public class Payment : BaseEntity
     public string? TransactionId { get; set; }
 
     /// <summary>
+    /// Sağlayıcı işlem ID'si
+    /// </summary>
+    [StringLength(100)]
+    public string? ProviderTransactionId { get; set; }
+
+    /// <summary>
     /// Sağlayıcı referans ID'si
     /// </summary>
     [StringLength(100)]
     public string? ProviderReferenceId { get; set; }
+
+    /// <summary>
+    /// Ödeme sağlayıcısı
+    /// </summary>
+    public PaymentProvider Provider { get; set; }
+
+    /// <summary>
+    /// Açıklama
+    /// </summary>
+    [StringLength(500)]
+    public string? Description { get; set; }
 
     /// <summary>
     /// Ödeme tarihi
@@ -88,11 +105,7 @@ public class Payment : BaseEntity
     /// </summary>
     public DateTime? LastRetryDate { get; set; }
 
-    /// <summary>
-    /// Ödeme sağlayıcısı
-    /// </summary>
-    [StringLength(100)]
-    public string? PaymentProvider { get; set; }
+
 
     /// <summary>
     /// Kart son 4 hanesi
@@ -146,7 +159,7 @@ public class Payment : BaseEntity
     /// Ödeme başarılı mı?
     /// </summary>
     [NotMapped]
-    public bool IsSuccessful => Status == PaymentStatus.Completed;
+    public bool IsSuccessful => Status == PaymentStatus.Success;
 
     /// <summary>
     /// Ödeme başarısız mı?
@@ -158,7 +171,7 @@ public class Payment : BaseEntity
     /// Ödeme iade edildi mi?
     /// </summary>
     [NotMapped]
-    public bool IsRefunded => Status == PaymentStatus.Refunded || Status == PaymentStatus.PartialRefund;
+    public bool IsRefunded => Status == PaymentStatus.Refunded;
 
     /// <summary>
     /// Ödeme iptal edildi mi?
@@ -170,5 +183,5 @@ public class Payment : BaseEntity
     /// Ödeme bekliyor mu?
     /// </summary>
     [NotMapped]
-    public bool IsPending => Status == PaymentStatus.Pending || Status == PaymentStatus.Processing || Status == PaymentStatus.AwaitingConfirmation;
+    public bool IsPending => Status == PaymentStatus.Pending || Status == PaymentStatus.Processing;
 } 

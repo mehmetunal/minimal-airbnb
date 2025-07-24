@@ -1,214 +1,174 @@
-@model Maggsoft.Core.Model.Pagination.PagedList<MinimalAirbnb.Application.Favorites.DTOs.FavoriteDto>
+@model MinimalAirbnb.Web.Models.PagedListWrapper<MinimalAirbnb.Application.Favorites.DTOs.FavoriteDto>
 @{
-    ViewData["Title"] = "Favoriler";
+    ViewData["Title"] = "Favorilerim";
+    var currentPage = Model.PageNumber + 1;
 }
 
-<div class="container mt-4">
-    <div class="row">
+<div class="container py-5">
+    <!-- Başlık -->
+    <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="mb-0">
-                    <i class="bi bi-heart-fill text-danger"></i>
-                    Favoriler
-                </h2>
-                <a href="@Url.Action("Index", "Properties")" class="btn btn-primary">
-                    <i class="bi bi-search"></i>
-                    Ev Ara
-                </a>
-            </div>
-
-            <!-- Filtreler -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form method="get" class="row g-3">
-                        <div class="col-md-4">
-                            <label for="userId" class="form-label">Kullanıcı ID</label>
-                            <input type="text" class="form-control" id="userId" name="UserId" 
-                                   value="@Context.Request.Query["UserId"]" placeholder="Kullanıcı ID girin">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="propertyId" class="form-label">Ev ID</label>
-                            <input type="text" class="form-control" id="propertyId" name="PropertyId" 
-                                   value="@Context.Request.Query["PropertyId"]" placeholder="Ev ID girin">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button type="submit" class="btn btn-outline-primary me-2">
-                                <i class="bi bi-search"></i>
-                                Filtrele
-                            </button>
-                            <a href="@Url.Action("Index", "Favorites")" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-clockwise"></i>
-                                Temizle
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            @if (Model.Data.Any())
-            {
-                <!-- Favori Listesi -->
-                <div class="row">
-                    @foreach (var favorite in Model.Data)
-                    {
-                        <div class="col-md-6 col-lg-4 mb-4">
-                            <div class="card h-100 shadow-sm">
-                                @if (!string.IsNullOrEmpty(favorite.MainPhotoUrl))
-                                {
-                                    <img src="@favorite.MainPhotoUrl" class="card-img-top" alt="@favorite.PropertyTitle" style="height: 200px; object-fit: cover;">
-                                }
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div>
-                                            <h6 class="card-title mb-1">@favorite.PropertyTitle</h6>
-                                            <small class="text-muted">@favorite.HostName</small>
-                                        </div>
-                                        <div class="text-end">
-                                            <div class="d-flex align-items-center">
-                                                @for (int i = 1; i <= 5; i++)
-                                                {
-                                                    if (i <= favorite.AverageRating)
-                                                    {
-                                                        <i class="bi bi-star-fill text-warning me-1"></i>
-                                                    }
-                                                    else
-                                                    {
-                                                        <i class="bi bi-star text-muted me-1"></i>
-                                                    }
-                                                }
-                                            </div>
-                                            <small class="text-muted">@favorite.AverageRating?.ToString("F1")/5</small>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-primary fw-bold">₺@favorite.PricePerNight</span>
-                                            <small class="text-muted">gecelik</small>
-                                        </div>
-                                        <small class="text-muted">@favorite.City</small>
-                                    </div>
-                                    
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="bi bi-calendar3"></i>
-                                            @favorite.CreatedAt.ToString("dd.MM.yyyy")
-                                        </small>
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="@Url.Action("Details", "Properties", new { id = favorite.PropertyId })" 
-                                               class="btn btn-outline-primary">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-outline-danger remove-favorite" 
-                                                    data-favorite-id="@favorite.Id" data-property-title="@favorite.PropertyTitle">
-                                                <i class="bi bi-heart-break"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-
-                <!-- Sayfalama -->
-                @if (Model.TotalPages > 1)
-                {
-                    <nav aria-label="Favori sayfaları">
-                        <ul class="pagination justify-content-center">
-                            @if (Model.HasPreviousPage)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("Index", "Favorites", new { pageNumber = Model.PageIndex, pageSize = Model.PageSize })">
-                                        <i class="bi bi-chevron-left"></i>
-                                    </a>
-                                </li>
-                            }
-
-                            @for (int i = Math.Max(1, Model.PageIndex + 1 - 2); i <= Math.Min(Model.TotalPages, Model.PageIndex + 1 + 2); i++)
-                            {
-                                <li class="page-item @(i == Model.PageIndex + 1 ? "active" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", "Favorites", new { pageNumber = i, pageSize = Model.PageSize })">@i</a>
-                                </li>
-                            }
-
-                            @if (Model.HasNextPage)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("Index", "Favorites", new { pageNumber = Model.PageIndex + 2, pageSize = Model.PageSize })">
-                                        <i class="bi bi-chevron-right"></i>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </nav>
-                }
-
-                <!-- Toplam Bilgi -->
-                <div class="text-center mt-3">
-                    <small class="text-muted">
-                        Toplam @Model.TotalCount favori, @Model.TotalPages sayfa
-                    </small>
-                </div>
-            }
-            else
-            {
-                <!-- Boş Durum -->
-                <div class="text-center py-5">
-                    <i class="bi bi-heart display-1 text-muted"></i>
-                    <h4 class="mt-3 text-muted">Henüz favori eviniz bulunmuyor</h4>
-                    <p class="text-muted">Beğendiğiniz evleri favorilere ekleyin!</p>
-                    <a href="@Url.Action("Index", "Properties")" class="btn btn-primary">
-                        <i class="bi bi-search"></i>
-                        Ev Ara
-                    </a>
-                </div>
-            }
+            <h1 class="fw-bold">
+                <i class="bi bi-heart text-danger"></i> Favorilerim
+            </h1>
+            <p class="text-muted">Beğendiğiniz evleri buradan takip edebilirsiniz</p>
         </div>
     </div>
+
+    <!-- Favori Listesi -->
+    <div class="row">
+        @if (Model?.Data != null && Model.Data.Any())
+        {
+            foreach (var favorite in Model.Data)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        @if (!string.IsNullOrEmpty(favorite.MainPhotoUrl))
+                        {
+                            <img src="@favorite.MainPhotoUrl" class="card-img-top" alt="@favorite.PropertyTitle" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-house fs-1 text-muted"></i>
+                            </div>
+                        }
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">@favorite.PropertyTitle</h5>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-geo-alt"></i> @favorite.PropertyCity, @favorite.PropertyCountry
+                            </p>
+                            
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-warning me-2">
+                                    @if (favorite.PropertyAverageRating.HasValue)
+                                    {
+                                        var rating = (int)favorite.PropertyAverageRating.Value;
+                                        @for (int i = 0; i < Math.Min(rating, 5); i++)
+                                        {
+                                            <i class="bi bi-star-fill"></i>
+                                        }
+                                        @for (int i = rating; i < 5; i++)
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @for (int i = 0; i < 5; i++)
+                                        {
+                                            <i class="bi bi-star"></i>
+                                        }
+                                    }
+                                </div>
+                                <small class="text-muted">(@favorite.PropertyTotalReviews)</small>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">Yatak Odası</small><br>
+                                    <strong>@favorite.PropertyBedroomCount</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Banyo</small><br>
+                                    <strong>@favorite.PropertyBathroomCount</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="fw-bold text-primary">₺@favorite.PropertyPricePerNight</span>
+                                <small class="text-muted">/gece</small>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("Details", "Properties", new { id = favorite.PropertyId })" class="btn btn-outline-primary btn-sm flex-fill">
+                                    <i class="bi bi-eye"></i> Görüntüle
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeFavorite('@favorite.Id')">
+                                    <i class="bi bi-heart-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-heart fs-1 text-muted mb-3"></i>
+                <h3>Henüz favoriniz bulunmuyor</h3>
+                <p class="text-muted">Beğendiğiniz evleri favorilere ekleyerek buradan takip edebilirsiniz.</p>
+                <a href="@Url.Action("Index", "Properties")" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Ev Ara
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Sayfalama -->
+    @if (Model?.TotalPages > 1)
+    {
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Favori sayfalama">
+                    <ul class="pagination justify-content-center">
+                        @if (currentPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = currentPage - 1, PageSize = Model.PageSize })">
+                                    Önceki
+                                </a>
+                            </li>
+                        }
+
+                        @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(Model.TotalPages, currentPage + 2); i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = i, PageSize = Model.PageSize })">
+                                    @i
+                                </a>
+                            </li>
+                        }
+
+                        @if (currentPage < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@Url.Action("Index", new { PageNumber = currentPage + 1, PageSize = Model.PageSize })">
+                                    Sonraki
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
     <script>
-        // Favori kaldırma işlemi
-        document.addEventListener('DOMContentLoaded', function() {
-            const removeButtons = document.querySelectorAll('.remove-favorite');
-            
-            removeButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const favoriteId = this.dataset.favoriteId;
-                    const propertyTitle = this.dataset.propertyTitle;
-                    
-                    if (confirm(`"${propertyTitle}" evini favorilerden kaldırmak istediğinizden emin misiniz?`)) {
-                        // AJAX ile favori kaldırma işlemi
-                        fetch(`/api/favorites/${favoriteId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                // Kartı sayfadan kaldır
-                                const card = this.closest('.col-md-6');
-                                card.remove();
-                                
-                                // Başarı mesajı
-                                alert('Ev favorilerden kaldırıldı!');
-                                
-                                // Sayfa yenile (opsiyonel)
-                                // location.reload();
-                            } else {
-                                alert('Favori kaldırılırken bir hata oluştu!');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Favori kaldırılırken bir hata oluştu!');
-                        });
+        function removeFavorite(favoriteId) {
+            if (confirm('Bu evi favorilerden çıkarmak istediğinizden emin misiniz?')) {
+                fetch(`/api/favorites/${favoriteId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
                     }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert('Hata: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Favori silinirken bir hata oluştu: ' + error.message);
                 });
-            });
-        });
+            }
+        }
     </script>
 } 
