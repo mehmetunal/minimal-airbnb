@@ -1,0 +1,197 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var user = ViewBag.User as MinimalAirbnb.Application.Users.DTOs.UserDto;
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-person-circle text-primary"></i>
+                    Hoş Geldiniz, @(user?.FirstName ?? "Kullanıcı")!
+                </h2>
+                <div>
+                    <a href="@Url.Action("Profile", "Users")" class="btn btn-outline-primary">
+                        <i class="bi bi-person"></i>
+                        Profil
+                    </a>
+                </div>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-heart-fill text-danger display-4"></i>
+                            <h5 class="card-title mt-2">Favorilerim</h5>
+                            <p class="card-text">Beğendiğiniz evleri takip edin</p>
+                            <a href="@Url.Action("MyFavorites", "Favorites")" class="btn btn-primary">
+                                <i class="bi bi-arrow-right"></i>
+                                Favorilerimi Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-calendar-check-fill text-success display-4"></i>
+                            <h5 class="card-title mt-2">Rezervasyonlarım</h5>
+                            <p class="card-text">Geçmiş ve gelecek rezervasyonlarınız</p>
+                            <a href="@Url.Action("MyReservations", "Reservations")" class="btn btn-success">
+                                <i class="bi bi-arrow-right"></i>
+                                Rezervasyonlarımı Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-star-fill text-warning display-4"></i>
+                            <h5 class="card-title mt-2">Değerlendirmelerim</h5>
+                            <p class="card-text">Yaptığınız değerlendirmeler</p>
+                            <a href="@Url.Action("MyReviews", "Reviews")" class="btn btn-warning">
+                                <i class="bi bi-arrow-right"></i>
+                                Değerlendirmelerimi Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hızlı İşlemler -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-lightning-fill text-warning"></i>
+                                Hızlı İşlemler
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <a href="@Url.Action("Index", "Properties")" class="btn btn-outline-primary w-100">
+                                        <i class="bi bi-search"></i>
+                                        Ev Ara
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="@Url.Action("Index", "Messages")" class="btn btn-outline-info w-100">
+                                        <i class="bi bi-envelope"></i>
+                                        Mesajlarım
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="@Url.Action("Inbox", "Messages")" class="btn btn-outline-secondary w-100">
+                                        <i class="bi bi-inbox"></i>
+                                        Gelen Kutusu
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="@Url.Action("Profile", "Users")" class="btn btn-outline-dark w-100">
+                                        <i class="bi bi-gear"></i>
+                                        Ayarlar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Son Aktiviteler -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-clock-history text-info"></i>
+                                Son Aktiviteler
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-heart text-danger"></i>
+                                        <span class="ms-2">Favori eklendi</span>
+                                    </div>
+                                    <small class="text-muted">2 saat önce</small>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-calendar-check text-success"></i>
+                                        <span class="ms-2">Rezervasyon yapıldı</span>
+                                    </div>
+                                    <small class="text-muted">1 gün önce</small>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-star text-warning"></i>
+                                        <span class="ms-2">Değerlendirme yapıldı</span>
+                                    </div>
+                                    <small class="text-muted">3 gün önce</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-bell text-warning"></i>
+                                Bildirimler
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-info-circle text-info"></i>
+                                        <span class="ms-2">Hoş geldiniz! Dashboard'unuzu keşfedin.</span>
+                                    </div>
+                                    <small class="text-muted">Şimdi</small>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-check-circle text-success"></i>
+                                        <span class="ms-2">Hesabınız başarıyla doğrulandı</span>
+                                    </div>
+                                    <small class="text-muted">1 gün önce</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Dashboard sayfası yüklendiğinde çalışacak script'ler
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard yüklendi');
+            
+            // Kartlara hover efekti ekle
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.transition = 'transform 0.3s ease';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,253 @@
+@{
+    ViewData["Title"] = "Ev Kirala";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-house-plus"></i> Evinizi Kiralayın
+                    </h3>
+                    <p class="mb-0">Evinizi güvenli bir şekilde kiralayarak ek gelir elde edin</p>
+                </div>
+                <div class="card-body">
+                    <form id="createPropertyForm">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Ev Başlığı *</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Açıklama *</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ev Tipi *</label>
+                                <select class="form-select" id="propertyType" name="propertyType" required>
+                                    <option value="">Seçiniz</option>
+                                    <option value="1">Daire</option>
+                                    <option value="2">Villa</option>
+                                    <option value="3">Ev</option>
+                                    <option value="4">Stüdyo</option>
+                                    <option value="5">Loft</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Günlük Fiyat (₺) *</label>
+                                <input type="number" class="form-control" id="pricePerNight" name="pricePerNight" min="0" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Yatak Odası Sayısı *</label>
+                                <input type="number" class="form-control" id="bedroomCount" name="bedroomCount" min="1" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Yatak Sayısı *</label>
+                                <input type="number" class="form-control" id="bedCount" name="bedCount" min="1" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Banyo Sayısı *</label>
+                                <input type="number" class="form-control" id="bathroomCount" name="bathroomCount" min="1" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label class="form-label">Maksimum Misafir *</label>
+                                <input type="number" class="form-control" id="maxGuestCount" name="maxGuestCount" min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Temizlik Ücreti (₺)</label>
+                                <input type="number" class="form-control" id="cleaningFee" name="cleaningFee" min="0" step="0.01" value="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Hizmet Ücreti (₺)</label>
+                                <input type="number" class="form-control" id="serviceFee" name="serviceFee" min="0" step="0.01" value="0">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Adres *</label>
+                                <input type="text" class="form-control" id="address" name="address" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Şehir *</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ülke *</label>
+                                <input type="text" class="form-control" id="country" name="country" value="Türkiye" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Enlem</label>
+                                <input type="number" class="form-control" id="latitude" name="latitude" step="any">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Boylam</label>
+                                <input type="number" class="form-control" id="longitude" name="longitude" step="any">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Olanaklar</label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="hasWifi" name="hasWifi">
+                                            <label class="form-check-label" for="hasWifi">
+                                                <i class="bi bi-wifi"></i> WiFi
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="hasAirConditioning" name="hasAirConditioning">
+                                            <label class="form-check-label" for="hasAirConditioning">
+                                                <i class="bi bi-snow"></i> Klima
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="hasKitchen" name="hasKitchen">
+                                            <label class="form-check-label" for="hasKitchen">
+                                                <i class="bi bi-cup-hot"></i> Mutfak
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="hasParking" name="hasParking">
+                                            <label class="form-check-label" for="hasParking">
+                                                <i class="bi bi-p-circle"></i> Otopark
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="hasPool" name="hasPool">
+                                            <label class="form-check-label" for="hasPool">
+                                                <i class="bi bi-water"></i> Havuz
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="allowsPets" name="allowsPets">
+                                            <label class="form-check-label" for="allowsPets">
+                                                <i class="bi bi-heart"></i> Evcil Hayvan
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Minimum Konaklama (Gün)</label>
+                                <input type="number" class="form-control" id="minimumStayDays" name="minimumStayDays" min="1" value="1">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Maksimum Konaklama (Gün)</label>
+                                <input type="number" class="form-control" id="maximumStayDays" name="maximumStayDays" min="1" value="30">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">İptal Politikası (Gün)</label>
+                                <input type="number" class="form-control" id="cancellationPolicyDays" name="cancellationPolicyDays" min="0" value="7">
+                                <small class="form-text text-muted">Kaç gün öncesine kadar ücretsiz iptal edilebilir</small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="@Url.Action("Index")" class="btn btn-secondary me-md-2">
+                                <i class="bi bi-arrow-left"></i> İptal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Ev Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('createPropertyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const propertyData = {
+                title: formData.get('title'),
+                description: formData.get('description'),
+                propertyType: parseInt(formData.get('propertyType')),
+                pricePerNight: parseFloat(formData.get('pricePerNight')),
+                bedroomCount: parseInt(formData.get('bedroomCount')),
+                bedCount: parseInt(formData.get('bedCount')),
+                bathroomCount: parseInt(formData.get('bathroomCount')),
+                maxGuestCount: parseInt(formData.get('maxGuestCount')),
+                cleaningFee: parseFloat(formData.get('cleaningFee') || 0),
+                serviceFee: parseFloat(formData.get('serviceFee') || 0),
+                address: formData.get('address'),
+                city: formData.get('city'),
+                country: formData.get('country'),
+                latitude: parseFloat(formData.get('latitude') || 0),
+                longitude: parseFloat(formData.get('longitude') || 0),
+                hasWifi: formData.get('hasWifi') === 'on',
+                hasAirConditioning: formData.get('hasAirConditioning') === 'on',
+                hasKitchen: formData.get('hasKitchen') === 'on',
+                hasParking: formData.get('hasParking') === 'on',
+                hasPool: formData.get('hasPool') === 'on',
+                allowsPets: formData.get('allowsPets') === 'on',
+                minimumStayDays: parseInt(formData.get('minimumStayDays')),
+                maximumStayDays: parseInt(formData.get('maximumStayDays')),
+                cancellationPolicyDays: parseInt(formData.get('cancellationPolicyDays'))
+            };
+            
+            try {
+                const response = await fetch('/api/properties', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(propertyData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Ev başarıyla oluşturuldu!');
+                    window.location.href = '/Properties';
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+            } catch (error) {
+                alert('Ev oluşturulurken bir hata oluştu: ' + error.message);
+            }
+        });
+    </script>
+} 
