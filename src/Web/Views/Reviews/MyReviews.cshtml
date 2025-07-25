@@ -163,7 +163,7 @@
                             @if (Model.HasPreviousPage)
                             {
                                 <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageNumber, pageSize = Model.PageSize })">
+                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { pageNumber = Model.PageNumber, pageSize = Model.PageSize })">
                                         <i class="bi bi-chevron-left"></i>
                                     </a>
                                 </li>
@@ -172,14 +172,14 @@
                             @for (int i = Math.Max(1, Model.PageNumber + 1 - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 1 + 2); i++)
                             {
                                 <li class="page-item @(i == Model.PageNumber + 1 ? "active" : "")">
-                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { userId = Context.Request.Query["userId"], pageNumber = i, pageSize = Model.PageSize })">@i</a>
+                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { pageNumber = i, pageSize = Model.PageSize })">@i</a>
                                 </li>
                             }
 
                             @if (Model.HasNextPage)
                             {
                                 <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new { userId = Context.Request.Query["userId"], pageNumber = Model.PageNumber + 2, pageSize = Model.PageSize })">
+                                    <a class="page-link" href="@Url.Action("MyReviews", "Reviews", new {  pageNumber = Model.PageNumber + 2, pageSize = Model.PageSize })">
                                         <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>

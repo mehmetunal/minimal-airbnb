@@ -8,6 +8,7 @@ using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
 using MinimalAirbnb.Web.Models;
+using System.Security.Claims;
 
 namespace MinimalAirbnb.Web.Controllers;
 
@@ -119,13 +120,20 @@ public class ReviewsController : Controller
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateReviewRequest request)
     {
+        // Kullanıcı ID'sini authentication'dan al
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(currentUserId) || !Guid.TryParse(currentUserId, out var parsedCurrentUserId))
+        {
+            return Json(new { success = false, message = "Kullanıcı bilgileri bulunamadı. Lütfen tekrar giriş yapın." });
+        }
+
         try
         {
             var command = new CreateReviewCommand
             {
                 PropertyId = request.PropertyId,
                 ReservationId = request.ReservationId,
-                UserId = request.UserId,
+                UserId = parsedCurrentUserId, // Authentication'dan alınan ID'yi kullan
                 Rating = request.Rating,
                 Comment = request.Comment,
                 CleanlinessRating = request.CleanlinessRating,
@@ -200,11 +208,18 @@ public class ReviewsController : Controller
     /// <summary>
     /// Kullanıcının değerlendirmelerini göster
     /// </summary>
-    public async Task<IActionResult> MyReviews(Guid userId, [FromQuery] int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> MyReviews([FromQuery] int pageNumber = 1, int pageSize = 10)
     {
+        // Kullanıcı ID'sini authentication'dan al
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(currentUserId) || !Guid.TryParse(currentUserId, out var parsedCurrentUserId))
+        {
+            return RedirectToAction("Login", "Users");
+        }
+
         try
         {
-            var response = await _httpClient.GetAsync<PagedListWrapper<ReviewDto>>($"/api/reviews?UserId={userId}&PageNumber={pageNumber}&PageSize={pageSize}");
+            var response = await _httpClient.GetAsync<PagedListWrapper<ReviewDto>>($"/api/reviews?UserId={parsedCurrentUserId}&PageNumber={pageNumber}&PageSize={pageSize}");
 
             if (response != null)
             {
@@ -227,7 +242,6 @@ public class CreateReviewRequest
 {
     public Guid PropertyId { get; set; }
     public Guid? ReservationId { get; set; }
-    public Guid UserId { get; set; }
     public int Rating { get; set; }
     public string Comment { get; set; } = string.Empty;
     public int? CleanlinessRating { get; set; }
