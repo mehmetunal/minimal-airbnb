@@ -21,9 +21,14 @@ public interface IUserRepository
     Task<IEnumerable<User>> GetAllAsync();
     
     /// <summary>
-    /// ID'ye göre kullanıcı getir
+    /// ID'ye göre kullanıcı getir (sadece temel bilgiler)
     /// </summary>
     Task<User?> GetByIdAsync(Guid id);
+    
+    /// <summary>
+    /// ID'ye göre kullanıcıyı tüm detayları ile getir
+    /// </summary>
+    Task<User?> GetByIdWithDetailsAsync(Guid id);
     
     /// <summary>
     /// Email ile kullanıcı bul

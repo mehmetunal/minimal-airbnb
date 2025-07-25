@@ -47,6 +47,37 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByIdAsync(Guid id)
     {
         return await _context.Users
+            .Select(u => new User
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                DateOfBirth = u.DateOfBirth,
+                UserName = u.UserName,
+                ProfilePicture = u.ProfilePicture,
+                ProfilePictureUrl = u.ProfilePictureUrl,
+                Bio = u.Bio,
+                Address = u.Address,
+                City = u.City,
+                Country = u.Country,
+                PostalCode = u.PostalCode,
+                UserType = u.UserType,
+                IsVerified = u.IsVerified,
+                IsActive = u.IsActive,
+                LastLoginDate = u.LastLoginDate,
+                LoginCount = u.LoginCount
+            })
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    /// <summary>
+    /// Kullanıcıyı tüm navigation property'ler ile getir
+    /// </summary>
+    public async Task<User?> GetByIdWithDetailsAsync(Guid id)
+    {
+        return await _context.Users
             .Include(u => u.Properties)
             .Include(u => u.Reservations)
             .Include(u => u.Reviews)
@@ -56,39 +87,45 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(u => u.Id == id);
     }
 
+
+
     public async Task<User?> GetByEmailAsync(string email)
     {
         return await _context.Users
-            .Include(u => u.Properties)
-            .Include(u => u.Reservations)
-            .Include(u => u.Reviews)
-            .Include(u => u.Favorites)
-            .Include(u => u.SentMessages)
-            .Include(u => u.ReceivedMessages)
+            .Select(u => new User
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                DateOfBirth = u.DateOfBirth,
+                UserName = u.UserName,
+                ProfilePicture = u.ProfilePicture,
+                ProfilePictureUrl = u.ProfilePictureUrl,
+                Bio = u.Bio,
+                Address = u.Address,
+                City = u.City,
+                Country = u.Country,
+                PostalCode = u.PostalCode,
+                UserType = u.UserType,
+                IsVerified = u.IsVerified,
+                IsActive = u.IsActive,
+                LastLoginDate = u.LastLoginDate,
+                LoginCount = u.LoginCount
+            })
             .FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<User?> GetByUserNameAsync(string userName)
     {
         return await _context.Users
-            .Include(u => u.Properties)
-            .Include(u => u.Reservations)
-            .Include(u => u.Reviews)
-            .Include(u => u.Favorites)
-            .Include(u => u.SentMessages)
-            .Include(u => u.ReceivedMessages)
             .FirstOrDefaultAsync(u => u.UserName == userName);
     }
 
     public async Task<User?> GetByPhoneNumberAsync(string phoneNumber)
     {
         return await _context.Users
-            .Include(u => u.Properties)
-            .Include(u => u.Reservations)
-            .Include(u => u.Reviews)
-            .Include(u => u.Favorites)
-            .Include(u => u.SentMessages)
-            .Include(u => u.ReceivedMessages)
             .FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
     }
 

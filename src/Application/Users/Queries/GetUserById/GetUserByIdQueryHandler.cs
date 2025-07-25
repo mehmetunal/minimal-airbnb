@@ -23,6 +23,7 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, Result<
     {
         try
         {
+            // Performans için sadece gerekli alanları getir
             var user = await _userRepository.GetByIdAsync(request.Id);
             
             if (user == null)

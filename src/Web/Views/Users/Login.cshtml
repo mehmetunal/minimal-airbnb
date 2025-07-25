@@ -18,25 +18,25 @@
                             <label class="form-label">E-posta *</label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Şifre *</label>
                             <input type="password" class="form-control" id="password" name="password" required>
                         </div>
-                        
+
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
                             <label class="form-check-label" for="rememberMe">
                                 Beni hatırla
                             </label>
                         </div>
-                        
+
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
                             </button>
                         </div>
-                        
+
                         <div class="text-center mt-3">
                             <a href="@Url.Action("Register")" class="text-decoration-none">
                                 Hesabınız yok mu? Kayıt olun
@@ -53,14 +53,14 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const formData = new FormData(this);
             const loginData = {
                 email: formData.get('email'),
                 password: formData.get('password'),
                 rememberMe: formData.get('rememberMe') === 'on'
             };
-            
+
             try {
                 const response = await fetch('/Users/Login', {
                     method: 'POST',
@@ -69,9 +69,9 @@
                     },
                     body: JSON.stringify(loginData)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     alert('Başarıyla giriş yaptınız!');
                     // RedirectUrl varsa oraya yönlendir, yoksa ana sayfaya
@@ -84,4 +84,4 @@
             }
         });
     </script>
-} 
+}

@@ -24,17 +24,17 @@
                                 <input type="text" class="form-control" id="lastName" name="lastName" required>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">E-posta *</label>
                             <input type="email" class="form-control" id="email" name="email" required>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Telefon *</label>
                             <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Şifre *</label>
@@ -45,12 +45,12 @@
                                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Doğum Tarihi</label>
                             <input type="date" class="form-control" id="birthDate" name="birthDate">
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Cinsiyet</label>
                             <select class="form-select" id="gender" name="gender">
@@ -60,12 +60,12 @@
                                 <option value="3">Diğer</option>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Adres</label>
                             <textarea class="form-control" id="address" name="address" rows="3"></textarea>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Şehir</label>
@@ -76,21 +76,21 @@
                                 <input type="text" class="form-control" id="country" name="country" value="Türkiye">
                             </div>
                         </div>
-                        
+
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required>
                             <label class="form-check-label" for="agreeTerms">
-                                <a href="#" class="text-decoration-none">Kullanım Şartları</a> ve 
+                                <a href="#" class="text-decoration-none">Kullanım Şartları</a> ve
                                 <a href="#" class="text-decoration-none">Gizlilik Politikası</a>'nı kabul ediyorum *
                             </label>
                         </div>
-                        
+
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-person-plus"></i> Kayıt Ol
                             </button>
                         </div>
-                        
+
                         <div class="text-center mt-3">
                             <a href="@Url.Action("Login")" class="text-decoration-none">
                                 Zaten hesabınız var mı? Giriş yapın
@@ -107,15 +107,15 @@
     <script>
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            
+
             if (password !== confirmPassword) {
                 alert('Şifreler eşleşmiyor!');
                 return;
             }
-            
+
             const formData = new FormData(this);
             const registerData = {
                 firstName: formData.get('firstName'),
@@ -130,7 +130,7 @@
                 city: formData.get('city'),
                 country: formData.get('country')
             };
-            
+
             try {
                 const response = await fetch('/Users/Register', {
                     method: 'POST',
@@ -139,9 +139,9 @@
                     },
                     body: JSON.stringify(registerData)
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     alert(result.message);
                     // RedirectUrl varsa oraya yönlendir, yoksa login sayfasına
@@ -154,4 +154,4 @@
             }
         });
     </script>
-} 
+}
