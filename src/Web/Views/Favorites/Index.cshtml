@@ -160,13 +160,16 @@
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        location.reload();
+                        showSuccess('Favori başarıyla kaldırıldı!');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
                     } else {
-                        alert('Hata: ' + result.message);
+                        showError('Hata: ' + result.message?.description);
                     }
                 })
                 .catch(error => {
-                    alert('Favori silinirken bir hata oluştu: ' + error.message);
+                    showError('Favori silinirken bir hata oluştu: ' + error.message);
                 });
             }
         }

@@ -415,25 +415,25 @@
             const notes = document.getElementById('notes').value;
             
             if (!cardHolderName || !cardNumber || !expiryDate || !cvv || !paymentMethod) {
-                alert('Lütfen tüm ödeme bilgilerini doldurun.');
+                showError('Lütfen tüm ödeme bilgilerini doldurun.');
                 return;
             }
             
             // Kart numarası formatı kontrolü
             if (cardNumber.replace(/\s/g, '').length !== 16) {
-                alert('Geçerli bir kart numarası girin.');
+                showError('Geçerli bir kart numarası girin.');
                 return;
             }
             
             // CVV kontrolü
             if (cvv.length < 3 || cvv.length > 4) {
-                alert('Geçerli bir CVV girin.');
+                showError('Geçerli bir CVV girin.');
                 return;
             }
             
             // Son kullanma tarihi kontrolü
             if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
-                alert('Son kullanma tarihini MM/YY formatında girin.');
+                showError('Son kullanma tarihini MM/YY formatında girin.');
                 return;
             }
             
@@ -473,15 +473,17 @@
                     modal.hide();
                     
                     // Başarı mesajı göster
-                    alert('Rezervasyon ve ödeme başarıyla tamamlandı!');
+                    showSuccess('Rezervasyon ve ödeme başarıyla tamamlandı!');
                     
                     // Başarılı rezervasyon sonrası yönlendirme
-                    window.location.href = '/Reservations/MyReservations';
+                    setTimeout(() => {
+                        window.location.href = '/Reservations/MyReservations';
+                    }, 2000);
                 } else {
-                    alert('Hata: ' + result.message);
+                    showError('Hata: ' + result.message?.description);
                 }
             } catch (error) {
-                alert('İşlem sırasında bir hata oluştu: ' + error.message);
+                showError('İşlem sırasında bir hata oluştu: ' + error.message);
             } finally {
                 // Butonu tekrar aktif et
                 confirmBtn.disabled = false;
@@ -511,17 +513,19 @@
                                 icon.classList.add('bi-heart-fill');
                                 favoriteBtn.classList.remove('btn-outline-danger');
                                 favoriteBtn.classList.add('btn-danger');
+                                showSuccess('Favorilere eklendi!');
                             } else {
                                 icon.classList.remove('bi-heart-fill');
                                 icon.classList.add('bi-heart');
                                 favoriteBtn.classList.remove('btn-danger');
                                 favoriteBtn.classList.add('btn-outline-danger');
+                                showSuccess('Favorilerden çıkarıldı!');
                             }
                         } else {
-                            alert('Hata: ' + result.message);
+                            showError('Hata: ' + result.message?.description);
                         }
                     } catch (error) {
-                        alert('Favori işlemi sırasında hata: ' + error.message);
+                        showError('Favori işlemi sırasında hata: ' + error.message);
                     }
                 });
             }

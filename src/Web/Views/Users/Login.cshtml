@@ -77,7 +77,7 @@
                     // RedirectUrl varsa oraya yönlendir, yoksa ana sayfaya
                     window.location.href = result.redirectUrl || '/';
                 } else {
-                    alert('Hata: ' + result.message);
+                    alert('Hata: ' + result.message?.description);
                 }
             } catch (error) {
                 alert('Giriş yapılırken bir hata oluştu: ' + error.message);

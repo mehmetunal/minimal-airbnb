@@ -243,7 +243,7 @@
                     alert('Ev başarıyla oluşturuldu!');
                     window.location.href = '/Properties';
                 } else {
-                    alert('Hata: ' + result.message);
+                    alert('Hata: ' + result.message?.description);
                 }
             } catch (error) {
                 alert('Ev oluşturulurken bir hata oluştu: ' + error.message);

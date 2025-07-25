@@ -2,7 +2,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MinimalAirbnb.Application.Reservations.Commands.CreateReservation;
 using MinimalAirbnb.Application.Reservations.Commands.DeleteReservation;
+using MinimalAirbnb.Application.Reservations.Commands.UpdateReservation;
 using MinimalAirbnb.Application.Reservations.Queries.GetReservations;
+using MinimalAirbnb.Application.Reservations.Queries.GetReservationById;
 using MinimalAirbnb.Application.Reservations.DTOs;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
@@ -34,11 +36,41 @@ public class ReservationsController : BaseApiController
     }
 
     /// <summary>
+    /// ID'ye göre reservation getir
+    /// </summary>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Result<ReservationDto>>> GetReservationById(Guid id)
+    {
+        var query = new GetReservationByIdQuery { Id = id };
+        var result = await _mediator.Send(query);
+        
+        if (!result.IsSuccess)
+            return NotFound(result);
+            
+        return Ok(result);
+    }
+
+    /// <summary>
     /// Yeni reservation oluştur
     /// </summary>
     [HttpPost]
     public async Task<ActionResult<Result<CreateReservationResponseDto>>> CreateReservation([FromBody] CreateReservationCommand command)
     {
+        var result = await _mediator.Send(command);
+        
+        if (!result.IsSuccess)
+            return BadRequest(result);
+            
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Rezervasyon güncelle
+    /// </summary>
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Result<object>>> UpdateReservation(Guid id, [FromBody] UpdateReservationCommand command)
+    {
+        command.ReservationId = id;
         var result = await _mediator.Send(command);
         
         if (!result.IsSuccess)

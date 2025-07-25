@@ -207,6 +207,43 @@ public class UsersController : Controller
 
         return View();
     }
+
+    /// <summary>
+    /// Kullanıcı ayarları sayfası
+    /// </summary>
+    [HttpGet("Settings/{id}")]
+    [Authorize]
+    public async Task<IActionResult> Settings(Guid id)
+    {
+        try
+        {
+            // Kullanıcının kendi ayarlarına erişip erişmediğini kontrol et
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currentUserId) || !Guid.TryParse(currentUserId, out var parsedCurrentUserId))
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Sadece kendi ayarlarına erişebilir
+            if (parsedCurrentUserId != id)
+            {
+                return Forbid();
+            }
+
+            var response = await _httpClient.GetAsync<Result<UserDto>>($"/api/users/{id}");
+
+            if (response != null && response.IsSuccess && response.Data != null)
+            {
+                return View(response.Data);
+            }
+        }
+        catch
+        {
+            ModelState.AddModelError("", "Kullanıcı bilgileri yüklenirken bir hata oluştu.");
+        }
+
+        return NotFound();
+    }
 }
 
 /// <summary>

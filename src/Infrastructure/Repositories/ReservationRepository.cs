@@ -50,6 +50,16 @@ public class ReservationRepository : IReservationRepository
             .FirstOrDefaultAsync(r => r.Id == id);
     }
 
+    public async Task<Reservation?> GetByIdWithDetailsAsync(Guid id)
+    {
+        return await _context.Reservations
+            .Include(r => r.Guest)
+            .Include(r => r.Property)
+            .Include(r => r.Property.Host)
+            .Include(r => r.Payments)
+            .FirstOrDefaultAsync(r => r.Id == id);
+    }
+
     /// <summary>
     /// Property'ye göre reservation'ları getir
     /// </summary>

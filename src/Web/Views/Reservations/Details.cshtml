@@ -147,18 +147,18 @@
                             <div class="d-grid gap-2">
                                 @if (Model.Status == ReservationStatus.Pending)
                                 {
-                                    <button type="button" class="btn btn-success">
+                                    <button type="button" class="btn btn-success" onclick="confirmReservation('@Model.Id', true)">
                                         <i class="bi bi-check-circle"></i>
                                         Onayla
                                     </button>
-                                    <button type="button" class="btn btn-danger">
+                                    <button type="button" class="btn btn-danger" onclick="confirmReservation('@Model.Id', false)">
                                         <i class="bi bi-x-circle"></i>
                                         Reddet
                                     </button>
                                 }
                                 @if (Model.Status == ReservationStatus.Confirmed)
                                 {
-                                    <button type="button" class="btn btn-warning">
+                                    <button type="button" class="btn btn-warning" onclick="suspendReservation('@Model.Id')">
                                         <i class="bi bi-pause-circle"></i>
                                         Askıya Al
                                     </button>
@@ -240,3 +240,73 @@
         background-color: #dee2e6;
     }
 </style>
+
+<script>
+    function confirmReservation(reservationId, isApproved) {
+        const action = isApproved ? 'onaylamak' : 'reddetmek';
+        if (!confirm(`Bu rezervasyonu ${action} istediğinizden emin misiniz?`)) {
+            return;
+        }
+
+        const status = isApproved ? 2 : 3; // 2: Confirmed, 3: Cancelled
+        const updateData = {
+            id: reservationId,
+            status: status
+        };
+
+        fetch('/api/reservations/' + reservationId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.isSuccess) {
+                showSuccess('Rezervasyon başarıyla ' + (isApproved ? 'onaylandı' : 'reddedildi') + '!');
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                showError('Hata: ' + (result.message?.description || 'Bilinmeyen bir hata oluştu'));
+            }
+        })
+        .catch(error => {
+            showError('İşlem sırasında bir hata oluştu: ' + error.message);
+        });
+    }
+
+    function suspendReservation(reservationId) {
+        if (!confirm('Bu rezervasyonu askıya almak istediğinizden emin misiniz?')) {
+            return;
+        }
+
+        const updateData = {
+            id: reservationId,
+            status: 4 // Suspended
+        };
+
+        fetch('/api/reservations/' + reservationId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.isSuccess) {
+                showSuccess('Rezervasyon başarıyla askıya alındı!');
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                showError('Hata: ' + (result.message?.description || 'Bilinmeyen bir hata oluştu'));
+            }
+        })
+        .catch(error => {
+            showError('İşlem sırasında bir hata oluştu: ' + error.message);
+        });
+    }
+</script>

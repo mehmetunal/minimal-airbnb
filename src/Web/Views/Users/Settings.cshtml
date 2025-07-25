@@ -5,203 +5,162 @@
 
 <div class="container py-5">
     <div class="row">
-        <div class="col-lg-3">
-            <!-- Ayarlar Menüsü -->
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    <h6 class="mb-0"><i class="bi bi-gear"></i> Ayarlar</h6>
-                </div>
-                <div class="list-group list-group-flush">
-                    <a href="#profile" class="list-group-item list-group-item-action active" data-bs-toggle="list">
-                        <i class="bi bi-person"></i> Profil Bilgileri
-                    </a>
-                    <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="list">
-                        <i class="bi bi-shield-lock"></i> Güvenlik
-                    </a>
-                    <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="list">
-                        <i class="bi bi-bell"></i> Bildirimler
-                    </a>
-                    <a href="#privacy" class="list-group-item list-group-item-action" data-bs-toggle="list">
-                        <i class="bi bi-eye"></i> Gizlilik
-                    </a>
-                </div>
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary mb-3">Hesap Ayarları</h1>
+                <p class="lead text-muted">Profil bilgilerinizi güncelleyin ve hesap güvenliğinizi yönetin</p>
             </div>
-        </div>
 
-        <div class="col-lg-9">
-            <div class="tab-content">
+            <div class="row g-4">
                 <!-- Profil Bilgileri -->
-                <div class="tab-pane fade show active" id="profile">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h6 class="mb-0"><i class="bi bi-person"></i> Profil Bilgileri</h6>
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="h5 mb-0">
+                                <i class="bi bi-person-circle me-2"></i>Profil Bilgileri
+                            </h3>
                         </div>
-                        <div class="card-body">
-                            <form method="post" asp-action="UpdateProfile">
-                                <input type="hidden" name="id" value="@Model.Id" />
-                                
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="firstName" class="form-label">Ad</label>
-                                        <input type="text" class="form-control" id="firstName" name="firstName" value="@Model.FirstName" required>
+                        <div class="card-body p-4">
+                            <form id="profileForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="firstName" class="form-label">Ad *</label>
+                                        <input type="text" class="form-control" id="firstName" name="firstName" value="@Model?.FirstName" required>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="lastName" class="form-label">Soyad</label>
-                                        <input type="text" class="form-control" id="lastName" name="lastName" value="@Model.LastName" required>
+                                    <div class="col-md-6">
+                                        <label for="lastName" class="form-label">Soyad *</label>
+                                        <input type="text" class="form-control" id="lastName" name="lastName" value="@Model?.LastName" required>
                                     </div>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">E-posta Adresi</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="@Model.Email" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="phoneNumber" class="form-label">Telefon Numarası</label>
-                                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="@Model.PhoneNumber">
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">E-posta *</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="@Model?.Email" required readonly>
+                                        <div class="form-text">E-posta adresinizi değiştirmek için destek ekibimizle iletişime geçin.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="phoneNumber" class="form-label">Telefon</label>
+                                        <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" value="@Model?.PhoneNumber">
+                                    </div>
+                                    <div class="col-md-6">
                                         <label for="dateOfBirth" class="form-label">Doğum Tarihi</label>
-                                        <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="@Model.DateOfBirth?.ToString("yyyy-MM-dd")">
+                                        <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="@(Model?.DateOfBirth?.ToString("yyyy-MM-dd"))">
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="gender" class="form-label">Cinsiyet</label>
-                                        <select class="form-select" id="gender" name="gender">
-                                            <option value="">Seçiniz</option>
-                                            <option value="1" selected="@(Model.Gender == MinimalAirbnb.Domain.Enums.Gender.Male)">Erkek</option>
-                                            <option value="2" selected="@(Model.Gender == MinimalAirbnb.Domain.Enums.Gender.Female)">Kadın</option>
-                                            <option value="3" selected="@(Model.Gender == MinimalAirbnb.Domain.Enums.Gender.Other)">Diğer</option>
+                                    <div class="col-md-6">
+                                        <label for="userType" class="form-label">Kullanıcı Tipi</label>
+                                        <select class="form-select" id="userType" name="userType" disabled>
+                                            <option value="Guest" selected="@(Model?.UserType == MinimalAirbnb.Domain.Enums.UserType.Guest)">Misafir</option>
+                                            <option value="Host" selected="@(Model?.UserType == MinimalAirbnb.Domain.Enums.UserType.Host)">Ev Sahibi</option>
                                         </select>
+                                        <div class="form-text">Kullanıcı tipinizi değiştirmek için destek ekibimizle iletişime geçin.</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="bio" class="form-label">Hakkımda</label>
+                                        <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Kendiniz hakkında kısa bir açıklama yazın...">@Model?.Bio</textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-circle me-2"></i>Profili Güncelle
+                                        </button>
                                     </div>
                                 </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
 
-                                <div class="mb-3">
-                                    <label for="bio" class="form-label">Hakkında</label>
-                                    <textarea class="form-control" id="bio" name="bio" rows="3">@Model.Bio</textarea>
-                                </div>
-
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check-circle"></i> Değişiklikleri Kaydet
-                                    </button>
+                <!-- Adres Bilgileri -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h3 class="h5 mb-0">
+                                <i class="bi bi-geo-alt me-2"></i>Adres Bilgileri
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <form id="addressForm">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="address" class="form-label">Adres</label>
+                                        <input type="text" class="form-control" id="address" name="address" value="@Model?.Address" placeholder="Sokak adresi">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="city" class="form-label">Şehir</label>
+                                        <input type="text" class="form-control" id="city" name="city" value="@Model?.City">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="country" class="form-label">Ülke</label>
+                                        <input type="text" class="form-control" id="country" name="country" value="@Model?.Country">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="postalCode" class="form-label">Posta Kodu</label>
+                                        <input type="text" class="form-control" id="postalCode" name="postalCode" value="@Model?.PostalCode">
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-info">
+                                            <i class="bi bi-check-circle me-2"></i>Adresi Güncelle
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- Güvenlik -->
-                <div class="tab-pane fade" id="security">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h6 class="mb-0"><i class="bi bi-shield-lock"></i> Güvenlik</h6>
+                <!-- Şifre Değiştirme -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            <h3 class="h5 mb-0">
+                                <i class="bi bi-shield-lock me-2"></i>Şifre Değiştirme
+                            </h3>
                         </div>
-                        <div class="card-body">
-                            <form method="post" asp-action="ChangePassword">
-                                <input type="hidden" name="id" value="@Model.Id" />
-                                
-                                <div class="mb-3">
-                                    <label for="currentPassword" class="form-label">Mevcut Şifre</label>
-                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="newPassword" class="form-label">Yeni Şifre</label>
-                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="confirmNewPassword" class="form-label">Yeni Şifre Tekrar</label>
-                                    <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
-                                </div>
-
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-warning">
-                                        <i class="bi bi-key"></i> Şifreyi Değiştir
-                                    </button>
+                        <div class="card-body p-4">
+                            <form id="passwordForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="currentPassword" class="form-label">Mevcut Şifre *</label>
+                                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="newPassword" class="form-label">Yeni Şifre *</label>
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                        <div class="form-text">En az 6 karakter olmalıdır.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="confirmPassword" class="form-label">Yeni Şifre (Tekrar) *</label>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="bi bi-check-circle me-2"></i>Şifreyi Değiştir
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bildirimler -->
-                <div class="tab-pane fade" id="notifications">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h6 class="mb-0"><i class="bi bi-bell"></i> Bildirimler</h6>
+                <!-- Hesap Güvenliği -->
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="h5 mb-0">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Hesap Güvenliği
+                            </h3>
                         </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
-                                    <label class="form-check-label" for="emailNotifications">
-                                        E-posta bildirimleri
-                                    </label>
+                        <div class="card-body p-4">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Hesabı Sil</h6>
+                                            <p class="text-muted mb-0">Hesabınızı kalıcı olarak silmek için aşağıdaki butona tıklayın.</p>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                            <i class="bi bi-trash me-2"></i>Hesabı Sil
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="smsNotifications">
-                                    <label class="form-check-label" for="smsNotifications">
-                                        SMS bildirimleri
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="pushNotifications" checked>
-                                    <label class="form-check-label" for="pushNotifications">
-                                        Push bildirimleri
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="d-grid">
-                                <button type="button" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i> Ayarları Kaydet
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gizlilik -->
-                <div class="tab-pane fade" id="privacy">
-                    <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h6 class="mb-0"><i class="bi bi-eye"></i> Gizlilik</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="profileVisibility" checked>
-                                    <label class="form-check-label" for="profileVisibility">
-                                        Profilimi herkese açık göster
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="onlineStatus" checked>
-                                    <label class="form-check-label" for="onlineStatus">
-                                        Çevrimiçi durumumu göster
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="activityStatus">
-                                    <label class="form-check-label" for="activityStatus">
-                                        Son aktivite zamanımı göster
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="d-grid">
-                                <button type="button" class="btn btn-primary">
-                                    <i class="bi bi-check-circle"></i> Ayarları Kaydet
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -209,4 +168,165 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<!-- Hesap Silme Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Hesabı Sil
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger fw-bold">Bu işlem geri alınamaz!</p>
+                <p>Hesabınızı silmek istediğinizden emin misiniz? Bu işlem:</p>
+                <ul>
+                    <li>Tüm profil bilgilerinizi silecek</li>
+                    <li>Tüm rezervasyon geçmişinizi silecek</li>
+                    <li>Tüm favori ilanlarınızı silecek</li>
+                    <li>Bu işlem geri alınamaz</li>
+                </ul>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmDelete">
+                    <label class="form-check-label" for="confirmDelete">
+                        Hesabımı silmek istediğimi onaylıyorum
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="deleteAccountBtn" disabled>
+                    <i class="bi bi-trash me-2"></i>Hesabı Sil
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+
+
+        // Form submit işlemleri
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Form verilerini al
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // API'ye gönder
+            fetch('/api/users/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showSuccess('Profil başarıyla güncellendi!');
+                } else {
+                    showError('Profil güncellenirken bir hata oluştu: ' + result.message?.description);
+                }
+            })
+            .catch(error => {
+                showError('Bir hata oluştu: ' + error.message);
+            });
+        });
+
+        document.getElementById('addressForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            fetch('/api/users/update-address', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showSuccess('Adres başarıyla güncellendi!');
+                } else {
+                    showError('Adres güncellenirken bir hata oluştu: ' + result.message?.description);
+                }
+            })
+            .catch(error => {
+                showError('Bir hata oluştu: ' + error.message);
+            });
+        });
+
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            if (data.newPassword !== data.confirmPassword) {
+                showError('Yeni şifreler eşleşmiyor!');
+                return;
+            }
+            
+            fetch('/api/users/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showSuccess('Şifre başarıyla değiştirildi!');
+                    this.reset();
+                } else {
+                    showError('Şifre değiştirilirken bir hata oluştu: ' + result.message?.description);
+                }
+            })
+            .catch(error => {
+                showError('Bir hata oluştu: ' + error.message);
+            });
+        });
+
+        // Hesap silme işlemi
+        document.getElementById('confirmDelete').addEventListener('change', function() {
+            document.getElementById('deleteAccountBtn').disabled = !this.checked;
+        });
+
+        document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+            if (confirm('Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+                
+                fetch('/api/users/delete', {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showSuccess('Hesabınız başarıyla silindi!');
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 2000);
+                    } else {
+                        showError('Hesap silinirken bir hata oluştu: ' + result.message?.description);
+                    }
+                })
+                .catch(error => {
+                    showError('Bir hata oluştu: ' + error.message);
+                });
+            }
+        });
+
+
+    </script>
+} 

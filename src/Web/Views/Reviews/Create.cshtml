@@ -13,7 +13,7 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form method="post" asp-action="Create">
+                    <form id="reviewForm">
                         <input type="hidden" name="PropertyId" value="@ViewBag.PropertyId" />
                         @if (ViewBag.ReservationId != null)
                         {
@@ -159,6 +159,7 @@
             const ratingDisplay = document.getElementById('rating-display');
             const commentTextarea = document.getElementById('comment');
             const charCount = document.getElementById('char-count');
+            const form = document.getElementById('reviewForm');
 
             // Yıldız tıklama olayları
             stars.forEach(star => {
@@ -214,6 +215,49 @@
                     charCount.style.color = '#ffc107';
                 } else {
                     charCount.style.color = '#6c757d';
+                }
+            });
+
+            // Form submit
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const data = {
+                    PropertyId: formData.get('PropertyId'),
+                    ReservationId: formData.get('ReservationId') || null,
+                    UserId: '@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value',
+                    Rating: parseInt(formData.get('Rating')),
+                    Comment: formData.get('Comment'),
+                    CleanlinessRating: formData.get('CleanlinessRating') ? parseInt(formData.get('CleanlinessRating')) : null,
+                    CommunicationRating: formData.get('CommunicationRating') ? parseInt(formData.get('CommunicationRating')) : null,
+                    CheckInRating: formData.get('CheckInRating') ? parseInt(formData.get('CheckInRating')) : null,
+                    AccuracyRating: formData.get('AccuracyRating') ? parseInt(formData.get('AccuracyRating')) : null,
+                    LocationRating: formData.get('LocationRating') ? parseInt(formData.get('LocationRating')) : null,
+                    ValueRating: formData.get('ValueRating') ? parseInt(formData.get('ValueRating')) : null
+                };
+
+                try {
+                    const response = await fetch('/Reviews/Create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showSuccess(result.message);
+                        setTimeout(() => {
+                            window.location.href = '/Reviews/Index';
+                        }, 1500);
+                    } else {
+                        showError(result.message);
+                    }
+                } catch (error) {
+                    showError('Değerlendirme gönderilirken bir hata oluştu: ' + error.message);
                 }
             });
         });

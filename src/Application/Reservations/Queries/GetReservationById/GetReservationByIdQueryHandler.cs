@@ -4,6 +4,7 @@ using MinimalAirbnb.Application.Reservations.Queries.GetReservationById;
 using MinimalAirbnb.Application.Reservations.DTOs;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Application.Reservations.Queries.GetReservationById;
 
@@ -23,7 +24,7 @@ public class GetReservationByIdQueryHandler : IRequestHandler<GetReservationById
     {
         try
         {
-            var reservation = await _reservationRepository.GetByIdAsync(request.Id);
+            var reservation = await _reservationRepository.GetByIdWithDetailsAsync(request.Id);
             
             if (reservation == null)
             {
@@ -34,7 +35,12 @@ public class GetReservationByIdQueryHandler : IRequestHandler<GetReservationById
             {
                 Id = reservation.Id,
                 GuestId = reservation.GuestId,
+                GuestName = reservation.Guest?.FirstName + " " + reservation.Guest?.LastName,
                 PropertyId = reservation.PropertyId,
+                PropertyTitle = reservation.Property?.Title,
+                PropertyPhotoUrl = reservation.Property?.Photos?.FirstOrDefault(p => p.IsMainPhoto)?.PhotoUrl,
+                HostId = reservation.Property?.HostId ?? Guid.Empty,
+                HostName = reservation.Property?.Host?.FirstName + " " + reservation.Property?.Host?.LastName,
                 CheckInDate = reservation.CheckInDate,
                 CheckOutDate = reservation.CheckOutDate,
                 GuestCount = reservation.GuestCount,

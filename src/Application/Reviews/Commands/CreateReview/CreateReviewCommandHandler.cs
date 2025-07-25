@@ -26,8 +26,15 @@ public class CreateReviewCommandHandler : IRequestHandler<CreateReviewCommand, R
             {
                 GuestId = request.UserId, // UserId'yi GuestId olarak kullan
                 PropertyId = request.PropertyId,
+                ReservationId = request.ReservationId,
                 Rating = request.Rating,
                 Comment = request.Comment,
+                CleanlinessRating = request.CleanlinessRating,
+                CommunicationRating = request.CommunicationRating,
+                CheckInRating = request.CheckInRating,
+                AccuracyRating = request.AccuracyRating,
+                LocationRating = request.LocationRating,
+                ValueRating = request.ValueRating,
                 IsApproved = false, // Default olarak onaylanmamış
                 IsRejected = false,
                 LikeCount = 0,

@@ -143,11 +143,11 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    alert(result.message);
+                    alert(result.message?.description);
                     // RedirectUrl varsa oraya yönlendir, yoksa login sayfasına
                     window.location.href = result.redirectUrl || '/Users/Login';
                 } else {
-                    alert('Hata: ' + result.message);
+                    alert('Hata: ' + result.message?.description);
                 }
             } catch (error) {
                 alert('Kayıt olurken bir hata oluştu: ' + error.message);

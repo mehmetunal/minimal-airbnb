@@ -33,6 +33,42 @@ public class Review : BaseEntity
     public int Rating { get; set; }
 
     /// <summary>
+    /// Temizlik puanı (1-5)
+    /// </summary>
+    [Range(1, 5)]
+    public int? CleanlinessRating { get; set; }
+
+    /// <summary>
+    /// İletişim puanı (1-5)
+    /// </summary>
+    [Range(1, 5)]
+    public int? CommunicationRating { get; set; }
+
+    /// <summary>
+    /// Check-in puanı (1-5)
+    /// </summary>
+    [Range(1, 5)]
+    public int? CheckInRating { get; set; }
+
+    /// <summary>
+    /// Doğruluk puanı (1-5)
+    /// </summary>
+    [Range(1, 5)]
+    public int? AccuracyRating { get; set; }
+
+    /// <summary>
+    /// Konum puanı (1-5)
+    /// </summary>
+    [Range(1, 5)]
+    public int? LocationRating { get; set; }
+
+    /// <summary>
+    /// Değer puanı (1-5)
+    /// </summary>
+    [Range(1, 5)]
+    public int? ValueRating { get; set; }
+
+    /// <summary>
     /// Yorum metni
     /// </summary>
     [Required]

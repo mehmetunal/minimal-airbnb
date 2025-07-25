@@ -220,13 +220,16 @@
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        location.reload();
+                        showSuccess('Değerlendirme başarıyla silindi!');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
                     } else {
-                        alert('Hata: ' + result.message);
+                        showError('Hata: ' + result.message?.description);
                     }
                 })
                 .catch(error => {
-                    alert('Değerlendirme silinirken bir hata oluştu: ' + error.message);
+                    showError('Değerlendirme silinirken bir hata oluştu: ' + error.message);
                 });
             }
         }
@@ -241,13 +244,16 @@
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    location.reload();
+                    showSuccess('Değerlendirme beğenildi!');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 } else {
-                    alert('Hata: ' + result.message);
+                    showError('Hata: ' + result.message?.description);
                 }
             })
             .catch(error => {
-                alert('Beğeni işlemi sırasında hata: ' + error.message);
+                showError('Beğeni işlemi sırasında hata: ' + error.message);
             });
         }
 
@@ -261,13 +267,16 @@
             .then(response => response.json())
             .then(result => {
                 if (result.success) {
-                    location.reload();
+                    showSuccess('Değerlendirme beğenilmedi!');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 } else {
-                    alert('Hata: ' + result.message);
+                    showError('Hata: ' + result.message?.description);
                 }
             })
             .catch(error => {
-                alert('Beğenmeme işlemi sırasında hata: ' + error.message);
+                showError('Beğenmeme işlemi sırasında hata: ' + error.message);
             });
         }
     </script>

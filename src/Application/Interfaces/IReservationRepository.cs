@@ -24,6 +24,11 @@ public interface IReservationRepository
     Task<Reservation?> GetByIdAsync(Guid id);
 
     /// <summary>
+    /// ID'ye göre reservation getir (detaylı bilgilerle)
+    /// </summary>
+    Task<Reservation?> GetByIdWithDetailsAsync(Guid id);
+
+    /// <summary>
     /// Property'ye göre reservation'ları getir
     /// </summary>
     Task<IEnumerable<Reservation>> GetByPropertyAsync(Guid propertyId);

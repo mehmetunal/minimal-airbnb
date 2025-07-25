@@ -258,13 +258,16 @@
                 .then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        location.reload();
+                        showSuccess('Mesaj başarıyla silindi!');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
                     } else {
-                        alert('Hata: ' + result.message);
+                        showError('Hata: ' + result.message?.description);
                     }
                 })
                 .catch(error => {
-                    alert('Mesaj silinirken bir hata oluştu: ' + error.message);
+                    showError('Mesaj silinirken bir hata oluştu: ' + error.message);
                 });
             }
         }

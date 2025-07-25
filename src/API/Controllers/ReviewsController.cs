@@ -1,7 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MinimalAirbnb.Application.Reviews.Commands.CreateReview;
+using MinimalAirbnb.Application.Reviews.Queries.GetReviews;
+using MinimalAirbnb.Application.Reviews.Queries.GetReviewById;
+using MinimalAirbnb.Application.Reviews.DTOs;
 using Maggsoft.Core.Base;
+using Maggsoft.Core.Model.Pagination;
 
 namespace MinimalAirbnb.API.Controllers;
 
@@ -17,6 +21,31 @@ public class ReviewsController : BaseApiController
     public ReviewsController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    /// <summary>
+    /// Reviews listesini getir
+    /// </summary>
+    [HttpGet]
+    public async Task<ActionResult<PagedList<ReviewDto>>> GetReviews([FromQuery] GetReviewsQuery query)
+    {
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// ID'ye göre review getir
+    /// </summary>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Result<ReviewDto>>> GetReviewById(Guid id)
+    {
+        var query = new GetReviewByIdQuery { Id = id };
+        var result = await _mediator.Send(query);
+        
+        if (!result.IsSuccess)
+            return NotFound(result);
+            
+        return Ok(result);
     }
 
     /// <summary>

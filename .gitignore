@@ -255,12 +255,6 @@ temp/
 *.mdf
 *.ldf
 
-# Application specific
-appsettings.Development.json
-appsettings.Production.json
-appsettings.Staging.json
-appsettings.Local.json
-
 # SSL certificates
 *.pfx
 *.p12

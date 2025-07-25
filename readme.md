@@ -1,4 +1,67 @@
-# Mini Airbnb - Modül Listesi ve Detayları (pwd.md)
+# MinimalAirbnb - Ev Paylaşım Platformu
+
+## 🔐 Güvenlik Konfigürasyonu
+
+### Connection String Güvenliği
+Bu proje, veritabanı connection string'lerini güvenli bir şekilde yönetmek için **User Secrets** kullanmaktadır.
+
+#### Kurulum Adımları:
+
+1. **User Secrets'ı Etkinleştirin:**
+   ```bash
+   cd src/API
+   dotnet user-secrets init
+   ```
+
+2. **Connection String'i Ekleyin:**
+   ```bash
+   dotnet user-secrets set "ConnectionStrings:DefaultConnection" "your-connection-string-here"
+   ```
+
+3. **Örnek appsettings.json:**
+   ```json
+   {
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "AllowedHosts": "*"
+   }
+   ```
+
+4. **Örnek appsettings.example.json:**
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=your-server;Database=your-database;User Id=your-username;Password=your-password;TrustServerCertificate=true;"
+     },
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "AllowedHosts": "*"
+   }
+   ```
+
+#### Güvenlik Önlemleri:
+- ✅ `appsettings.json` dosyası `.gitignore`'a eklendi
+- ✅ Connection string'ler User Secrets'ta saklanıyor
+- ✅ Örnek konfigürasyon dosyası (`appsettings.example.json`) eklendi
+- ✅ Production ortamında Environment Variables kullanılmalı
+
+#### Production Ortamı:
+Production ortamında connection string'i Environment Variable olarak ayarlayın:
+```bash
+export ConnectionStrings__DefaultConnection="your-production-connection-string"
+```
+
+---
+
+## 📋 Proje Modülleri ve Detayları
 
 ## 1. Kullanıcı Yönetimi Modülü
 **Amaç:** Kullanıcıların sisteme kayıt olması, giriş yapması ve rollerinin belirlenmesi.

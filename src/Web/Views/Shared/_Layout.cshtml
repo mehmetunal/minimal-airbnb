@@ -166,6 +166,7 @@
     
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/loading.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     
     <script>
@@ -184,7 +185,7 @@
                     alert('Başarıyla çıkış yaptınız!');
                     window.location.href = '/';
                 } else {
-                    alert('Hata: ' + result.message);
+                    alert('Hata: ' + result.message?.description);
                 }
             } catch (error) {
                 alert('Çıkış yapılırken bir hata oluştu: ' + error.message);

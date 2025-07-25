@@ -200,8 +200,26 @@
     <script>
         function cancelReservation(reservationId) {
             if (confirm('Bu rezervasyonu iptal etmek istediğinizden emin misiniz?')) {
-                // AJAX ile iptal işlemi yapılabilir
-                window.location.href = `/Reservations/Cancel/${reservationId}`;
+                fetch(`/api/reservations/${reservationId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showSuccess('Rezervasyon başarıyla iptal edildi!');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        showError('Hata: ' + result.message?.description);
+                    }
+                })
+                .catch(error => {
+                    showError('Rezervasyon iptal edilirken bir hata oluştu: ' + error.message);
+                });
             }
         }
     </script>

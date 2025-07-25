@@ -54,7 +54,14 @@
                             <select class="form-select" id="guestCount" name="GuestCount" required>
                                 @for (int i = 1; i <= 10; i++)
                                 {
-                                    <option value="@i">@i kişi</option>
+                                    if (Model.GuestCount == i)
+                                    {
+                                        <option value="@i" selected>@i kişi</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">@i kişi</option>
+                                    }
                                 }
                             </select>
                         </div>
