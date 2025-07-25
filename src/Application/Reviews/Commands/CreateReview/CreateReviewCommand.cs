@@ -6,7 +6,7 @@ namespace MinimalAirbnb.Application.Reviews.Commands.CreateReview;
 /// <summary>
 /// Review oluşturma command'i
 /// </summary>
-public class CreateReviewCommand : IRequest<Result<object>>
+public class CreateReviewCommand : IRequest<Result<CreateReviewResponseDto>>
 {
     public Guid PropertyId { get; set; }
     public Guid? ReservationId { get; set; }

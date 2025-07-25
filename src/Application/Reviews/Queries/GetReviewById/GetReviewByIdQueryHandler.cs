@@ -4,6 +4,7 @@ using MinimalAirbnb.Application.Reviews.Queries.GetReviewById;
 using MinimalAirbnb.Application.Reviews.DTOs;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace MinimalAirbnb.Application.Reviews.Queries.GetReviewById;
 
@@ -23,7 +24,10 @@ public class GetReviewByIdQueryHandler : IRequestHandler<GetReviewByIdQuery, Res
     {
         try
         {
-            var review = await _reviewRepository.GetByIdAsync(request.Id);
+            var review = await _reviewRepository.GetAll()
+                .Include(r => r.Guest)
+                .Include(r => r.Property)
+                .FirstOrDefaultAsync(r => r.Id == request.Id);
             
             if (review == null)
             {
@@ -38,6 +42,12 @@ public class GetReviewByIdQueryHandler : IRequestHandler<GetReviewByIdQuery, Res
                 ReservationId = review.ReservationId,
                 Rating = review.Rating,
                 Comment = review.Comment,
+                CleanlinessRating = review.CleanlinessRating,
+                CommunicationRating = review.CommunicationRating,
+                CheckInRating = review.CheckInRating,
+                AccuracyRating = review.AccuracyRating,
+                LocationRating = review.LocationRating,
+                ValueRating = review.ValueRating,
                 HostResponse = review.HostResponse,
                 IsApproved = review.IsApproved,
                 IsRejected = review.IsRejected,
@@ -45,7 +55,12 @@ public class GetReviewByIdQueryHandler : IRequestHandler<GetReviewByIdQuery, Res
                 ModeratedByUserId = review.ModeratedByUserId,
                 ModerationDate = review.ModerationDate,
                 LikeCount = review.LikeCount,
-                DislikeCount = review.DislikeCount
+                DislikeCount = review.DislikeCount,
+                CreatedDate = review.CreatedDate,
+                UpdatedDate = review.ModifiedDate,
+                GuestName = $"{review.Guest.FirstName} {review.Guest.LastName}",
+                PropertyTitle = review.Property.Title,
+                GuestPhotoUrl = review.Guest.ProfilePicture
             };
 
             return Result<ReviewDto>.Success(reviewDto, new SuccessMessage("200", "Değerlendirme bilgileri başarıyla getirildi."));

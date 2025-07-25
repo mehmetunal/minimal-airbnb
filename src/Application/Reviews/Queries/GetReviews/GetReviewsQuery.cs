@@ -13,4 +13,8 @@ public class GetReviewsQuery : IRequest<PagedList<ReviewDto>>
     public int PageSize { get; set; } = 10;
     public Guid? PropertyId { get; set; }
     public Guid? UserId { get; set; }
+    public int? Rating { get; set; }
+    public bool? IsApproved { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
 } 

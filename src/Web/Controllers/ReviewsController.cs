@@ -29,14 +29,47 @@ public class ReviewsController : Controller
     /// <summary>
     /// Değerlendirme listesini göster
     /// </summary>
-    public async Task<IActionResult> Index([FromQuery] GetReviewsQuery query)
+    public async Task<IActionResult> Index([FromQuery] GetReviewsQuery query,
+                [FromQuery] int? Rating,
+                [FromQuery] bool? IsApproved,
+                [FromQuery] DateTime? StartDate,
+                [FromQuery] DateTime? EndDate)
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedListWrapper<ReviewDto>>($"/api/reviews?PageNumber={query.PageNumber}&PageSize={query.PageSize}&PropertyId={query.PropertyId}&UserId={query.UserId}");
+            var queryParams = new List<string>
+            {
+                $"PageNumber={query.PageNumber}",
+                $"PageSize={query.PageSize}"
+            };
+
+            if (query.PropertyId.HasValue)
+                queryParams.Add($"PropertyId={query.PropertyId}");
+
+            if (query.UserId.HasValue)
+                queryParams.Add($"UserId={query.UserId}");
+
+            if (Rating.HasValue)
+                queryParams.Add($"Rating={Rating}");
+
+            if (IsApproved.HasValue)
+                queryParams.Add($"IsApproved={IsApproved}");
+
+            if (StartDate.HasValue)
+                queryParams.Add($"StartDate={StartDate:yyyy-MM-dd}");
+
+            if (EndDate.HasValue)
+                queryParams.Add($"EndDate={EndDate:yyyy-MM-dd}");
+
+            var queryString = string.Join("&", queryParams);
+            var response = await _httpClient.GetAsync<PagedListWrapper<ReviewDto>>($"/api/reviews?{queryString}");
 
             if (response != null)
             {
+                ViewBag.Rating = Rating;
+                ViewBag.IsApproved = IsApproved;
+                ViewBag.StartDate = StartDate;
+                ViewBag.EndDate = EndDate;
                 return View(response);
             }
         }
@@ -103,7 +136,7 @@ public class ReviewsController : Controller
                 ValueRating = request.ValueRating
             };
 
-            var response = await _httpClient.PostAsync<Result<object>>("/api/reviews", command);
+            var response = await _httpClient.PostAsync<object>("/api/reviews", command);
 
             if (response is { IsSuccess: true })
             {
