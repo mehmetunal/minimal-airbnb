@@ -35,8 +35,6 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<MinimalAirbnbDbContext>()
 .AddDefaultTokenProviders();
 
-
-
 // Seed Data Service
 builder.Services.AddScoped<SeedDataService>();
 
@@ -67,8 +65,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-
 
 // Controllers
 app.MapControllers();
@@ -117,7 +113,7 @@ app.MapGet("/api/tables", async (MinimalAirbnbDbContext context) =>
             SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
             WHERE TABLE_TYPE = 'BASE TABLE'
-            AND TABLE_CATALOG = 'airbnb'
+            AND TABLE_CATALOG = 'MinimalAirbnb'
             ORDER BY TABLE_NAME";
 
         var tableNames = await context.Database.SqlQueryRaw<string>(sql).ToListAsync();
@@ -146,7 +142,7 @@ app.MapGet("/api/tables/{tableName}/columns", async (MinimalAirbnbDbContext cont
             SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT
             FROM INFORMATION_SCHEMA.COLUMNS
             WHERE TABLE_NAME = @tableName
-            AND TABLE_CATALOG = 'airbnb'
+            AND TABLE_CATALOG = 'MinimalAirbnb'
             ORDER BY ORDINAL_POSITION";
 
         var columns = await context.Database.SqlQueryRaw<dynamic>(sql, new[] { new Microsoft.Data.SqlClient.SqlParameter("@tableName", tableName) }).ToListAsync();
@@ -175,7 +171,7 @@ app.MapGet("/api/columns/{tableName}", async (MinimalAirbnbDbContext context, st
             SELECT COLUMN_NAME
             FROM INFORMATION_SCHEMA.COLUMNS
             WHERE TABLE_NAME = '{tableName}'
-            AND TABLE_CATALOG = 'airbnb'
+            AND TABLE_CATALOG = 'MinimalAirbnb'
             ORDER BY ORDINAL_POSITION";
 
         var columns = await context.Database.SqlQueryRaw<string>(sql).ToListAsync();
