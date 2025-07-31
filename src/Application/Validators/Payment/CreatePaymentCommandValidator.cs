@@ -1,5 +1,5 @@
 using FluentValidation;
-using MinimalAirbnb.Application.Payments.Commands.CreatePayment;
+using MinimalAirbnb.Application.Commands.Payment;
 using MinimalAirbnb.Domain.Enums;
 
 namespace MinimalAirbnb.Application.Validators.Payment;
@@ -32,13 +32,11 @@ public class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentComm
             .WithMessage("Para birimi 3 karakter olmalıdır.");
 
         RuleFor(x => x.PaymentMethod)
-            .NotEmpty()
-            .WithMessage("Ödeme yöntemi gereklidir.")
-            .Must(BeValidPaymentMethod)
-            .WithMessage("Geçersiz ödeme yöntemi.");
+            .IsInEnum()
+            .WithMessage("Geçerli bir ödeme yöntemi seçiniz.");
 
         // Kredi/Banka kartı validasyonları
-        When(x => x.PaymentMethod == "CreditCard" || x.PaymentMethod == "DebitCard", () =>
+        When(x => x.PaymentMethod == PaymentMethod.CreditCard || x.PaymentMethod == PaymentMethod.DebitCard, () =>
         {
             RuleFor(x => x.CardNumber)
                 .NotEmpty()
@@ -66,7 +64,7 @@ public class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentComm
         });
 
         // PayPal validasyonları
-        When(x => x.PaymentMethod == "PayPal", () =>
+        When(x => x.PaymentMethod == PaymentMethod.PayPal, () =>
         {
             RuleFor(x => x.PayPalEmail)
                 .NotEmpty()
@@ -76,7 +74,7 @@ public class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentComm
         });
 
         // Banka transferi validasyonları
-        When(x => x.PaymentMethod == "BankTransfer", () =>
+        When(x => x.PaymentMethod == PaymentMethod.BankTransfer, () =>
         {
             RuleFor(x => x.BankAccountNumber)
                 .NotEmpty()
@@ -95,10 +93,7 @@ public class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentComm
             .WithMessage("Geçerli bir callback URL giriniz.");
     }
 
-    private bool BeValidPaymentMethod(string paymentMethod)
-    {
-        return Enum.TryParse<PaymentMethod>(paymentMethod, out _);
-    }
+
 
     private bool BeValidUrl(string? url)
     {

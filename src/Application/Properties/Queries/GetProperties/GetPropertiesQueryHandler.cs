@@ -56,7 +56,7 @@ public class GetPropertiesQueryHandler : IRequestHandler<GetPropertiesQuery, Res
             query = query.OrderByDescending(p => p.CreatedDate);
 
             // Get paged list
-            var pagedList = await query.ToPagedListAsync(request.PageNumber - 1, request.PageSize);
+            var pagedList = await query.ToPagedListAsync(request.PageNumber - 1, request.PageSize, new List<Filter>());
 
             // Map to DTOs
             var propertyDtos = pagedList.Data.Select(p => new PropertyDto
@@ -78,7 +78,8 @@ public class GetPropertiesQueryHandler : IRequestHandler<GetPropertiesQuery, Res
                 MinimumStayDays = p.MinimumStayDays,
                 MaximumStayDays = p.MaximumStayDays,
                 AverageRating = p.AverageRating,
-                CreatedDate = p.CreatedDate
+                CreatedDate = p.CreatedDate,
+                CreatedAt = p.CreatedDate
             }).ToList();
 
             // Create new PagedList with DTOs

@@ -31,19 +31,44 @@ public class AddReservationDto
     /// Misafir sayısı
     /// </summary>
     public int GuestCount { get; set; }
-    
+
     /// <summary>
-    /// Toplam fiyat
+    /// Gecelik fiyat
     /// </summary>
-    public decimal TotalPrice { get; set; }
-    
+    public decimal PricePerNight { get; set; }
+
+    /// <summary>
+    /// Temizlik ücreti
+    /// </summary>
+    public decimal CleaningFee { get; set; }
+
+    /// <summary>
+    /// Hizmet ücreti
+    /// </summary>
+    public decimal ServiceFee { get; set; }
+
+    /// <summary>
+    /// Rezervasyon durumu
+    /// </summary>
+    public ReservationStatus Status { get; set; }
+
+    /// <summary>
+    /// Check-in saati
+    /// </summary>
+    public TimeSpan CheckInTime { get; set; }
+
+    /// <summary>
+    /// Check-out saati
+    /// </summary>
+    public TimeSpan CheckOutTime { get; set; }
+
     /// <summary>
     /// Özel istekler
     /// </summary>
     public string? SpecialRequests { get; set; }
-    
+
     /// <summary>
-    /// Rezervasyon durumu
+    /// Toplam fiyat
     /// </summary>
-    public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
+    public decimal TotalPrice { get; set; }
 } 

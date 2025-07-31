@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MinimalAirbnb.Application.Reviews.Commands.CreateReview;
+using MinimalAirbnb.Application.Commands.Review;
 using MinimalAirbnb.Application.Reviews.Queries.GetReviews;
 using MinimalAirbnb.Application.Reviews.Queries.GetReviewById;
 using MinimalAirbnb.Application.Reviews.DTOs;

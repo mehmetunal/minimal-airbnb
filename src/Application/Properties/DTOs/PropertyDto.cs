@@ -198,12 +198,77 @@ public class PropertyDto
     public int PhotoCount { get; set; }
 
     /// <summary>
-    /// Oluşturulma tarihi
-    /// </summary>
-    public DateTime CreatedDate { get; set; }
-
-    /// <summary>
     /// Müsait mi?
     /// </summary>
     public bool IsAvailable { get; set; }
+
+    /// <summary>
+    /// Fiyat (alias)
+    /// </summary>
+    public decimal Price => PricePerNight;
+
+    /// <summary>
+    /// Yatak odası sayısı (alias)
+    /// </summary>
+    public int Bedrooms => BedroomCount;
+
+    /// <summary>
+    /// Banyo sayısı (alias)
+    /// </summary>
+    public int Bathrooms => BathroomCount;
+
+    /// <summary>
+    /// Maksimum misafir sayısı (alias)
+    /// </summary>
+    public int MaxGuests => MaxGuestCount;
+
+    /// <summary>
+    /// Oluşturulma tarihi
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Değerlendirme sayısı
+    /// </summary>
+    public int ReviewCount => TotalReviews;
+
+    /// <summary>
+    /// Onaylandı mı?
+    /// </summary>
+    public bool IsApproved { get; set; }
+
+    /// <summary>
+    /// Güvenlik kamerası var mı?
+    /// </summary>
+    public bool HasSecurityCamera { get; set; }
+
+    /// <summary>
+    /// Yangın söndürücü var mı?
+    /// </summary>
+    public bool HasFireExtinguisher { get; set; }
+
+    /// <summary>
+    /// İlk yardım çantası var mı?
+    /// </summary>
+    public bool HasFirstAidKit { get; set; }
+
+    /// <summary>
+    /// Yayınlandı mı?
+    /// </summary>
+    public bool IsPublished { get; set; }
+
+    /// <summary>
+    /// Ev sahibi e-posta adresi
+    /// </summary>
+    public string HostEmail { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Ev sahibi telefon numarası
+    /// </summary>
+    public string HostPhone { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Oluşturulma tarihi (alias)
+    /// </summary>
+    public DateTime CreatedDate { get; set; }
 } 

@@ -8,14 +8,19 @@ namespace MinimalAirbnb.Application.DTOs.Payment;
 public class AddPaymentDto
 {
     /// <summary>
-    /// Kullanıcı ID
-    /// </summary>
-    public Guid UserId { get; set; }
-    
-    /// <summary>
     /// Rezervasyon ID
     /// </summary>
     public Guid ReservationId { get; set; }
+    
+    /// <summary>
+    /// Kullanıcı ID
+    /// </summary>
+    public Guid UserId { get; set; }
+
+    /// <summary>
+    /// Misafir ID
+    /// </summary>
+    public Guid GuestId { get; set; }
     
     /// <summary>
     /// Ödeme tutarı
@@ -23,17 +28,22 @@ public class AddPaymentDto
     public decimal Amount { get; set; }
     
     /// <summary>
+    /// Para birimi
+    /// </summary>
+    public string Currency { get; set; } = "TRY";
+    
+    /// <summary>
     /// Ödeme yöntemi
     /// </summary>
-    public string PaymentMethod { get; set; } = string.Empty;
+    public PaymentMethod PaymentMethod { get; set; }
     
     /// <summary>
     /// Ödeme durumu
     /// </summary>
-    public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
-    
+    public PaymentStatus Status { get; set; }
+
     /// <summary>
-    /// İşlem ID
+    /// İşlem ID'si
     /// </summary>
     public string? TransactionId { get; set; }
     
@@ -43,7 +53,7 @@ public class AddPaymentDto
     public DateTime PaymentDate { get; set; }
     
     /// <summary>
-    /// Açıklama
+    /// Ödeme açıklaması
     /// </summary>
     public string? Description { get; set; }
 } 

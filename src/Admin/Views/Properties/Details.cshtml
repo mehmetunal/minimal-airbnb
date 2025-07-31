@@ -1,0 +1,204 @@
+@model MinimalAirbnb.Application.Properties.DTOs.PropertyDto
+@{
+    ViewData["Title"] = "Property Detayı";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-house-heart me-2"></i>Property Detayı
+        </h1>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil me-1"></i>Düzenle
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Geri Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Property Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-info-circle me-2"></i>Property Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Başlık:</dt>
+                                <dd class="col-sm-8">@Model.Title</dd>
+
+                                <dt class="col-sm-4">Açıklama:</dt>
+                                <dd class="col-sm-8">@Model.Description</dd>
+
+                                <dt class="col-sm-4">Şehir:</dt>
+                                <dd class="col-sm-8">@Model.City</dd>
+
+                                <dt class="col-sm-4">Adres:</dt>
+                                <dd class="col-sm-8">@Model.Address</dd>
+
+                                <dt class="col-sm-4">Posta Kodu:</dt>
+                                <dd class="col-sm-8">@Model.PostalCode</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Fiyat:</dt>
+                                <dd class="col-sm-8">@Model.Price.ToString("C")</dd>
+
+                                <dt class="col-sm-4">Tür:</dt>
+                                <dd class="col-sm-8">@Model.PropertyType</dd>
+
+                                <dt class="col-sm-4">Yatak Odası:</dt>
+                                <dd class="col-sm-8">@Model.Bedrooms</dd>
+
+                                <dt class="col-sm-4">Banyo:</dt>
+                                <dd class="col-sm-8">@Model.Bathrooms</dd>
+
+                                <dt class="col-sm-4">Maksimum Misafir:</dt>
+                                <dd class="col-sm-8">@Model.MaxGuests</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Özellikler -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-list-check me-2"></i>Özellikler
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Genel Özellikler</h6>
+                            <ul class="list-unstyled">
+                                @if (Model.HasWifi)
+                                {
+                                    <li><i class="bi bi-wifi text-success me-2"></i>WiFi</li>
+                                }
+                                @if (Model.HasParking)
+                                {
+                                    <li><i class="bi bi-car-front text-success me-2"></i>Parking</li>
+                                }
+                                @if (Model.HasKitchen)
+                                {
+                                    <li><i class="bi bi-house-gear text-success me-2"></i>Mutfak</li>
+                                }
+                                @if (Model.HasAirConditioning)
+                                {
+                                    <li><i class="bi bi-snow text-success me-2"></i>Klima</li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Güvenlik</h6>
+                            <ul class="list-unstyled">
+                                @if (Model.HasSecurityCamera)
+                                {
+                                    <li><i class="bi bi-camera-video text-success me-2"></i>Güvenlik Kamerası</li>
+                                }
+                                @if (Model.HasFireExtinguisher)
+                                {
+                                    <li><i class="bi bi-fire text-success me-2"></i>Yangın Söndürücü</li>
+                                }
+                                @if (Model.HasFirstAidKit)
+                                {
+                                    <li><i class="bi bi-heart-pulse text-success me-2"></i>İlk Yardım Çantası</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Host Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-person me-2"></i>Host Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-sm me-3">
+                            <i class="bi bi-person-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">@Model.HostName</div>
+                            <small class="text-muted">@Model.HostEmail</small>
+                        </div>
+                    </div>
+                    <div class="small text-muted">
+                        <div><i class="bi bi-telephone me-1"></i>@Model.HostPhone</div>
+                        <div><i class="bi bi-calendar me-1"></i>Kayıt: @Model.CreatedAt.ToString("dd.MM.yyyy")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-graph-up me-2"></i>İstatistikler
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="h4 text-primary">@Model.AverageRating</div>
+                            <small class="text-muted">Ortalama Puan</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="h4 text-success">@Model.ReviewCount</div>
+                            <small class="text-muted">Yorum Sayısı</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Durum -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-info-circle me-2"></i>Durum
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Durum:</span>
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="badge bg-success">Müsait</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Müsait Değil</span>
+                        }
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span>Onay:</span>
+                        @if (Model.IsApproved)
+                        {
+                            <span class="badge bg-success">Onaylı</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning">Beklemede</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

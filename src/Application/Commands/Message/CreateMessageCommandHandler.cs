@@ -2,13 +2,14 @@ using MediatR;
 using MinimalAirbnb.Application.DTOs.Message;
 using MinimalAirbnb.Application.Interfaces;
 using AutoMapper;
+using Maggsoft.Core.Base;
 
 namespace MinimalAirbnb.Application.Commands.Message;
 
 /// <summary>
 /// Mesaj Oluşturma Handler'ı
 /// </summary>
-public class CreateMessageCommandHandler : IRequestHandler<CreateMessageCommand, MessageResultDto>
+public class CreateMessageCommandHandler : IRequestHandler<CreateMessageCommand, Result<MessageResultDto>>
 {
     private readonly IMessageRepository _messageRepository;
     private readonly IMapper _mapper;
@@ -19,12 +20,12 @@ public class CreateMessageCommandHandler : IRequestHandler<CreateMessageCommand,
         _mapper = mapper;
     }
 
-    public async Task<MessageResultDto> Handle(CreateMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Result<MessageResultDto>> Handle(CreateMessageCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // DTO'dan entity'ye dönüştür
-            var message = _mapper.Map<Domain.Entities.Message>(request.AddMessageDto);
+            // Command'den entity'ye dönüştür
+            var message = _mapper.Map<Domain.Entities.Message>(request);
 
             // Mesajı ekle
             await _messageRepository.AddAsync(message);
@@ -33,11 +34,11 @@ public class CreateMessageCommandHandler : IRequestHandler<CreateMessageCommand,
             // Entity'den DTO'ya dönüştür
             var messageResultDto = _mapper.Map<MessageResultDto>(message);
 
-            return messageResultDto;
+            return Result<MessageResultDto>.Success(messageResultDto);
         }
         catch (Exception ex)
         {
-            throw new Exception($"Mesaj oluşturulurken hata oluştu: {ex.Message}");
+            return Result<MessageResultDto>.Failure(new Maggsoft.Core.Model.Error("Mesaj oluşturma hatası", $"Mesaj oluşturulurken hata oluştu: {ex.Message}"));
         }
     }
 } 

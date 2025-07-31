@@ -378,6 +378,61 @@ public class PaymentDto
     public int CopyCount { get; set; }
 
     /// <summary>
+    /// Misafir e-posta adresi
+    /// </summary>
+    public string GuestEmail { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Misafir telefon numarası
+    /// </summary>
+    public string GuestPhone { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Misafir oluşturulma tarihi
+    /// </summary>
+    public DateTime GuestCreatedAt { get; set; }
+
+    /// <summary>
+    /// Check-in tarihi
+    /// </summary>
+    public DateTime CheckInDate { get; set; }
+
+    /// <summary>
+    /// Check-out tarihi
+    /// </summary>
+    public DateTime CheckOutDate { get; set; }
+
+    /// <summary>
+    /// Toplam fiyat
+    /// </summary>
+    public decimal TotalPrice { get; set; }
+
+    /// <summary>
+    /// Rezervasyon durumu
+    /// </summary>
+    public ReservationStatus ReservationStatus { get; set; }
+
+    /// <summary>
+    /// Ödeme sayısı
+    /// </summary>
+    public int PaymentCount { get; set; }
+
+    /// <summary>
+    /// Toplam ödenen tutar
+    /// </summary>
+    public decimal TotalPaidAmount { get; set; }
+
+    /// <summary>
+    /// Oluşturulma tarihi
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Güncellenme tarihi
+    /// </summary>
+    public DateTime? UpdatedAt { get; set; }
+
+    /// <summary>
     /// Oluşturulma tarihi
     /// </summary>
     public DateTime CreatedDate { get; set; }

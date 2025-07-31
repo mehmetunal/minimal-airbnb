@@ -1,0 +1,330 @@
+@model MinimalAirbnb.Application.Commands.Message.CreateMessageCommand
+@{
+    ViewData["Title"] = "Yeni Mesaj Ekle";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-plus-circle me-2"></i>Yeni Mesaj Ekle
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Geri Dön
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-chat-dots me-2"></i>Mesaj Bilgileri
+            </h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="SenderId" class="form-label">Gönderen *</label>
+                            <select asp-for="SenderId" class="form-select" id="senderSelect">
+                                <option value="">Gönderen seçiniz</option>
+                                <!-- AJAX ile doldurulacak -->
+                            </select>
+                            <span asp-validation-for="SenderId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ReceiverId" class="form-label">Alıcı *</label>
+                            <select asp-for="ReceiverId" class="form-select" id="receiverSelect">
+                                <option value="">Alıcı seçiniz</option>
+                                <!-- AJAX ile doldurulacak -->
+                            </select>
+                            <span asp-validation-for="ReceiverId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Subject" class="form-label">Konu *</label>
+                            <input asp-for="Subject" class="form-control" placeholder="Mesaj konusu..." id="subject" />
+                            <span asp-validation-for="Subject" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Content" class="form-label">İçerik *</label>
+                            <textarea asp-for="Content" class="form-control" rows="8" placeholder="Mesaj içeriğinizi yazın..." id="content"></textarea>
+                            <div class="form-text">
+                                <span id="charCount">0</span>/2000 karakter
+                            </div>
+                            <span asp-validation-for="Content" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsRead" class="form-check-input" />
+                                <label asp-for="IsRead" class="form-check-label">Okundu</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsArchived" class="form-check-input" />
+                                <label asp-for="IsArchived" class="form-check-label">Arşivlendi</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Priority" class="form-label">Öncelik</label>
+                            <select asp-for="Priority" class="form-select">
+                                <option value="Low">Düşük</option>
+                                <option value="Normal" selected>Normal</option>
+                                <option value="High">Yüksek</option>
+                                <option value="Urgent">Acil</option>
+                            </select>
+                            <span asp-validation-for="Priority" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Category" class="form-label">Kategori</label>
+                            <select asp-for="Category" class="form-select">
+                                <option value="General">Genel</option>
+                                <option value="Support">Destek</option>
+                                <option value="Booking">Rezervasyon</option>
+                                <option value="Payment">Ödeme</option>
+                                <option value="Complaint">Şikayet</option>
+                                <option value="Suggestion">Öneri</option>
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+
+                        <!-- Hızlı Şablonlar -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-lightning me-2"></i>Hızlı Şablonlar</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="loadTemplate('welcome')">
+                                        <i class="bi bi-emoji-smile me-1"></i>Hoş Geldiniz
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success btn-sm" onclick="loadTemplate('booking')">
+                                        <i class="bi bi-calendar-check me-1"></i>Rezervasyon Onayı
+                                    </button>
+                                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="loadTemplate('payment')">
+                                        <i class="bi bi-credit-card me-1"></i>Ödeme Hatırlatması
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info btn-sm" onclick="loadTemplate('support')">
+                                        <i class="bi bi-headset me-1"></i>Destek Mesajı
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mesaj Önizleme -->
+                <div class="card bg-light mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-eye me-2"></i>Mesaj Önizleme</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <strong>Gönderen:</strong>
+                                    <span id="previewSender">Seçilmedi</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Alıcı:</strong>
+                                    <span id="previewReceiver">Seçilmedi</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Konu:</strong>
+                                    <span id="previewSubject">Henüz konu yazılmadı</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>İçerik:</strong>
+                                    <div id="previewContent" class="border rounded p-3 bg-white">
+                                        <em class="text-muted">Henüz içerik yazılmadı</em>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <div class="mb-3">
+                                        <strong>Öncelik:</strong>
+                                        <div id="previewPriority">
+                                            <span class="badge bg-secondary">Normal</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Kategori:</strong>
+                                        <div id="previewCategory">
+                                            <span class="badge bg-secondary">Genel</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Durum:</strong>
+                                        <div id="previewStatus">
+                                            <span class="badge bg-warning">Okunmadı</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Oluşturulma:</strong>
+                                        <div id="previewDate">@DateTime.Now.ToString("dd.MM.yyyy HH:mm")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Gönder
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Kullanıcı listesini yükle
+        loadUsers();
+
+        function loadUsers() {
+            fetch('/api/users?PageSize=100')
+                .then(response => response.json())
+                .then(data => {
+                    const senderSelect = document.getElementById('senderSelect');
+                    const receiverSelect = document.getElementById('receiverSelect');
+                    
+                    data.data.forEach(user => {
+                        // Gönderen seçenekleri
+                        const senderOption = document.createElement('option');
+                        senderOption.value = user.id;
+                        senderOption.textContent = `${user.fullName} (${user.email})`;
+                        senderSelect.appendChild(senderOption);
+                        
+                        // Alıcı seçenekleri
+                        const receiverOption = document.createElement('option');
+                        receiverOption.value = user.id;
+                        receiverOption.textContent = `${user.fullName} (${user.email})`;
+                        receiverSelect.appendChild(receiverOption);
+                    });
+                });
+        }
+
+        // Event listeners
+        document.getElementById('senderSelect').addEventListener('change', updatePreview);
+        document.getElementById('receiverSelect').addEventListener('change', updatePreview);
+        document.getElementById('subject').addEventListener('input', updatePreview);
+        document.getElementById('content').addEventListener('input', function() {
+            updatePreview();
+            updateCharCount();
+        });
+        document.querySelector('[name="Priority"]').addEventListener('change', updatePreview);
+        document.querySelector('[name="Category"]').addEventListener('change', updatePreview);
+        document.querySelector('[name="IsRead"]').addEventListener('change', updatePreview);
+
+        function updatePreview() {
+            // Gönderen önizleme
+            const senderSelect = document.getElementById('senderSelect');
+            const senderText = senderSelect.options[senderSelect.selectedIndex]?.text || 'Seçilmedi';
+            document.getElementById('previewSender').textContent = senderText;
+
+            // Alıcı önizleme
+            const receiverSelect = document.getElementById('receiverSelect');
+            const receiverText = receiverSelect.options[receiverSelect.selectedIndex]?.text || 'Seçilmedi';
+            document.getElementById('previewReceiver').textContent = receiverText;
+
+            // Konu önizleme
+            const subject = document.getElementById('subject').value;
+            document.getElementById('previewSubject').textContent = subject || 'Henüz konu yazılmadı';
+
+            // İçerik önizleme
+            const content = document.getElementById('content').value;
+            document.getElementById('previewContent').innerHTML = content || '<em class="text-muted">Henüz içerik yazılmadı</em>';
+
+            // Öncelik önizleme
+            const priority = document.querySelector('[name="Priority"]').value;
+            const priorityElement = document.getElementById('previewPriority');
+            priorityElement.innerHTML = getPriorityBadge(priority);
+
+            // Kategori önizleme
+            const category = document.querySelector('[name="Category"]').value;
+            const categoryElement = document.getElementById('previewCategory');
+            categoryElement.innerHTML = getCategoryBadge(category);
+
+            // Durum önizleme
+            const isRead = document.querySelector('[name="IsRead"]').checked;
+            const statusElement = document.getElementById('previewStatus');
+            statusElement.innerHTML = isRead ? '<span class="badge bg-success">Okundu</span>' : '<span class="badge bg-warning">Okunmadı</span>';
+        }
+
+        function updateCharCount() {
+            const content = document.getElementById('content').value;
+            const count = content.length;
+            document.getElementById('charCount').textContent = count;
+            if (count > 2000) {
+                document.getElementById('charCount').classList.add('text-danger');
+            } else {
+                document.getElementById('charCount').classList.remove('text-danger');
+            }
+        }
+
+        function getPriorityBadge(priority) {
+            switch (priority) {
+                case 'Low': return '<span class="badge bg-secondary">Düşük</span>';
+                case 'Normal': return '<span class="badge bg-primary">Normal</span>';
+                case 'High': return '<span class="badge bg-warning">Yüksek</span>';
+                case 'Urgent': return '<span class="badge bg-danger">Acil</span>';
+                default: return '<span class="badge bg-secondary">Normal</span>';
+            }
+        }
+
+        function getCategoryBadge(category) {
+            switch (category) {
+                case 'General': return '<span class="badge bg-secondary">Genel</span>';
+                case 'Support': return '<span class="badge bg-info">Destek</span>';
+                case 'Booking': return '<span class="badge bg-success">Rezervasyon</span>';
+                case 'Payment': return '<span class="badge bg-warning">Ödeme</span>';
+                case 'Complaint': return '<span class="badge bg-danger">Şikayet</span>';
+                case 'Suggestion': return '<span class="badge bg-primary">Öneri</span>';
+                default: return '<span class="badge bg-secondary">Genel</span>';
+            }
+        }
+
+        function loadTemplate(type) {
+            const templates = {
+                welcome: {
+                    subject: 'Hoş Geldiniz!',
+                    content: 'Merhaba,\n\nMinimalAirbnb platformuna hoş geldiniz! Size nasıl yardımcı olabiliriz?\n\nSaygılarımızla,\nMinimalAirbnb Ekibi'
+                },
+                booking: {
+                    subject: 'Rezervasyon Onayı',
+                    content: 'Merhaba,\n\nRezervasyonunuz başarıyla onaylanmıştır. Detaylar için profil sayfanızı kontrol edebilirsiniz.\n\nİyi tatiller!\nMinimalAirbnb Ekibi'
+                },
+                payment: {
+                    subject: 'Ödeme Hatırlatması',
+                    content: 'Merhaba,\n\nRezervasyonunuz için ödeme yapmanız gerekmektedir. Lütfen en kısa sürede ödemenizi tamamlayın.\n\nTeşekkürler,\nMinimalAirbnb Ekibi'
+                },
+                support: {
+                    subject: 'Destek Talebi',
+                    content: 'Merhaba,\n\nDestek talebiniz alınmıştır. En kısa sürede size dönüş yapacağız.\n\nTeşekkürler,\nMinimalAirbnb Destek Ekibi'
+                }
+            };
+
+            const template = templates[type];
+            if (template) {
+                document.getElementById('subject').value = template.subject;
+                document.getElementById('content').value = template.content;
+                updatePreview();
+                updateCharCount();
+            }
+        }
+    </script>
+} 

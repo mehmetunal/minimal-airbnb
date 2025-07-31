@@ -22,8 +22,7 @@ public class AddPaymentDtoValidator : AbstractValidator<AddPaymentDto>
             .LessThanOrEqualTo(100000).WithMessage("Ödeme tutarı 100.000'den fazla olamaz.");
 
         RuleFor(x => x.PaymentMethod)
-            .NotEmpty().WithMessage("Ödeme yöntemi boş olamaz.")
-            .MaximumLength(50).WithMessage("Ödeme yöntemi 50 karakterden uzun olamaz.");
+            .IsInEnum().WithMessage("Geçerli bir ödeme yöntemi seçiniz.");
 
         RuleFor(x => x.Status)
             .IsInEnum().WithMessage("Geçerli bir durum seçiniz.");

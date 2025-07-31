@@ -73,7 +73,7 @@ public class GetPaymentsQueryHandler : IRequestHandler<GetPaymentsQuery, PagedLi
                 pagedList.TotalCount
             );
         }
-        catch (Exception ex)
+        catch
         {
             return new PagedList<PaymentDto>(
                 new List<PaymentDto>(),

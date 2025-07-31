@@ -1,7 +1,7 @@
-@model Maggsoft.Core.Model.Pagination.PagedList<MinimalAirbnb.Application.Properties.DTOs.PropertyDto>
+@model MinimalAirbnb.Admin.Models.PagedListWrapper<MinimalAirbnb.Application.Properties.DTOs.PropertyDto>
 @{
     ViewData["Title"] = "Properties Yönetimi";
-    var currentPage = Model.PageIndex + 1; // Convert from 0-based to 1-based
+    var currentPage = Model.PageNumber; // PagedListWrapper uses 1-based indexing
 }
 
 <div class="container-fluid">

@@ -1,3 +1,5 @@
+using MinimalAirbnb.Domain.Enums;
+
 namespace MinimalAirbnb.Application.DTOs.Message;
 
 /// <summary>
@@ -39,4 +41,14 @@ public class AddMessageDto
     /// Okundu mu?
     /// </summary>
     public bool IsRead { get; set; } = false;
+
+    /// <summary>
+    /// Mesaj önceliği
+    /// </summary>
+    public MessagePriority Priority { get; set; }
+
+    /// <summary>
+    /// Mesaj kategorisi
+    /// </summary>
+    public MessageCategory Category { get; set; }
 } 

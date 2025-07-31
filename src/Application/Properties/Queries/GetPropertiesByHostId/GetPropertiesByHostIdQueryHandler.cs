@@ -50,7 +50,8 @@ public class GetPropertiesByHostIdQueryHandler : IRequestHandler<GetPropertiesBy
                 MinimumStayDays = p.MinimumStayDays,
                 MaximumStayDays = p.MaximumStayDays,
                 AverageRating = p.AverageRating,
-                CreatedDate = p.CreatedDate
+                CreatedDate = p.CreatedDate,
+                CreatedAt = p.CreatedDate
             }).ToList();
 
             return Result<List<PropertyDto>>.Success(propertyDtos, new SuccessMessage("200", "Ev sahibine ait mülkler başarıyla getirildi."));

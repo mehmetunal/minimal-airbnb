@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using MinimalAirbnb.Application.Reviews.Queries.GetReviews;
 using MinimalAirbnb.Application.Reviews.Queries.GetReviewById;
-using MinimalAirbnb.Application.Reviews.Commands.CreateReview;
+using MinimalAirbnb.Application.Commands.Review;
 using MinimalAirbnb.Application.Reviews.DTOs;
 using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;

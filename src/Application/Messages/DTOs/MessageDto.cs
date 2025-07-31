@@ -23,6 +23,11 @@ public class MessageDto
     public string SenderName { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gönderen e-posta adresi
+    /// </summary>
+    public string SenderEmail { get; set; } = string.Empty;
+
+    /// <summary>
     /// Gönderen profil fotoğrafı
     /// </summary>
     public string? SenderPhotoUrl { get; set; }
@@ -36,6 +41,11 @@ public class MessageDto
     /// Alıcı kullanıcı adı
     /// </summary>
     public string ReceiverName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Alıcı e-posta adresi
+    /// </summary>
+    public string ReceiverEmail { get; set; } = string.Empty;
 
     /// <summary>
     /// Alıcı profil fotoğrafı
@@ -73,6 +83,51 @@ public class MessageDto
     public bool IsRead { get; set; }
 
     /// <summary>
+    /// Arşivlendi mi?
+    /// </summary>
+    public bool IsArchived { get; set; }
+
+    /// <summary>
+    /// Mesaj önceliği
+    /// </summary>
+    public MessagePriority Priority { get; set; }
+
+    /// <summary>
+    /// Mesaj kategorisi
+    /// </summary>
+    public MessageCategory Category { get; set; }
+
+    /// <summary>
+    /// Toplam mesaj sayısı
+    /// </summary>
+    public int MessageCount { get; set; }
+
+    /// <summary>
+    /// Okunmamış mesaj sayısı
+    /// </summary>
+    public int UnreadCount { get; set; }
+
+    /// <summary>
+    /// Görüntülenme sayısı
+    /// </summary>
+    public int ViewCount { get; set; }
+
+    /// <summary>
+    /// Yanıt sayısı
+    /// </summary>
+    public int ReplyCount { get; set; }
+
+    /// <summary>
+    /// Oluşturulma tarihi
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Güncellenme tarihi
+    /// </summary>
+    public DateTime? UpdatedAt { get; set; }
+
+    /// <summary>
     /// Okunma tarihi
     /// </summary>
     public DateTime? ReadDate { get; set; }
@@ -88,37 +143,12 @@ public class MessageDto
     public MessageType MessageType { get; set; }
 
     /// <summary>
-    /// Öncelik seviyesi
-    /// </summary>
-    public MessagePriority Priority { get; set; }
-
-    /// <summary>
-    /// Mesaj kategorisi
-    /// </summary>
-    public MessageCategory Category { get; set; }
-
-    /// <summary>
     /// Ek dosya URL'i
     /// </summary>
     public string? AttachmentUrl { get; set; }
 
     /// <summary>
-    /// Oluşturulma tarihi
+    /// Oluşturulma tarihi (alias)
     /// </summary>
-    public DateTime CreatedAt { get; set; }
-
-    /// <summary>
-    /// Güncellenme tarihi
-    /// </summary>
-    public DateTime? UpdatedAt { get; set; }
-
-    /// <summary>
-    /// Görüntülenme sayısı
-    /// </summary>
-    public int ViewCount { get; set; }
-
-    /// <summary>
-    /// Yanıt sayısı
-    /// </summary>
-    public int ReplyCount { get; set; }
+    public DateTime CreatedDate => CreatedAt;
 } 

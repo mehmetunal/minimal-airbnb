@@ -1,0 +1,302 @@
+@model MinimalAirbnb.Application.Commands.Review.CreateReviewCommand
+@{
+    ViewData["Title"] = "Yeni Yorum Ekle";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-plus-circle me-2"></i>Yeni Yorum Ekle
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Geri Dön
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-chat-quote me-2"></i>Yorum Bilgileri
+            </h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="PropertyId" class="form-label">Property *</label>
+                            <select asp-for="PropertyId" class="form-select" id="propertySelect">
+                                <option value="">Property seçiniz</option>
+                                <!-- AJAX ile doldurulacak -->
+                            </select>
+                            <span asp-validation-for="PropertyId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GuestId" class="form-label">Misafir *</label>
+                            <select asp-for="GuestId" class="form-select" id="guestSelect">
+                                <option value="">Misafir seçiniz</option>
+                                <!-- AJAX ile doldurulacak -->
+                            </select>
+                            <span asp-validation-for="GuestId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ReservationId" class="form-label">Rezervasyon (Opsiyonel)</label>
+                            <select asp-for="ReservationId" class="form-select" id="reservationSelect">
+                                <option value="">Rezervasyon seçiniz (opsiyonel)</option>
+                                <!-- AJAX ile doldurulacak -->
+                            </select>
+                            <span asp-validation-for="ReservationId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Rating" class="form-label">Puan *</label>
+                            <div class="rating-input">
+                                @for (int i = 5; i >= 1; i--)
+                                {
+                                    <input type="radio" asp-for="Rating" value="@i" id="rating@i" class="rating-radio" />
+                                    <label for="rating@i" class="rating-star">
+                                        <i class="bi bi-star"></i>
+                                    </label>
+                                }
+                            </div>
+                            <span asp-validation-for="Rating" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Comment" class="form-label">Yorum *</label>
+                            <textarea asp-for="Comment" class="form-control" rows="6" placeholder="Deneyiminizi paylaşın..." id="commentText"></textarea>
+                            <div class="form-text">
+                                <span id="charCount">0</span>/1000 karakter
+                            </div>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsApproved" class="form-check-input" />
+                                <label asp-for="IsApproved" class="form-check-label">Onaylı</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AdminResponse" class="form-label">Admin Yanıtı (Opsiyonel)</label>
+                            <textarea asp-for="AdminResponse" class="form-control" rows="3" placeholder="Misafire yanıtınız..."></textarea>
+                            <span asp-validation-for="AdminResponse" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yorum Önizleme -->
+                <div class="card bg-light mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-eye me-2"></i>Yorum Önizleme</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <strong>Property:</strong>
+                                    <span id="previewProperty">Seçilmedi</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Misafir:</strong>
+                                    <span id="previewGuest">Seçilmedi</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Puan:</strong>
+                                    <div id="previewRating">
+                                        <i class="bi bi-star text-muted"></i>
+                                        <i class="bi bi-star text-muted"></i>
+                                        <i class="bi bi-star text-muted"></i>
+                                        <i class="bi bi-star text-muted"></i>
+                                        <i class="bi bi-star text-muted"></i>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Yorum:</strong>
+                                    <p id="previewComment" class="text-muted">Henüz yorum yazılmadı</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <div class="mb-3">
+                                        <strong>Durum:</strong>
+                                        <div id="previewStatus">
+                                            <span class="badge bg-warning">Beklemede</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Oluşturulma:</strong>
+                                        <div id="previewDate">@DateTime.Now.ToString("dd.MM.yyyy HH:mm")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <style>
+        .rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 5px;
+        }
+
+        .rating-radio {
+            display: none;
+        }
+
+        .rating-star {
+            cursor: pointer;
+            font-size: 24px;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+
+        .rating-star:hover,
+        .rating-star:hover ~ .rating-star,
+        .rating-radio:checked ~ .rating-star {
+            color: #ffc107;
+        }
+
+        .rating-radio:checked ~ .rating-star {
+            color: #ffc107;
+        }
+    </style>
+
+    <script>
+        // Property listesini yükle
+        loadProperties();
+        loadGuests();
+
+        function loadProperties() {
+            fetch('/api/properties?PageSize=100')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('propertySelect');
+                    data.data.forEach(property => {
+                        const option = document.createElement('option');
+                        option.value = property.id;
+                        option.textContent = `${property.title} - ${property.city}`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function loadGuests() {
+            fetch('/api/users?PageSize=100&UserType=Guest')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('guestSelect');
+                    data.data.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.id;
+                        option.textContent = `${user.fullName} (${user.email})`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function loadReservations(propertyId, guestId) {
+            const select = document.getElementById('reservationSelect');
+            select.innerHTML = '<option value="">Rezervasyon seçiniz (opsiyonel)</option>';
+
+            if (propertyId && guestId) {
+                fetch(`/api/reservations?PropertyId=${propertyId}&GuestId=${guestId}&PageSize=100`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.data.forEach(reservation => {
+                            const option = document.createElement('option');
+                            option.value = reservation.id;
+                            option.textContent = `${reservation.checkInDate} - ${reservation.checkOutDate}`;
+                            select.appendChild(option);
+                        });
+                    });
+            }
+        }
+
+        // Event listeners
+        document.getElementById('propertySelect').addEventListener('change', function() {
+            updatePreview();
+            if (this.value && document.getElementById('guestSelect').value) {
+                loadReservations(this.value, document.getElementById('guestSelect').value);
+            }
+        });
+
+        document.getElementById('guestSelect').addEventListener('change', function() {
+            updatePreview();
+            if (this.value && document.getElementById('propertySelect').value) {
+                loadReservations(document.getElementById('propertySelect').value, this.value);
+            }
+        });
+
+        document.getElementById('commentText').addEventListener('input', function() {
+            updatePreview();
+            const count = this.value.length;
+            document.getElementById('charCount').textContent = count;
+            if (count > 1000) {
+                document.getElementById('charCount').classList.add('text-danger');
+            } else {
+                document.getElementById('charCount').classList.remove('text-danger');
+            }
+        });
+
+        // Rating event listeners
+        document.querySelectorAll('.rating-radio').forEach(radio => {
+            radio.addEventListener('change', updatePreview);
+        });
+
+        // Onay durumu değişikliği
+        document.querySelector('[name="IsApproved"]').addEventListener('change', function() {
+            const statusElement = document.getElementById('previewStatus');
+            if (this.checked) {
+                statusElement.innerHTML = '<span class="badge bg-success">Onaylı</span>';
+            } else {
+                statusElement.innerHTML = '<span class="badge bg-warning">Beklemede</span>';
+            }
+        });
+
+        function updatePreview() {
+            // Property önizleme
+            const propertySelect = document.getElementById('propertySelect');
+            const propertyText = propertySelect.options[propertySelect.selectedIndex]?.text || 'Seçilmedi';
+            document.getElementById('previewProperty').textContent = propertyText;
+
+            // Misafir önizleme
+            const guestSelect = document.getElementById('guestSelect');
+            const guestText = guestSelect.options[guestSelect.selectedIndex]?.text || 'Seçilmedi';
+            document.getElementById('previewGuest').textContent = guestText;
+
+            // Rating önizleme
+            const rating = document.querySelector('input[name="Rating"]:checked')?.value || 0;
+            const ratingElement = document.getElementById('previewRating');
+            ratingElement.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('i');
+                star.className = i <= rating ? 'bi bi-star-fill text-warning me-1' : 'bi bi-star text-muted me-1';
+                ratingElement.appendChild(star);
+            }
+
+            // Yorum önizleme
+            const comment = document.getElementById('commentText').value;
+            document.getElementById('previewComment').textContent = comment || 'Henüz yorum yazılmadı';
+        }
+    </script>
+}

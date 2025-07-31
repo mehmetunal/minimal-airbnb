@@ -156,4 +156,34 @@ public class UpdatePropertyDto
     /// Yayınlanmış mı?
     /// </summary>
     public bool IsPublished { get; set; }
+
+    /// <summary>
+    /// Fiyat (alias)
+    /// </summary>
+    public decimal Price => PricePerNight;
+
+    /// <summary>
+    /// Güvenlik kamerası var mı?
+    /// </summary>
+    public bool HasSecurityCamera { get; set; }
+
+    /// <summary>
+    /// Yangın söndürücü var mı?
+    /// </summary>
+    public bool HasFireExtinguisher { get; set; }
+
+    /// <summary>
+    /// İlk yardım çantası var mı?
+    /// </summary>
+    public bool HasFirstAidKit { get; set; }
+
+    /// <summary>
+    /// Müsait mi?
+    /// </summary>
+    public bool IsAvailable { get; set; }
+
+    /// <summary>
+    /// Onaylandı mı?
+    /// </summary>
+    public bool IsApproved { get; set; }
 } 

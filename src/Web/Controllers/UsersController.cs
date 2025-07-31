@@ -62,11 +62,6 @@ public class UsersController : Controller
 
             if (response != null && response.IsSuccess && response.Data != null)
             {
-                // Session'a kullanıcı bilgilerini kaydet
-                HttpContext.Session.SetString("UserId", response.Data.UserId.ToString());
-                HttpContext.Session.SetString("UserEmail", response.Data.Email);
-                HttpContext.Session.SetString("UserName", response.Data.FullName);
-
                 // Cookie authentication oluştur
                 var claims = new List<Claim>
                 {
@@ -143,7 +138,6 @@ public class UsersController : Controller
     [HttpPost("Logout")]
     public async Task<IActionResult> Logout()
     {
-        HttpContext.Session.Clear();
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return Json(new { success = true, message = "Başarıyla çıkış yaptınız!" });
     }

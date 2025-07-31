@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MinimalAirbnb.Application.Reservations.Commands.CreateReservation;
+using MinimalAirbnb.Application.Commands.Reservation;
 using MinimalAirbnb.Application.Reservations.Commands.DeleteReservation;
-using MinimalAirbnb.Application.Reservations.Commands.UpdateReservation;
+
 using MinimalAirbnb.Application.Reservations.Queries.GetReservations;
 using MinimalAirbnb.Application.Reservations.Queries.GetReservationById;
 using MinimalAirbnb.Application.Reservations.DTOs;
@@ -68,7 +68,7 @@ public class ReservationsController : BaseApiController
     /// Rezervasyon güncelle
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<ActionResult<Result<object>>> UpdateReservation(Guid id, [FromBody] UpdateReservationCommand command)
+    public async Task<ActionResult<Result<object>>> UpdateReservation(Guid id, [FromBody] MinimalAirbnb.Application.Reservations.Commands.UpdateReservation.UpdateReservationCommand command)
     {
         command.ReservationId = id;
         var result = await _mediator.Send(command);
@@ -85,7 +85,7 @@ public class ReservationsController : BaseApiController
     [HttpDelete("{id}")]
     public async Task<ActionResult<Result<object>>> DeleteReservation(Guid id)
     {
-        var command = new DeleteReservationCommand { ReservationId = id };
+        var command = new MinimalAirbnb.Application.Reservations.Commands.DeleteReservation.DeleteReservationCommand { ReservationId = id };
         var result = await _mediator.Send(command);
         
         if (!result.IsSuccess)

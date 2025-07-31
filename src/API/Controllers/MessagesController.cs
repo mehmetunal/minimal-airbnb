@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MinimalAirbnb.Application.Messages.Commands.CreateMessage;
+using MinimalAirbnb.Application.Commands.Message;
 using Maggsoft.Core.Base;
 
 namespace MinimalAirbnb.API.Controllers;

@@ -156,4 +156,24 @@ public class AddPropertyDto
     /// Check-out saati
     /// </summary>
     public TimeSpan CheckOutTime { get; set; } = new TimeSpan(11, 0, 0);
+
+    /// <summary>
+    /// Fiyat (alias)
+    /// </summary>
+    public decimal Price => PricePerNight;
+
+    /// <summary>
+    /// Güvenlik kamerası var mı?
+    /// </summary>
+    public bool HasSecurityCamera { get; set; }
+
+    /// <summary>
+    /// Yangın söndürücü var mı?
+    /// </summary>
+    public bool HasFireExtinguisher { get; set; }
+
+    /// <summary>
+    /// İlk yardım çantası var mı?
+    /// </summary>
+    public bool HasFirstAidKit { get; set; }
 } 

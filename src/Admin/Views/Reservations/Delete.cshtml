@@ -1,0 +1,254 @@
+@model MinimalAirbnb.Application.Reservations.DTOs.ReservationDto
+@{
+    ViewData["Title"] = "Rezervasyon Sil";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-trash me-2"></i>Rezervasyon Sil
+        </h1>
+        <div>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                <i class="bi bi-eye me-1"></i>Detaylar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Geri Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Uyarı Kartı -->
+            <div class="card border-danger shadow mb-4">
+                <div class="card-header bg-danger text-white py-3">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Dikkat!
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="bi bi-exclamation-triangle me-2"></i>Bu rezervasyonu silmek istediğinizden emin misiniz?</h5>
+                        <p class="mb-0">
+                            Bu işlem geri alınamaz. Rezervasyon ile ilgili tüm ödemeler ve yorumlar da silinecektir.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rezervasyon Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-calendar-check me-2"></i>Silinecek Rezervasyon Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Rezervasyon ID:</dt>
+                                <dd class="col-sm-8">@Model.Id</dd>
+
+                                <dt class="col-sm-4">Property:</dt>
+                                <dd class="col-sm-8">@Model.PropertyTitle</dd>
+
+                                <dt class="col-sm-4">Misafir:</dt>
+                                <dd class="col-sm-8">@Model.GuestName</dd>
+
+                                <dt class="col-sm-4">Misafir E-posta:</dt>
+                                <dd class="col-sm-8">@Model.GuestEmail</dd>
+
+                                <dt class="col-sm-4">Misafir Telefon:</dt>
+                                <dd class="col-sm-8">@Model.GuestPhone</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Giriş Tarihi:</dt>
+                                <dd class="col-sm-8">@Model.CheckInDate.ToString("dd.MM.yyyy")</dd>
+
+                                <dt class="col-sm-4">Çıkış Tarihi:</dt>
+                                <dd class="col-sm-8">@Model.CheckOutDate.ToString("dd.MM.yyyy")</dd>
+
+                                <dt class="col-sm-4">Toplam Fiyat:</dt>
+                                <dd class="col-sm-8">@Model.TotalPrice.ToString("C")</dd>
+
+                                <dt class="col-sm-4">Durum:</dt>
+                                <dd class="col-sm-8">
+                                    @switch (Model.Status)
+                                    {
+                                        case ReservationStatus.Pending:
+                                            <span class="badge bg-warning">Beklemede</span>
+                                            break;
+                                        case ReservationStatus.Confirmed:
+                                            <span class="badge bg-success">Onaylandı</span>
+                                            break;
+                                        case ReservationStatus.Cancelled:
+                                            <span class="badge bg-danger">İptal Edildi</span>
+                                            break;
+                                        case ReservationStatus.Completed:
+                                            <span class="badge bg-info">Tamamlandı</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@Model.Status</span>
+                                            break;
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Oluşturulma:</dt>
+                                <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Özel İstekler -->
+            @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+            {
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="bi bi-chat-text me-2"></i>Özel İstekler
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">@Model.SpecialRequests</p>
+                    </div>
+                </div>
+            }
+
+            <!-- İptal Bilgileri -->
+            @if (Model.Status == ReservationStatus.Cancelled && !string.IsNullOrEmpty(Model.CancellationReason))
+            {
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 bg-danger text-white">
+                        <h6 class="m-0 font-weight-bold">
+                            <i class="bi bi-x-circle me-2"></i>İptal Bilgileri
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-3">İptal Nedeni:</dt>
+                            <dd class="col-sm-9">@Model.CancellationReason</dd>
+                            @if (Model.CancelledByUserId != Guid.Empty)
+                            {
+                                <dt class="col-sm-3">İptal Eden:</dt>
+                                <dd class="col-sm-9">@Model.CancelledByUserName</dd>
+                            }
+                            @if (Model.CancelledAt != null)
+                            {
+                                <dt class="col-sm-3">İptal Tarihi:</dt>
+                                <dd class="col-sm-9">@Model.CancelledAt.Value.ToString("dd.MM.yyyy HH:mm")</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Property Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-house me-2"></i>Property Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>@Model.PropertyTitle</strong>
+                        <br />
+                        <small class="text-muted">@Model.PropertyAddress</small>
+                    </div>
+                    <div class="small text-muted">
+                        <div><i class="bi bi-geo-alt me-1"></i>@Model.PropertyCity</div>
+                        <div><i class="bi bi-currency-dollar me-1"></i>@Model.PropertyPrice.ToString("C") / gece</div>
+                        <div><i class="bi bi-person me-1"></i>@Model.PropertyMaxGuests misafir</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Host Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-person me-2"></i>Host Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-sm me-3">
+                            <i class="bi bi-person-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">@Model.HostName</div>
+                            <small class="text-muted">@Model.HostEmail</small>
+                        </div>
+                    </div>
+                    <div class="small text-muted">
+                        <div><i class="bi bi-telephone me-1"></i>@Model.HostPhone</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fiyat Detayları -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-calculator me-2"></i>Fiyat Detayları
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Gecelik Fiyat:</span>
+                        <span>@Model.PricePerNight.ToString("C")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Temizlik Ücreti:</span>
+                        <span>@Model.CleaningFee.ToString("C")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Hizmet Ücreti:</span>
+                        <span>@Model.ServiceFee.ToString("C")</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Toplam:</span>
+                        <span>@Model.TotalPrice.ToString("C")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Silme Formu -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-danger">
+                        <i class="bi bi-trash me-2"></i>Silme İşlemi
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Silme Nedeni (Opsiyonel)</label>
+                            <textarea name="reason" class="form-control" rows="3" placeholder="Silme nedenini belirtin..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Bu rezervasyonu silmek istediğinizden emin misiniz?')">
+                                <i class="bi bi-trash me-1"></i>Evet, Sil
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-1"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

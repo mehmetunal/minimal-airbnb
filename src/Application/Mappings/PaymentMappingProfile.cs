@@ -1,6 +1,6 @@
 using AutoMapper;
 using MinimalAirbnb.Application.Payments.DTOs;
-using MinimalAirbnb.Application.Payments.Commands.CreatePayment;
+using MinimalAirbnb.Application.Commands.Payment;
 using MinimalAirbnb.Domain.Entities;
 
 namespace MinimalAirbnb.Application.Mappings;

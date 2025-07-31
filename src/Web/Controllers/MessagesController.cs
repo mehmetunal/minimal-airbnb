@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using MinimalAirbnb.Application.Messages.Queries.GetMessages;
 using MinimalAirbnb.Application.Messages.Queries.GetMessageById;
 using MinimalAirbnb.Application.Messages.DTOs;
@@ -7,6 +8,7 @@ using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
 using MinimalAirbnb.Web.Models;
+using MinimalAirbnb.Web.Extensions;
 
 namespace MinimalAirbnb.Web.Controllers;
 
@@ -32,9 +34,8 @@ public class MessagesController : Controller
     {
         try
         {
-            // Session'dan UserId'yi al
-            var userId = HttpContext.Session.GetString("UserId");
-            var currentUserId = !string.IsNullOrEmpty(userId) && Guid.TryParse(userId, out var parsedUserId) ? parsedUserId.ToString() : query.SenderId?.ToString();
+            // Extension method ile UserId'yi al
+            var currentUserId = User.GetUserId();
 
             var response = await _httpClient.GetAsync<PagedListWrapper<MessageDto>>($"/api/messages?PageNumber={query.PageNumber}&PageSize={query.PageSize}&SenderId={currentUserId}&ReceiverId={query.ReceiverId}");
             
@@ -113,8 +114,8 @@ public class MessagesController : Controller
     {
         try
         {
-            // Session'dan UserId'yi al
-            var userId = HttpContext.Session.GetString("UserId");
+            // Extension method ile UserId'yi al
+            var userId = User.GetUserId();
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
             {
                 return RedirectToAction("Login", "Users");
@@ -142,8 +143,8 @@ public class MessagesController : Controller
     {
         try
         {
-            // Session'dan UserId'yi al
-            var userId = HttpContext.Session.GetString("UserId");
+            // Extension method ile UserId'yi al
+            var userId = User.GetUserId();
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var parsedUserId))
             {
                 return RedirectToAction("Login", "Users");

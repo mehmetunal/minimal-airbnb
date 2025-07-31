@@ -1,0 +1,177 @@
+@model MinimalAirbnb.Application.Payments.Commands.UpdatePayment.UpdatePaymentCommand
+@{
+    ViewData["Title"] = "Ödeme Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-pencil me-2"></i>Ödeme Düzenle
+        </h1>
+        <div>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                <i class="bi bi-eye me-1"></i>Detaylar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Geri Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-credit-card me-2"></i>Ödeme Bilgileri
+            </h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Ödeme ID</label>
+                            <input type="text" class="form-control" value="@Model.Id" readonly />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Amount" class="form-label">Tutar *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="Amount" class="form-control" type="number" step="0.01" id="amount" />
+                            </div>
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PaymentMethod" class="form-label">Ödeme Yöntemi *</label>
+                            <select asp-for="PaymentMethod" class="form-select">
+                                <option value="">Ödeme yöntemi seçiniz</option>
+                                <option value="CreditCard">Kredi Kartı</option>
+                                <option value="BankTransfer">Banka Transferi</option>
+                                <option value="PayPal">PayPal</option>
+                                <option value="Cash">Nakit</option>
+                            </select>
+                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label">Durum *</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Pending">Beklemede</option>
+                                <option value="Success">Başarılı</option>
+                                <option value="Failed">Başarısız</option>
+                                <option value="Refunded">İade Edildi</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="TransactionId" class="form-label">İşlem ID</label>
+                            <input asp-for="TransactionId" class="form-control" placeholder="İşlem ID (opsiyonel)" />
+                            <span asp-validation-for="TransactionId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Notes" class="form-label">Notlar</label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Ödeme notları..."></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle me-2"></i>Bilgi</h6>
+                            <ul class="mb-0">
+                                <li>Rezervasyon ve Misafir bilgileri değiştirilemez</li>
+                                <li>Sadece ödeme detayları güncellenebilir</li>
+                                <li>Durum değişiklikleri loglanacaktır</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ödeme Özeti -->
+                <div class="card bg-light mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-calculator me-2"></i>Güncellenmiş Ödeme Özeti</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Güncellenmiş Tutar:</span>
+                                    <span id="updatedAmount">₺0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Ödeme Yöntemi:</span>
+                                    <span id="updatedMethod">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Durum:</span>
+                                    <span id="updatedStatus">-</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>İşlem ID:</span>
+                                    <span id="updatedTransaction">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Notlar:</span>
+                                    <span id="updatedNotes">-</span>
+                                </div>
+                                <hr />
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Özet:</span>
+                                    <span id="updateSummary">Ödeme güncellenecek</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Güncelle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Sayfa yüklendiğinde mevcut değerleri ayarla
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSummary();
+        });
+
+        // Event listeners
+        document.getElementById('amount').addEventListener('input', updateSummary);
+        document.querySelector('[name="PaymentMethod"]').addEventListener('change', updateSummary);
+        document.querySelector('[name="Status"]').addEventListener('change', updateSummary);
+        document.querySelector('[name="TransactionId"]').addEventListener('input', updateSummary);
+        document.querySelector('[name="Notes"]').addEventListener('input', updateSummary);
+
+        function updateSummary() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const method = document.querySelector('[name="PaymentMethod"]').value;
+            const status = document.querySelector('[name="Status"]').value;
+            const transaction = document.querySelector('[name="TransactionId"]').value;
+            const notes = document.querySelector('[name="Notes"]').value;
+
+            document.getElementById('updatedAmount').textContent = `₺${amount.toFixed(2)}`;
+            document.getElementById('updatedMethod').textContent = method || '-';
+            document.getElementById('updatedStatus').textContent = status || '-';
+            document.getElementById('updatedTransaction').textContent = transaction || '-';
+            document.getElementById('updatedNotes').textContent = notes || '-';
+            
+            document.getElementById('updateSummary').textContent = `₺${amount.toFixed(2)} ödeme güncellenecek`;
+        }
+    </script>
+} 

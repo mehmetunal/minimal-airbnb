@@ -191,4 +191,49 @@ public class ReservationDto
     /// Onaylanma tarihi (alternatif)
     /// </summary>
     public DateTime? ConfirmedDate { get; set; }
+
+    /// <summary>
+    /// Misafir e-posta adresi
+    /// </summary>
+    public string GuestEmail { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Misafir telefon numarası
+    /// </summary>
+    public string GuestPhone { get; set; } = string.Empty;
+
+    /// <summary>
+    /// İptal tarihi (alias)
+    /// </summary>
+    public DateTime? CancelledAt => CancellationDate;
+
+    /// <summary>
+    /// Ev adresi
+    /// </summary>
+    public string PropertyAddress { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Ev şehri
+    /// </summary>
+    public string PropertyCity { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Ev fiyatı
+    /// </summary>
+    public decimal PropertyPrice { get; set; }
+
+    /// <summary>
+    /// Ev maksimum misafir sayısı
+    /// </summary>
+    public int PropertyMaxGuests { get; set; }
+
+    /// <summary>
+    /// Ev sahibi e-posta adresi
+    /// </summary>
+    public string HostEmail { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Ev sahibi telefon numarası
+    /// </summary>
+    public string HostPhone { get; set; } = string.Empty;
 } 

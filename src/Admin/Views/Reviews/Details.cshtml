@@ -1,0 +1,319 @@
+@model MinimalAirbnb.Application.Reviews.DTOs.ReviewDto
+@{
+    ViewData["Title"] = "Yorum Detayı";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-chat-quote me-2"></i>Yorum Detayı
+        </h1>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="bi bi-pencil me-1"></i>Düzenle
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Geri Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Yorum Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-info-circle me-2"></i>Yorum Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Yorum ID:</dt>
+                                <dd class="col-sm-8">@Model.Id</dd>
+
+                                <dt class="col-sm-4">Property:</dt>
+                                <dd class="col-sm-8">@Model.PropertyTitle</dd>
+
+                                <dt class="col-sm-4">Misafir:</dt>
+                                <dd class="col-sm-8">@Model.GuestName</dd>
+
+                                <dt class="col-sm-4">Misafir E-posta:</dt>
+                                <dd class="col-sm-8">@Model.GuestEmail</dd>
+
+                                <dt class="col-sm-4">Puan:</dt>
+                                <dd class="col-sm-8">
+                                    <div class="d-flex align-items-center">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= Model.Rating)
+                                            {
+                                                <i class="bi bi-star-fill text-warning me-1"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star text-muted me-1"></i>
+                                            }
+                                        }
+                                        <span class="ms-2">(@Model.Rating/5)</span>
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Oluşturulma:</dt>
+                                <dd class="col-sm-8">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                                <dt class="col-sm-4">Güncellenme:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.UpdatedAt.HasValue)
+                                    {
+                                        @Model.UpdatedAt.Value.ToString("dd.MM.yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Güncellenmemiş</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Onay Durumu:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.IsApproved)
+                                    {
+                                        <span class="badge bg-success">Onaylı</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Beklemede</span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Rezervasyon:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.ReservationId != Guid.Empty)
+                                    {
+                                        <a href="/Admin/Reservations/Details/@Model.ReservationId" class="text-decoration-none">
+                                            <i class="bi bi-calendar-check me-1"></i>Rezervasyon Detayı
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Rezervasyon yok</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yorum İçeriği -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-chat-text me-2"></i>Yorum İçeriği
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Yorum:</h6>
+                        <p class="mb-0">@Model.Comment</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.AdminResponse))
+                    {
+                        <hr />
+                        <div class="mb-3">
+                            <h6 class="text-primary">Admin Yanıtı:</h6>
+                            <p class="mb-0">@Model.AdminResponse</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Property Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-house me-2"></i>Property Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>@Model.PropertyTitle</strong>
+                        <br />
+                        <small class="text-muted">@Model.PropertyAddress</small>
+                    </div>
+                    <div class="small text-muted">
+                        <div><i class="bi bi-geo-alt me-1"></i>@Model.PropertyCity</div>
+                        <div><i class="bi bi-currency-dollar me-1"></i>@Model.PropertyPrice.ToString("C") / gece</div>
+                        <div><i class="bi bi-person me-1"></i>@Model.PropertyMaxGuests misafir</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Host Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-person me-2"></i>Host Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-sm me-3">
+                            <i class="bi bi-person-circle fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">@Model.HostName</div>
+                            <small class="text-muted">@Model.HostEmail</small>
+                        </div>
+                    </div>
+                    <div class="small text-muted">
+                        <div><i class="bi bi-telephone me-1"></i>@Model.HostPhone</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Misafir Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-person-badge me-2"></i>Misafir Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-sm me-3">
+                            <i class="bi bi-person-circle fa-2x text-success"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">@Model.GuestName</div>
+                            <small class="text-muted">@Model.GuestEmail</small>
+                        </div>
+                    </div>
+                    <div class="small text-muted">
+                        <div><i class="bi bi-telephone me-1"></i>@Model.GuestPhone</div>
+                        <div><i class="bi bi-calendar me-1"></i>Üye: @Model.GuestCreatedAt.ToString("dd.MM.yyyy")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hızlı İşlemler -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-lightning me-2"></i>Hızlı İşlemler
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        @if (!Model.IsApproved)
+                        {
+                            <button class="btn btn-success btn-sm" onclick="approveReview('@Model.Id')">
+                                <i class="bi bi-check-circle me-1"></i>Onayla
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-warning btn-sm" onclick="unapproveReview('@Model.Id')">
+                                <i class="bi bi-x-circle me-1"></i>Onayı Kaldır
+                            </button>
+                        }
+                        <button class="btn btn-info btn-sm" onclick="showResponseModal('@Model.Id')">
+                            <i class="bi bi-reply me-1"></i>Yanıtla
+                        </button>
+                        <a href="/Admin/Properties/Details/@Model.PropertyId" class="btn btn-primary btn-sm">
+                            <i class="bi bi-house me-1"></i>Property Detayı
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Yanıt Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Admin Yanıtı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="responseForm">
+                    <input type="hidden" id="reviewId" />
+                    <div class="mb-3">
+                        <label for="adminResponse" class="form-label">Yanıtınız:</label>
+                        <textarea id="adminResponse" class="form-control" rows="4" placeholder="Misafire yanıtınızı yazın..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="submitResponse()">Gönder</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function approveReview(id) {
+    if (confirm('Bu yorumu onaylamak istediğinizden emin misiniz?')) {
+        fetch(`/Admin/Reviews/Approve/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+
+function unapproveReview(id) {
+    if (confirm('Bu yorumun onayını kaldırmak istediğinizden emin misiniz?')) {
+        fetch(`/Admin/Reviews/Unapprove/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+
+function showResponseModal(id) {
+    document.getElementById('reviewId').value = id;
+    document.getElementById('adminResponse').value = '';
+    new bootstrap.Modal(document.getElementById('responseModal')).show();
+}
+
+function submitResponse() {
+    const id = document.getElementById('reviewId').value;
+    const response = document.getElementById('adminResponse').value;
+    
+    fetch(`/Admin/Reviews/Respond/${id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ response: response })
+    }).then(response => {
+        if (response.ok) {
+            location.reload();
+        }
+    });
+}
+</script> 

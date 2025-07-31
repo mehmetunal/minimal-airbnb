@@ -59,7 +59,8 @@ public class AuthController : BaseApiController
             {
                 UserId = user.Id,
                 Email = user.Email,
-                FullName = $"{user.FirstName} {user.LastName}"
+                FullName = $"{user.FirstName} {user.LastName}",
+                UserType = user.UserType.ToString()
             };
 
             return Ok(Result<LoginResponseDto>.Success(response, new SuccessMessage("200", "Başarıyla giriş yaptınız.")));
@@ -184,6 +185,7 @@ public class LoginResponseDto
     public Guid UserId { get; set; }
     public string Email { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
+    public string UserType { get; set; } = string.Empty;
 }
 
 /// <summary>

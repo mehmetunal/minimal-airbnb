@@ -38,6 +38,12 @@ public class MessageRepository : IMessageRepository
         return message;
     }
 
+    public async Task<Message> UpdateAsync(Message message)
+    {
+        _context.Messages.Update(message);
+        return message;
+    }
+
     public async Task<int> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync();

@@ -1,0 +1,273 @@
+@model MinimalAirbnb.Application.Commands.Payment.CreatePaymentCommand
+@{
+    ViewData["Title"] = "Yeni Ödeme Ekle";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-plus-circle me-2"></i>Yeni Ödeme Ekle
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Geri Dön
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-credit-card me-2"></i>Ödeme Bilgileri
+            </h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="ReservationId" class="form-label">Rezervasyon *</label>
+                            <select asp-for="ReservationId" class="form-select" id="reservationSelect">
+                                <option value="">Rezervasyon seçiniz</option>
+                                <!-- AJAX ile doldurulacak -->
+                            </select>
+                            <span asp-validation-for="ReservationId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GuestId" class="form-label">Misafir *</label>
+                            <select asp-for="GuestId" class="form-select" id="guestSelect">
+                                <option value="">Misafir seçiniz</option>
+                                <!-- AJAX ile doldurulacak -->
+                            </select>
+                            <span asp-validation-for="GuestId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Amount" class="form-label">Tutar *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="Amount" class="form-control" type="number" step="0.01" id="amount" />
+                            </div>
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PaymentMethod" class="form-label">Ödeme Yöntemi *</label>
+                            <select asp-for="PaymentMethod" class="form-select">
+                                <option value="">Ödeme yöntemi seçiniz</option>
+                                <option value="CreditCard">Kredi Kartı</option>
+                                <option value="BankTransfer">Banka Transferi</option>
+                                <option value="PayPal">PayPal</option>
+                                <option value="Cash">Nakit</option>
+                            </select>
+                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label">Durum *</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Pending">Beklemede</option>
+                                <option value="Success">Başarılı</option>
+                                <option value="Failed">Başarısız</option>
+                                <option value="Refunded">İade Edildi</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TransactionId" class="form-label">İşlem ID</label>
+                            <input asp-for="TransactionId" class="form-control" placeholder="İşlem ID (opsiyonel)" />
+                            <span asp-validation-for="TransactionId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Açıklama</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Ödeme açıklaması..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PaymentDate" class="form-label">Ödeme Tarihi</label>
+                            <input asp-for="PaymentDate" class="form-control" type="datetime-local" />
+                            <span asp-validation-for="PaymentDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rezervasyon Detayları -->
+                <div class="card bg-light mb-3" id="reservationDetails" style="display: none;">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Seçilen Rezervasyon Detayları</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>Property:</strong>
+                                    <div id="propertyInfo">-</div>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Misafir:</strong>
+                                    <div id="guestInfo">-</div>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Tarihler:</strong>
+                                    <div id="dateInfo">-</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <strong>Toplam Tutar:</strong>
+                                    <div id="totalAmount">-</div>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Durum:</strong>
+                                    <div id="reservationStatus">-</div>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Kalan Tutar:</strong>
+                                    <div id="remainingAmount">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ödeme Özeti -->
+                <div class="card bg-light mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-calculator me-2"></i>Ödeme Özeti</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Seçilen Tutar:</span>
+                                    <span id="selectedAmount">₺0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Ödeme Yöntemi:</span>
+                                    <span id="selectedMethod">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Durum:</span>
+                                    <span id="selectedStatus">-</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>İşlem ID:</span>
+                                    <span id="selectedTransaction">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Ödeme Tarihi:</span>
+                                    <span id="selectedDate">-</span>
+                                </div>
+                                <hr />
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Özet:</span>
+                                    <span id="paymentSummary">₺0.00 ödeme eklenecek</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Rezervasyon listesini yükle
+        loadReservations();
+        loadGuests();
+
+        function loadReservations() {
+            fetch('/api/reservations?PageSize=100')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('reservationSelect');
+                    data.data.forEach(reservation => {
+                        const option = document.createElement('option');
+                        option.value = reservation.id;
+                        option.textContent = `${reservation.propertyTitle} - ${reservation.guestName} (${reservation.checkInDate} - ${reservation.checkOutDate})`;
+                        option.dataset.reservation = JSON.stringify(reservation);
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        function loadGuests() {
+            fetch('/api/users?PageSize=100&UserType=Guest')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('guestSelect');
+                    data.data.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.id;
+                        option.textContent = `${user.fullName} (${user.email})`;
+                        select.appendChild(option);
+                    });
+                });
+        }
+
+        // Event listeners
+        document.getElementById('reservationSelect').addEventListener('change', function() {
+            updateReservationDetails();
+            updateSummary();
+        });
+
+        document.getElementById('amount').addEventListener('input', updateSummary);
+        document.getElementById('guestSelect').addEventListener('change', updateSummary);
+        document.querySelector('[name="PaymentMethod"]').addEventListener('change', updateSummary);
+        document.querySelector('[name="Status"]').addEventListener('change', updateSummary);
+        document.querySelector('[name="TransactionId"]').addEventListener('input', updateSummary);
+        document.querySelector('[name="PaymentDate"]').addEventListener('change', updateSummary);
+
+        function updateReservationDetails() {
+            const select = document.getElementById('reservationSelect');
+            const detailsDiv = document.getElementById('reservationDetails');
+            
+            if (select.value) {
+                const reservation = JSON.parse(select.options[select.selectedIndex].dataset.reservation);
+                
+                document.getElementById('propertyInfo').textContent = reservation.propertyTitle;
+                document.getElementById('guestInfo').textContent = reservation.guestName;
+                document.getElementById('dateInfo').textContent = `${reservation.checkInDate} - ${reservation.checkOutDate}`;
+                document.getElementById('totalAmount').textContent = `₺${reservation.totalPrice}`;
+                document.getElementById('reservationStatus').textContent = reservation.status;
+                document.getElementById('remainingAmount').textContent = `₺${reservation.totalPrice}`; // Basit hesaplama
+                
+                detailsDiv.style.display = 'block';
+            } else {
+                detailsDiv.style.display = 'none';
+            }
+        }
+
+        function updateSummary() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const method = document.querySelector('[name="PaymentMethod"]').value;
+            const status = document.querySelector('[name="Status"]').value;
+            const transaction = document.querySelector('[name="TransactionId"]').value;
+            const date = document.querySelector('[name="PaymentDate"]').value;
+
+            document.getElementById('selectedAmount').textContent = `₺${amount.toFixed(2)}`;
+            document.getElementById('selectedMethod').textContent = method || '-';
+            document.getElementById('selectedStatus').textContent = status || '-';
+            document.getElementById('selectedTransaction').textContent = transaction || '-';
+            document.getElementById('selectedDate').textContent = date ? new Date(date).toLocaleString('tr-TR') : '-';
+            
+            document.getElementById('paymentSummary').textContent = `₺${amount.toFixed(2)} ödeme eklenecek`;
+        }
+    </script>
+} 

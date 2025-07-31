@@ -1,0 +1,163 @@
+@model MinimalAirbnb.Application.Messages.DTOs.MessageDto
+@{
+    ViewData["Title"] = "Mesaj Detayı";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-envelope me-2"></i>Mesaj Detayı
+        </h1>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Düzenle
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Geri Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Mesaj İçeriği -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-envelope-open me-2"></i>Mesaj İçeriği
+                    </h6>
+                    <div>
+                        @if (Model.IsRead)
+                        {
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>Okundu
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock me-1"></i>Okunmadı
+                            </span>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="text-primary mb-3">@Model.Subject</h5>
+                        <div class="bg-light p-3 rounded">
+                            @Html.Raw(Model.Content.Replace("\n", "<br>"))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Mesaj Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-info-circle me-2"></i>Mesaj Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <small class="text-muted">Mesaj ID:</small>
+                        </div>
+                        <div class="col-8">
+                            <code>@Model.Id</code>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <small class="text-muted">Durum:</small>
+                        </div>
+                        <div class="col-8">
+                            @if (Model.IsArchived)
+                            {
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-archive me-1"></i>Arşivlendi
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info">
+                                    <i class="fas fa-inbox me-1"></i>Aktif
+                                </span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <small class="text-muted">Oluşturulma:</small>
+                        </div>
+                        <div class="col-8">
+                            <small>
+                                <i class="fas fa-calendar me-1"></i>
+                                @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                            </small>
+                        </div>
+                    </div>
+
+                    @if (Model.ReadDate.HasValue)
+                    {
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <small class="text-muted">Okunma:</small>
+                            </div>
+                            <div class="col-8">
+                                <small>
+                                    <i class="fas fa-eye me-1"></i>
+                                    @Model.ReadDate.Value.ToString("dd.MM.yyyy HH:mm")
+                                </small>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Gönderen Bilgileri -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-user me-2"></i>Gönderen
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-sm me-3">
+                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">@Model.SenderName</h6>
+                            <small class="text-muted">@Model.SenderEmail</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alıcı Bilgileri -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-user-check me-2"></i>Alıcı
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-sm me-3">
+                            <i class="fas fa-user-circle fa-3x text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">@Model.ReceiverName</h6>
+                            <small class="text-muted">@Model.ReceiverEmail</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MinimalAirbnb.Application.Properties.Commands.CreateProperty;
-using MinimalAirbnb.Application.Properties.Commands.UpdateProperty;
+using Microsoft.AspNetCore.Authorization;
+using MinimalAirbnb.Application.Commands.Property;
 using MinimalAirbnb.Application.Properties.Commands.DeleteProperty;
 using MinimalAirbnb.Application.Properties.Queries.GetProperties;
 using MinimalAirbnb.Application.Properties.Queries.GetPropertyById;
@@ -8,12 +8,14 @@ using MinimalAirbnb.Application.Properties.DTOs;
 using Maggsoft.Framework.HttpClientApi;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model.Pagination;
+using MinimalAirbnb.Admin.Models;
 
 namespace MinimalAirbnb.Admin.Controllers;
 
 /// <summary>
 /// Admin Properties Controller
 /// </summary>
+[Authorize(Roles = "Admin")]
 public class PropertiesController : Controller
 {
     private readonly IMaggsoftHttpClient _httpClient;
@@ -32,7 +34,7 @@ public class PropertiesController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync<PagedList<PropertyDto>>($"/api/properties?PageNumber={query.PageNumber}&PageSize={query.PageSize}&City={query.City}&MinPrice={query.MinPrice}&MaxPrice={query.MaxPrice}&PropertyType={query.PropertyType}");
+            var response = await _httpClient.GetAsync<PagedListWrapper<PropertyDto>>($"/api/properties?PageNumber={query.PageNumber}&PageSize={query.PageSize}&City={query.City}&MinPrice={query.MinPrice}&MaxPrice={query.MaxPrice}&PropertyType={query.PropertyType}");
             
             if (response != null)
             {
@@ -45,7 +47,7 @@ public class PropertiesController : Controller
             ModelState.AddModelError("", "Properties yüklenirken bir hata oluştu.");
         }
 
-        return View(new PagedList<PropertyDto>(new List<PropertyDto>(), 0, query.PageNumber, query.PageSize));
+        return View(PagedListWrapper<PropertyDto>.Empty(query.PageNumber, query.PageSize));
     }
 
     /// <summary>
@@ -123,7 +125,7 @@ public class PropertiesController : Controller
                     Id = response.Data.Id,
                     Title = response.Data.Title,
                     Description = response.Data.Description,
-                    PropertyType = response.Data.PropertyType.ToString(),
+                    PropertyType = response.Data.PropertyType,
                     PricePerNight = response.Data.PricePerNight,
                     Address = response.Data.Address,
                     City = response.Data.City,
@@ -134,8 +136,24 @@ public class PropertiesController : Controller
                     Bedrooms = response.Data.BedroomCount,
                     Bathrooms = response.Data.BathroomCount,
                     MaxGuests = response.Data.MaxGuestCount,
+                    Beds = response.Data.BedCount,
+                    CleaningFee = response.Data.CleaningFee,
+                    ServiceFee = response.Data.ServiceFee,
                     MinimumStay = response.Data.MinimumStayDays,
-                    MaximumStay = response.Data.MaximumStayDays
+                    MaximumStay = response.Data.MaximumStayDays,
+                    HasWifi = response.Data.HasWifi,
+                    HasAirConditioning = response.Data.HasAirConditioning,
+                    HasKitchen = response.Data.HasKitchen,
+                    HasParking = response.Data.HasParking,
+                    HasPool = response.Data.HasPool,
+                    AllowsPets = response.Data.AllowsPets,
+                    AllowsSmoking = response.Data.AllowsSmoking,
+                    HasSecurityCamera = response.Data.HasSecurityCamera,
+                    HasFireExtinguisher = response.Data.HasFireExtinguisher,
+                    HasFirstAidKit = response.Data.HasFirstAidKit,
+                    IsAvailable = response.Data.IsAvailable,
+                    IsApproved = response.Data.IsApproved,
+                    IsPublished = response.Data.IsPublished
                 };
                 return View(command);
             }

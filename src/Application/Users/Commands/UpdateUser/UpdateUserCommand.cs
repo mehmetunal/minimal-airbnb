@@ -1,5 +1,6 @@
 using MediatR;
 using Maggsoft.Core.Base;
+using MinimalAirbnb.Domain.Enums;
 
 namespace MinimalAirbnb.Application.Users.Commands.UpdateUser;
 
@@ -14,4 +15,7 @@ public class UpdateUserCommand : IRequest<Result<object>>
     public string Email { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public DateTime DateOfBirth { get; set; }
+    public UserType UserType { get; set; }
+    public Gender Gender { get; set; }
+    public bool EmailConfirmed { get; set; }
 } 

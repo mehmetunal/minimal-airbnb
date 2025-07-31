@@ -25,20 +25,20 @@
                 <a class="nav-link text-white-50" asp-controller="Properties" asp-action="Index">
                     <i class="bi bi-house-heart"></i> Properties
                 </a>
-                <a class="nav-link text-white-50" href="#">
+                <a class="nav-link text-white-50" asp-controller="Users" asp-action="Index">
                     <i class="bi bi-people"></i> Users
                 </a>
-                <a class="nav-link text-white-50" href="#">
+                <a class="nav-link text-white-50" asp-controller="Reservations" asp-action="Index">
                     <i class="bi bi-calendar-check"></i> Reservations
                 </a>
-                <a class="nav-link text-white-50" href="#">
+                <a class="nav-link text-white-50" asp-controller="Reviews" asp-action="Index">
                     <i class="bi bi-star"></i> Reviews
                 </a>
-                <a class="nav-link text-white-50" href="#">
+                <a class="nav-link text-white-50" asp-controller="Payments" asp-action="Index">
                     <i class="bi bi-credit-card"></i> Payments
                 </a>
-                <a class="nav-link text-white-50" href="#">
-                    <i class="bi bi-gear"></i> Settings
+                <a class="nav-link text-white-50" asp-controller="Messages" asp-action="Index">
+                    <i class="bi bi-envelope"></i> Messages
                 </a>
             </nav>
         </div>
@@ -57,10 +57,9 @@
                                 <i class="bi bi-person-circle"></i> Admin
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
+                                <li><a class="dropdown-item" href="/Auth/Profile"><i class="bi bi-person"></i> Profil</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right"></i> Çıkış Yap</a></li>
                             </ul>
                         </div>
                     </div>
@@ -77,6 +76,24 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        function logout() {
+            $.ajax({
+                url: '/Auth/Logout',
+                type: 'POST',
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '/Auth/Login';
+                    }
+                },
+                error: function() {
+                    window.location.href = '/Auth/Login';
+                }
+            });
+        }
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

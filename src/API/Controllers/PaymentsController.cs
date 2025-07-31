@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MinimalAirbnb.Application.Payments.Commands.CreatePayment;
+using MinimalAirbnb.Application.Commands.Payment;
 using MinimalAirbnb.Application.Payments.DTOs;
 using Maggsoft.Core.Base;
 using Maggsoft.Core.Model;

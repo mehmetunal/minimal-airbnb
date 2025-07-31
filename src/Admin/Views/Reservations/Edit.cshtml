@@ -1,0 +1,222 @@
+@model MinimalAirbnb.Application.Reservations.Commands.UpdateReservation.UpdateReservationCommand
+@{
+    ViewData["Title"] = "Rezervasyon Düzenle";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-pencil me-2"></i>Rezervasyon Düzenle
+        </h1>
+        <div>
+            <a asp-action="Details" asp-route-id="@Model.ReservationId" class="btn btn-info">
+                <i class="bi bi-eye me-1"></i>Detaylar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Geri Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-calendar-check me-2"></i>Rezervasyon Bilgileri
+            </h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="ReservationId" />
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Rezervasyon ID</label>
+                            <input type="text" class="form-control" value="@Model.ReservationId" readonly />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CheckInDate" class="form-label">Giriş Tarihi *</label>
+                            <input asp-for="CheckInDate" class="form-control" type="date" id="checkInDate" />
+                            <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CheckOutDate" class="form-label">Çıkış Tarihi *</label>
+                            <input asp-for="CheckOutDate" class="form-control" type="date" id="checkOutDate" />
+                            <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="GuestCount" class="form-label">Misafir Sayısı *</label>
+                            <input asp-for="GuestCount" class="form-control" type="number" min="1" id="guestCount" />
+                            <span asp-validation-for="GuestCount" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CheckInTime" class="form-label">Giriş Saati</label>
+                            <input asp-for="CheckInTime" class="form-control" type="time" />
+                            <span asp-validation-for="CheckInTime" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CheckOutTime" class="form-label">Çıkış Saati</label>
+                            <input asp-for="CheckOutTime" class="form-control" type="time" />
+                            <span asp-validation-for="CheckOutTime" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="PricePerNight" class="form-label">Gecelik Fiyat *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="PricePerNight" class="form-control" type="number" step="0.01" id="pricePerNight" />
+                            </div>
+                            <span asp-validation-for="PricePerNight" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CleaningFee" class="form-label">Temizlik Ücreti</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="CleaningFee" class="form-control" type="number" step="0.01" />
+                            </div>
+                            <span asp-validation-for="CleaningFee" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ServiceFee" class="form-label">Hizmet Ücreti</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="ServiceFee" class="form-control" type="number" step="0.01" />
+                            </div>
+                            <span asp-validation-for="ServiceFee" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TotalPrice" class="form-label">Toplam Fiyat *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="TotalPrice" class="form-control" type="number" step="0.01" id="totalPrice" readonly />
+                            </div>
+                            <span asp-validation-for="TotalPrice" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Status" class="form-label">Durum *</label>
+                            <select asp-for="Status" class="form-select">
+                                <option value="Pending">Beklemede</option>
+                                <option value="Confirmed">Onaylandı</option>
+                                <option value="Cancelled">İptal Edildi</option>
+                                <option value="Completed">Tamamlandı</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SpecialRequests" class="form-label">Özel İstekler</label>
+                    <textarea asp-for="SpecialRequests" class="form-control" rows="3" placeholder="Misafirin özel istekleri..."></textarea>
+                    <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CancellationReason" class="form-label">İptal Nedeni</label>
+                    <textarea asp-for="CancellationReason" class="form-control" rows="2" placeholder="İptal nedeni (sadece iptal durumunda)..."></textarea>
+                    <span asp-validation-for="CancellationReason" class="text-danger"></span>
+                </div>
+
+                <!-- Fiyat Özeti -->
+                <div class="card bg-light mb-3">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-calculator me-2"></i>Fiyat Özeti</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Gecelik Fiyat:</span>
+                                    <span id="nightlyPrice">₺0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Gece Sayısı:</span>
+                                    <span id="nightCount">0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Ara Toplam:</span>
+                                    <span id="subtotal">₺0.00</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Temizlik Ücreti:</span>
+                                    <span id="cleaningFeeDisplay">₺0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Hizmet Ücreti:</span>
+                                    <span id="serviceFeeDisplay">₺0.00</span>
+                                </div>
+                                <hr />
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Toplam:</span>
+                                    <span id="totalPriceDisplay">₺0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Güncelle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        // Fiyat hesaplama
+        function calculatePrice() {
+            const pricePerNight = parseFloat(document.getElementById('pricePerNight').value) || 0;
+            const checkInDate = new Date(document.getElementById('checkInDate').value);
+            const checkOutDate = new Date(document.getElementById('checkOutDate').value);
+            const cleaningFee = parseFloat(document.querySelector('[name="CleaningFee"]').value) || 0;
+            const serviceFee = parseFloat(document.querySelector('[name="ServiceFee"]').value) || 0;
+
+            let nightCount = 0;
+            if (checkInDate && checkOutDate && checkOutDate > checkInDate) {
+                nightCount = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+            }
+
+            const subtotal = pricePerNight * nightCount;
+            const total = subtotal + cleaningFee + serviceFee;
+
+            document.getElementById('nightlyPrice').textContent = `₺${pricePerNight.toFixed(2)}`;
+            document.getElementById('nightCount').textContent = nightCount;
+            document.getElementById('subtotal').textContent = `₺${subtotal.toFixed(2)}`;
+            document.getElementById('cleaningFeeDisplay').textContent = `₺${cleaningFee.toFixed(2)}`;
+            document.getElementById('serviceFeeDisplay').textContent = `₺${serviceFee.toFixed(2)}`;
+            document.getElementById('totalPriceDisplay').textContent = `₺${total.toFixed(2)}`;
+            document.getElementById('totalPrice').value = total.toFixed(2);
+        }
+
+        // Event listeners
+        document.getElementById('pricePerNight').addEventListener('input', calculatePrice);
+        document.getElementById('checkInDate').addEventListener('change', calculatePrice);
+        document.getElementById('checkOutDate').addEventListener('change', calculatePrice);
+        document.querySelector('[name="CleaningFee"]').addEventListener('input', calculatePrice);
+        document.querySelector('[name="ServiceFee"]').addEventListener('input', calculatePrice);
+
+        // Sayfa yüklendiğinde fiyatı hesapla
+        document.addEventListener('DOMContentLoaded', function() {
+            calculatePrice();
+        });
+    </script>
+} 

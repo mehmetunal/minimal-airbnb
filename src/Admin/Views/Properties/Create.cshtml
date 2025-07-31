@@ -1,0 +1,172 @@
+@model MinimalAirbnb.Application.Commands.Property.CreatePropertyCommand
+@{
+    ViewData["Title"] = "Yeni Property Ekle";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="bi bi-plus-circle me-2"></i>Yeni Property Ekle
+        </h1>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Geri Dön
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="bi bi-house-heart me-2"></i>Property Bilgileri
+            </h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Başlık *</label>
+                            <input asp-for="Title" class="form-control" placeholder="Property başlığı" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Açıklama</label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="Property açıklaması"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="City" class="form-label">Şehir *</label>
+                            <input asp-for="City" class="form-control" placeholder="Şehir" />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label">Adres *</label>
+                            <input asp-for="Address" class="form-control" placeholder="Tam adres" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PostalCode" class="form-label">Posta Kodu</label>
+                            <input asp-for="PostalCode" class="form-control" placeholder="Posta kodu" />
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label asp-for="Price" class="form-label">Fiyat (Gece) *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input asp-for="Price" class="form-control" type="number" step="0.01" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PropertyType" class="form-label">Property Türü *</label>
+                            <select asp-for="PropertyType" class="form-select">
+                                <option value="">Seçiniz</option>
+                                <option value="Apartment">Daire</option>
+                                <option value="House">Ev</option>
+                                <option value="Villa">Villa</option>
+                                <option value="Condo">Kondo</option>
+                                <option value="Studio">Stüdyo</option>
+                            </select>
+                            <span asp-validation-for="PropertyType" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Bedrooms" class="form-label">Yatak Odası</label>
+                                    <input asp-for="Bedrooms" class="form-control" type="number" min="0" />
+                                    <span asp-validation-for="Bedrooms" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Bathrooms" class="form-label">Banyo</label>
+                                    <input asp-for="Bathrooms" class="form-control" type="number" min="0" step="0.5" />
+                                    <span asp-validation-for="Bathrooms" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="MaxGuests" class="form-label">Maks. Misafir</label>
+                                    <input asp-for="MaxGuests" class="form-control" type="number" min="1" />
+                                    <span asp-validation-for="MaxGuests" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <h6 class="mb-3"><i class="bi bi-list-check me-2"></i>Özellikler</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="HasWifi" class="form-check-input" />
+                                <label asp-for="HasWifi" class="form-check-label">WiFi</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="HasParking" class="form-check-input" />
+                                <label asp-for="HasParking" class="form-check-label">Parking</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="HasKitchen" class="form-check-input" />
+                                <label asp-for="HasKitchen" class="form-check-label">Mutfak</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="HasAirConditioning" class="form-check-input" />
+                                <label asp-for="HasAirConditioning" class="form-check-label">Klima</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="HasSecurityCamera" class="form-check-input" />
+                                <label asp-for="HasSecurityCamera" class="form-check-label">Güvenlik Kamerası</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="HasFireExtinguisher" class="form-check-input" />
+                                <label asp-for="HasFireExtinguisher" class="form-check-label">Yangın Söndürücü</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="HasFirstAidKit" class="form-check-input" />
+                                <label asp-for="HasFirstAidKit" class="form-check-label">İlk Yardım Çantası</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>Kaydet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

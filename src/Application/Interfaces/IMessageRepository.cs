@@ -23,6 +23,11 @@ public interface IMessageRepository
     Task<Message> AddAsync(Message message);
 
     /// <summary>
+    /// Mesaj günceller
+    /// </summary>
+    Task<Message> UpdateAsync(Message message);
+
+    /// <summary>
     /// Değişiklikleri kaydeder
     /// </summary>
     /// <returns>Kaydedilen değişiklik sayısı</returns>
